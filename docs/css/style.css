@@ -160,6 +160,8 @@ body{background:#F4F6FB;font-family:Cambria, "Cambria Math", Georgia, "Times New
 .tab-add:hover{background:#EEF2FF;border-color:#C7D2FE}
 .tab-add:disabled{opacity:.5;cursor:not-allowed}
 .tab-add:disabled:hover{background:#fff;border-color:#E4EAF2}
+.tab-add.acc{background:#6366F1;border-color:#6366F1;color:#fff}
+.tab-add.acc:hover{background:#4F46E5;border-color:#4F46E5}
 .tabs{background:#fff;border-bottom:1px solid #E4EAF2;display:flex;gap:2px;padding:0 22px;
  overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
