@@ -134,5 +134,13 @@
 <div class="qtip" id="qTooltip"></div>
 
 <script src="js/auth-nav.js"></script>
+<script>
+(function(){
+  var navHome = document.getElementById("navHome");
+  var navDfmea = document.getElementById("navDfmea");
+  if(navHome) navHome.addEventListener("click", function(){ window.location.href = "index.html"; });
+  if(navDfmea) navDfmea.addEventListener("click", function(){ window.location.href = "index.html"; });
+})();
+</script>
 <script src="js/new-dfmea.js"></script>
 </body></html>
