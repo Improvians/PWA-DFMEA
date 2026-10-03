@@ -16,7 +16,12 @@
     desc: "2 DFMEA documents",
     real: true
   };
-  var PLACEHOLDER_PROJECTS = [
+  // These two open and work just like the real project -- their DFMEA
+  // documents reuse the same underlying worksheet, relabeled, the same
+  // way AI-generated and blank DFMEAs do. They're marked "Sample data"
+  // rather than "Active" so it's honest about which project is the real
+  // one being worked on, without being a dead end that can't be opened.
+  var SAMPLE_PROJECTS = [
     { id: "northstar-sensor-harness", name: "Northstar Sensor Harness", desc: "2 DFMEA documents" },
     { id: "meridian-charging-inlet", name: "Meridian Charging Inlet", desc: "1 DFMEA document" }
   ];
@@ -33,21 +38,19 @@
     return div.innerHTML;
   }
 
-  // Three card states: the one real, populated project ("active");
-  // placeholder projects that exist only to show how a bigger workspace
-  // would look ("placeholder" -- intentionally not clickable, there's
-  // nothing behind them); and projects the visitor actually created here
-  // ("empty" -- clickable like a real project, it's just honestly empty
-  // until a DFMEA is added to it, same as it would be in a real tool).
+  // Every project card is clickable -- nothing in this app is a dead
+  // end. "active" is the one real, being-worked-on project; "sample" is
+  // honestly-labelled demo data on the same editable structure; "empty"
+  // is a project the visitor created here that has no DFMEA yet, same as
+  // it would be in a real tool right after creating one.
   function cardHtml(project, state){
-    var clickable = state !== "placeholder";
     var icon = state === "active"
       ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'
       : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>';
-    var badgeClass = state === "active" ? "current" : "empty";
-    var badgeText = state === "active" ? "Active" : (state === "placeholder" ? "No data yet" : "No DFMEA yet");
-    return '<div class="proj-card' + (state === "placeholder" ? " disabled" : "") + '" data-id="' + project.id + '" data-real="' + clickable + '"'
-      + (state === "placeholder" ? ' data-tip="No DFMEA data has been added for this project yet."' : "")
+    var badgeClass = state === "active" ? "current" : (state === "sample" ? "sample" : "empty");
+    var badgeText = state === "active" ? "Active" : (state === "sample" ? "Sample data" : "No DFMEA yet");
+    return '<div class="proj-card" data-id="' + project.id + '" data-real="true"'
+      + (state === "sample" ? ' data-tip="Sample data on the same editable structure as the real project."' : "")
       + (state === "empty" ? ' data-tip="Open this project, then use + New DFMEA to add one."' : "") + '>'
       + '<div class="proj-icon">' + icon + '</div>'
       + '<div class="proj-name">' + escapeHtml(project.name) + '</div>'
@@ -59,7 +62,7 @@
   function render(){
     var grid = document.getElementById("projGrid");
     var html = cardHtml(REAL_PROJECT, "active");
-    PLACEHOLDER_PROJECTS.forEach(function(p){ html += cardHtml(p, "placeholder"); });
+    SAMPLE_PROJECTS.forEach(function(p){ html += cardHtml(p, "sample"); });
     readMyProjects().forEach(function(p){ html += cardHtml(p, "empty"); });
     grid.innerHTML = html;
 
