@@ -33,24 +33,34 @@
     return div.innerHTML;
   }
 
-  function cardHtml(project, disabled){
-    var icon = disabled
-      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>'
-      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>';
-    return '<div class="proj-card' + (disabled ? ' disabled' : '') + '" data-id="' + project.id + '" data-real="' + (!disabled) + '"'
-      + (disabled ? ' data-tip="No DFMEA data has been added for this project yet."' : '') + '>'
+  // Three card states: the one real, populated project ("active");
+  // placeholder projects that exist only to show how a bigger workspace
+  // would look ("placeholder" -- intentionally not clickable, there's
+  // nothing behind them); and projects the visitor actually created here
+  // ("empty" -- clickable like a real project, it's just honestly empty
+  // until a DFMEA is added to it, same as it would be in a real tool).
+  function cardHtml(project, state){
+    var clickable = state !== "placeholder";
+    var icon = state === "active"
+      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'
+      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>';
+    var badgeClass = state === "active" ? "current" : "empty";
+    var badgeText = state === "active" ? "Active" : (state === "placeholder" ? "No data yet" : "No DFMEA yet");
+    return '<div class="proj-card' + (state === "placeholder" ? " disabled" : "") + '" data-id="' + project.id + '" data-real="' + clickable + '"'
+      + (state === "placeholder" ? ' data-tip="No DFMEA data has been added for this project yet."' : "")
+      + (state === "empty" ? ' data-tip="Open this project, then use + New DFMEA to add one."' : "") + '>'
       + '<div class="proj-icon">' + icon + '</div>'
       + '<div class="proj-name">' + escapeHtml(project.name) + '</div>'
       + '<div class="proj-meta">' + escapeHtml(project.desc || "") + '</div>'
-      + '<span class="proj-badge ' + (disabled ? "empty" : "current") + '">' + (disabled ? "No data yet" : "Active") + '</span>'
+      + '<span class="proj-badge ' + badgeClass + '">' + badgeText + '</span>'
       + '</div>';
   }
 
   function render(){
     var grid = document.getElementById("projGrid");
-    var html = cardHtml(REAL_PROJECT, false);
-    PLACEHOLDER_PROJECTS.forEach(function(p){ html += cardHtml(p, true); });
-    readMyProjects().forEach(function(p){ html += cardHtml(p, true); });
+    var html = cardHtml(REAL_PROJECT, "active");
+    PLACEHOLDER_PROJECTS.forEach(function(p){ html += cardHtml(p, "placeholder"); });
+    readMyProjects().forEach(function(p){ html += cardHtml(p, "empty"); });
     grid.innerHTML = html;
 
     Array.prototype.slice.call(grid.querySelectorAll(".proj-card")).forEach(function(card){

@@ -3,6 +3,30 @@
   var params = new URLSearchParams(window.location.search);
   var mode = params.get("mode") === "ai" ? "ai" : "blank";
 
+  // Every DFMEA belongs to a project -- this list is the same set the
+  // Projects pages use (the one real project plus the two placeholders),
+  // extended with whatever custom projects were created on the Projects
+  // page. Arriving here from a project's own "+ New DFMEA" button
+  // (project.html passes ?project=<id>) pre-selects that project instead
+  // of defaulting to Aster EV Connector every time.
+  var KNOWN_PROJECTS = [
+    { id: "aster-ev-connector", name: "Aster EV Connector" },
+    { id: "northstar-sensor-harness", name: "Northstar Sensor Harness" },
+    { id: "meridian-charging-inlet", name: "Meridian Charging Inlet" }
+  ];
+  function readCustomProjects(){
+    try{ return JSON.parse(localStorage.getItem("dfmeaMyProjects") || "[]"); }catch(error){ return []; }
+  }
+  var projectSelect = document.getElementById("ndProject");
+  var allProjects = KNOWN_PROJECTS.concat(readCustomProjects());
+  projectSelect.innerHTML = allProjects.map(function(p){
+    return '<option value="' + p.id + '">' + escapeHtml(p.name) + '</option>';
+  }).join("");
+  var requestedProject = params.get("project");
+  if(requestedProject && allProjects.some(function(p){ return p.id === requestedProject; })){
+    projectSelect.value = requestedProject;
+  }
+
   // page-setup.js (loaded here too, purely for a consistent sidebar)
   // overwrites the whole .crumb element's innerHTML for its own
   // breadcrumb -- so this rebuilds it fresh rather than trusting the
@@ -56,6 +80,19 @@
       localStorage.setItem("dfmeaMyDocuments", JSON.stringify(list));
     }catch(error){ /* storage unavailable -- the flow still works, just won't be listed anywhere */ }
   }
+  // There's only one real, fully-populated worksheet in this build (the
+  // Crimp DFMEA), so every DFMEA created here "opens" by reusing that
+  // same live structure under its own name -- stored per document id so
+  // several created DFMEAs don't stomp on each other's labelling, and so
+  // visiting index.html directly (no ?doc=) always shows the real one.
+  function saveOverride(id, override){
+    try{
+      var map = JSON.parse(localStorage.getItem("dfmeaDocOverrides") || "{}");
+      map[id] = override;
+      localStorage.setItem("dfmeaDocOverrides", JSON.stringify(map));
+    }catch(error){ /* override just won't persist -- navigation still works */ }
+  }
+  function makeDocId(){ return "doc-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
   // Very simple "AI" stand-in: does the candidate's own name/filename
   // share a whole word with what the user typed? No real matching model
@@ -151,19 +188,30 @@
 
   function finishBlank(){
     var name = nameInput.value.trim();
-    saveDocRecord({ name: name, function: functionInput.value.trim(), mode: "blank", createdAt: new Date().toLocaleString() });
+    var fn = functionInput.value.trim();
+    var failure = failureInput.value.trim();
+    var projectId = projectSelect.value;
+    var docId = makeDocId();
+    saveDocRecord({ id: docId, name: name, function: fn, projectId: projectId, mode: "blank", createdAt: new Date().toLocaleString() });
+    // A brand new DFMEA still needs *something* to open -- rather than a
+    // dead end, it starts from the same default worksheet structure every
+    // new document gets here, clearly labelled as a starting point you're
+    // meant to edit, not a locked example.
+    saveOverride(docId, {
+      name: name, function: fn, failureMode: failure, mode: "blank", generatedAt: new Date().toISOString()
+    });
     document.getElementById("ndDoneTitle").textContent = "“" + name + "” created";
-    document.getElementById("ndDoneBody").textContent = "This DFMEA is empty right now. Import an existing Excel sheet, or use AI to generate a starting cause structure for it.";
+    document.getElementById("ndDoneBody").textContent = "This DFMEA was started from a default worksheet structure that you can fully edit. You can also regenerate it from related DFMEAs with AI instead.";
     var actions = document.getElementById("ndDoneActions");
     actions.innerHTML = "";
     var aiBtn = document.createElement("button");
-    aiBtn.type = "button"; aiBtn.className = "nd-btn primary"; aiBtn.textContent = "Generate with AI instead";
-    aiBtn.addEventListener("click", function(){ window.location.href = "new-dfmea.html?mode=ai"; });
-    var homeBtn = document.createElement("button");
-    homeBtn.type = "button"; homeBtn.className = "nd-btn"; homeBtn.textContent = "Back to Overview";
-    homeBtn.addEventListener("click", function(){ window.location.href = "index.html"; });
-    actions.appendChild(homeBtn);
+    aiBtn.type = "button"; aiBtn.className = "nd-btn"; aiBtn.textContent = "Generate with AI instead";
+    aiBtn.addEventListener("click", function(){ window.location.href = "new-dfmea.html?mode=ai&project=" + encodeURIComponent(projectId); });
+    var openBtn = document.createElement("button");
+    openBtn.type = "button"; openBtn.className = "nd-btn primary"; openBtn.textContent = "Open and edit";
+    openBtn.addEventListener("click", function(){ window.location.href = "index.html?doc=" + encodeURIComponent(docId); });
     actions.appendChild(aiBtn);
+    actions.appendChild(openBtn);
     showStep(step4);
   }
 
@@ -171,9 +219,14 @@
     var name = nameInput.value.trim();
     var fn = functionInput.value.trim();
     var failure = failureInput.value.trim();
+    var projectId = projectSelect.value;
+    var docId = makeDocId();
     var fromNames = selected.map(function(c){ return c.name; });
     var relatedUploadNames = selected.filter(function(c){ return !c.isReference; }).map(function(c){ return c.name; });
-    saveDocRecord({ name: name, function: fn, mode: "ai", generatedFrom: fromNames, relatedUploads: relatedUploadNames, createdAt: new Date().toLocaleString() });
+    saveDocRecord({ id: docId, name: name, function: fn, projectId: projectId, mode: "ai", generatedFrom: fromNames, relatedUploads: relatedUploadNames, createdAt: new Date().toLocaleString() });
+    saveOverride(docId, {
+      name: name, function: fn, failureMode: failure, mode: "ai", generatedFrom: relatedUploadNames, generatedAt: new Date().toISOString()
+    });
 
     document.getElementById("ndDoneTitle").textContent = "“" + name + "” generated";
     document.getElementById("ndDoneBody").textContent = "A starting cause structure was built using the reference DFMEA below. You can edit everything -- nothing is locked.";
@@ -188,13 +241,7 @@
     var openBtn = document.createElement("button");
     openBtn.type = "button"; openBtn.className = "nd-btn primary"; openBtn.textContent = "Open and edit";
     openBtn.addEventListener("click", function(){
-      try{
-        localStorage.setItem("dfmeaActiveOverride", JSON.stringify({
-          name: name, function: fn, failureMode: failure,
-          generatedFrom: relatedUploadNames, generatedAt: new Date().toISOString()
-        }));
-      }catch(error){ /* override just won't persist -- navigation still works */ }
-      window.location.href = "index.html";
+      window.location.href = "index.html?doc=" + encodeURIComponent(docId);
     });
     var homeBtn = document.createElement("button");
     homeBtn.type = "button"; homeBtn.className = "nd-btn"; homeBtn.textContent = "Back to Overview";
