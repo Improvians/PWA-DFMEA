@@ -250,8 +250,8 @@
       window.location.href = "index.html?doc=" + encodeURIComponent(docId);
     });
     var homeBtn = document.createElement("button");
-    homeBtn.type = "button"; homeBtn.className = "nd-btn"; homeBtn.textContent = "Back to Overview";
-    homeBtn.addEventListener("click", function(){ window.location.href = "index.html"; });
+    homeBtn.type = "button"; homeBtn.className = "nd-btn"; homeBtn.textContent = "Back to project";
+    homeBtn.addEventListener("click", function(){ window.location.href = "project.html?id=" + encodeURIComponent(projectId); });
     actions.appendChild(homeBtn);
     actions.appendChild(openBtn);
     showStep(step4);

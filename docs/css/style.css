@@ -112,6 +112,7 @@ body{background:#F4F6FB;font-family:"Inter", -apple-system, BlinkMacSystemFont, 
 .inactive-project .tree-name{position:relative}
 .tree-current{background:#EEF2FF;color:#4338CA;font-weight:700;
  box-shadow:inset 2px 0 0 #6366F1}
+.tree-doc-current>summary{background:#EEF2FF;color:#4338CA;font-weight:700;box-shadow:inset 2px 0 0 #6366F1}
 #treeZoom .hitbox.is-tbd>rect:nth-of-type(2){fill:#FEF2F2!important;stroke:#FCA5A5!important}
 #treeZoom .hitbox.is-tbd>rect:nth-of-type(3){fill:#EF4444!important}
 #treeZoom .pl{cursor:pointer}
