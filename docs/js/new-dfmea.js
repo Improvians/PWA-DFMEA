@@ -169,7 +169,8 @@
     var fn = functionInput.value.trim();
     var failure = failureInput.value.trim();
     var fromNames = selected.map(function(c){ return c.name; });
-    saveDocRecord({ name: name, function: fn, mode: "ai", generatedFrom: fromNames, createdAt: new Date().toLocaleString() });
+    var relatedUploadNames = selected.filter(function(c){ return !c.isReference; }).map(function(c){ return c.name; });
+    saveDocRecord({ name: name, function: fn, mode: "ai", generatedFrom: fromNames, relatedUploads: relatedUploadNames, createdAt: new Date().toLocaleString() });
 
     document.getElementById("ndDoneTitle").textContent = "“" + name + "” generated";
     document.getElementById("ndDoneBody").textContent = "A starting cause structure was built using the reference DFMEA below. You can edit everything -- nothing is locked.";
@@ -187,7 +188,7 @@
       try{
         localStorage.setItem("dfmeaActiveOverride", JSON.stringify({
           name: name, function: fn, failureMode: failure,
-          generatedFrom: fromNames, generatedAt: new Date().toISOString()
+          generatedFrom: relatedUploadNames, generatedAt: new Date().toISOString()
         }));
       }catch(error){ /* override just won't persist -- navigation still works */ }
       window.location.href = "index.html";
