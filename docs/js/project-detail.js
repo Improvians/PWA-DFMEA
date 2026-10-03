@@ -29,11 +29,24 @@
   function readMyProjects(){
     try{ return JSON.parse(localStorage.getItem("dfmeaMyProjects") || "[]"); }catch(error){ return []; }
   }
+  function readMyDocuments(){
+    try{ return JSON.parse(localStorage.getItem("dfmeaMyDocuments") || "[]"); }catch(error){ return []; }
+  }
   var project = KNOWN_PROJECTS[projectId];
   if(!project){
     var custom = readMyProjects().find(function(p){ return p.id === projectId; });
     project = { name: custom ? custom.name : "Unknown project", docs: [] };
   }
+  // Documents created through New DFMEA (blank or AI) for this project
+  // belong on this list too, not just the hardcoded examples -- each one
+  // really does open (it reuses the one live worksheet, renamed).
+  project = { name: project.name, docs: project.docs.slice() };
+  readMyDocuments().filter(function(d){ return d.projectId === projectId; }).forEach(function(d){
+    project.docs.push({
+      name: d.name, real: true, docId: d.id,
+      meta: d.mode === "ai" ? "Generated with AI · " + d.createdAt : "Created " + d.createdAt
+    });
+  });
 
   var pageTitle = document.querySelector(".ttl");
   if(pageTitle) pageTitle.textContent = project.name;
@@ -44,9 +57,9 @@
   if(navHome) navHome.addEventListener("click", function(){ window.location.href = "index.html"; });
 
   var newDfmeaBtn = document.getElementById("tabNewDfmea");
-  if(newDfmeaBtn) newDfmeaBtn.addEventListener("click", function(){ window.location.href = "new-dfmea.html?mode=blank"; });
+  if(newDfmeaBtn) newDfmeaBtn.addEventListener("click", function(){ window.location.href = "new-dfmea.html?mode=blank&project=" + encodeURIComponent(projectId); });
   var newDfmeaAiBtn = document.getElementById("tabNewDfmeaAi");
-  if(newDfmeaAiBtn) newDfmeaAiBtn.addEventListener("click", function(){ window.location.href = "new-dfmea.html?mode=ai"; });
+  if(newDfmeaAiBtn) newDfmeaAiBtn.addEventListener("click", function(){ window.location.href = "new-dfmea.html?mode=ai&project=" + encodeURIComponent(projectId); });
 
   function escapeHtml(value){
     var div = document.createElement("div");
@@ -64,7 +77,7 @@
     var icon = doc.real
       ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg>'
       : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>';
-    return '<div class="doc-row' + (doc.real ? "" : " disabled") + '" data-real="' + doc.real + '"'
+    return '<div class="doc-row' + (doc.real ? "" : " disabled") + '" data-real="' + doc.real + '" data-doc-id="' + (doc.docId || "") + '"'
       + (doc.real ? "" : ' data-tip="No DFMEA data has been added for this document yet."') + '>'
       + '<div class="doc-icon">' + icon + '</div>'
       + '<div><div class="doc-name">' + escapeHtml(doc.name) + '</div><div class="doc-meta">' + escapeHtml(doc.meta) + '</div></div>'
