@@ -77,11 +77,32 @@
     var name = nameInput.value.trim();
     if(!name){ nameInput.classList.add("err"); nameInput.focus(); return; }
     var desc = document.getElementById("cpDesc").value.trim();
+    var newProject = { id: "custom-" + Date.now().toString(36), name: name, desc: desc || "0 DFMEA documents", createdAt: new Date().toLocaleString() };
     var list = readMyProjects();
-    list.push({ id: "custom-" + Date.now().toString(36), name: name, desc: desc || "0 DFMEA documents", createdAt: new Date().toLocaleString() });
+    list.push(newProject);
     saveMyProjects(list);
     render();
     dialog.close();
+    // The sidebar tree is built once, at page load, by page-setup.js --
+    // a project created here afterward wouldn't show up in it until the
+    // next full page load otherwise. Append it live so the sidebar and
+    // the grid on this page agree immediately, not just after a refresh.
+    var treeNav = document.querySelector(".risk-tree");
+    var emptyState = treeNav && treeNav.querySelector(".project-empty");
+    if(treeNav){
+      var entry = document.createElement("details");
+      entry.className = "tree-project inactive-project";
+      entry.setAttribute("data-id", newProject.id);
+      entry.innerHTML = '<summary><span class="tree-name"></span></summary>';
+      entry.querySelector(".tree-name").textContent = newProject.name;
+      if(emptyState) treeNav.insertBefore(entry, emptyState);
+      else treeNav.appendChild(entry);
+      entry.querySelector(".tree-name").addEventListener("click", function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        window.location.href = "project.html?id=" + encodeURIComponent(newProject.id);
+      });
+    }
     if(window.showToast) window.showToast("“" + name + "” created. Add a DFMEA to it to get started.");
   });
 })();
