@@ -107,8 +107,8 @@ body{background:#F4F6FB;font-family:"Inter", -apple-system, BlinkMacSystemFont, 
 .tree-project-active>summary::marker{color:#64748B}
 .project-state{flex:none;margin-left:5px;color:#64748B;font-size:7.5px;font-weight:800;letter-spacing:.4px}
 .tree-document>summary{color:#475569;font-weight:600}
-.inactive-project>summary{color:#94A3B8}
-.inactive-project .tree-document>summary{color:#B0BAC7}
+.inactive-project>summary{color:#475569}
+.inactive-project .tree-document>summary{color:#64748B}
 .inactive-project .tree-name{position:relative}
 .tree-current{background:#EEF2FF;color:#4338CA;font-weight:700;
  box-shadow:inset 2px 0 0 #6366F1}

@@ -148,10 +148,22 @@
   // own override (keyed by the ?doc= id in the URL) in dfmeaDocOverrides,
   // so visiting index.html plainly (no ?doc=) always shows the real
   // Crimp DFMEA, and several created documents never stomp on each other.
+  // Northstar and Meridian's documents, and Aster's "Terminal Durability
+  // DFMEA", are sample data built into the app itself (not something a
+  // visitor created) -- they're the same kind of override, just seeded
+  // here instead of written to localStorage by New DFMEA.
+  var SEED_OVERRIDES = {
+    "seed-terminal-durability": { name: "Terminal Durability DFMEA", function: "Withstand repeated mating cycles", mode: "sample" },
+    "seed-harness-design": { name: "Harness Design DFMEA", function: "Protect and route the sensor harness", mode: "sample" },
+    "seed-connector-retention": { name: "Connector Retention DFMEA", function: "Keep the sensor connector seated under vibration", mode: "sample" },
+    "seed-terminal-assembly": { name: "Terminal Assembly DFMEA", function: "Align and seat the charging terminal", mode: "sample" }
+  };
   var override = null;
   if(isDashboard){
     var docId = urlParams.get("doc");
-    if(docId){
+    if(docId && SEED_OVERRIDES[docId]){
+      override = SEED_OVERRIDES[docId];
+    }else if(docId){
       try{
         var docOverrides = JSON.parse(localStorage.getItem("dfmeaDocOverrides") || "{}");
         override = docOverrides[docId];
@@ -172,6 +184,8 @@
     var sourceText = override.mode === "ai"
       ? ('was generated from the <b>Crimp Contact Resistance</b> reference DFMEA'
         + (override.generatedFrom && override.generatedFrom.length ? ' and ' + override.generatedFrom.length + ' related upload' + (override.generatedFrom.length === 1 ? "" : "s") : ""))
+      : override.mode === "sample"
+      ? 'is sample data included with this demo, on the same editable structure as the Crimp DFMEA'
       : 'was started from a default worksheet structure';
     banner.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1M3 12h3m12 0h3M5.6 18.4l2.1-2.1m8.6-8.6l2.1-2.1"/></svg>'
       + '<span><b>' + override.name + '</b> ' + sourceText
