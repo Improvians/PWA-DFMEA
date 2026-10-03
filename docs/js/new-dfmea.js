@@ -3,12 +3,15 @@
   var params = new URLSearchParams(window.location.search);
   var mode = params.get("mode") === "ai" ? "ai" : "blank";
 
+  // page-setup.js (loaded here too, purely for a consistent sidebar)
+  // overwrites the whole .crumb element's innerHTML for its own
+  // breadcrumb -- so this rebuilds it fresh rather than trusting the
+  // #ndCrumb child it originally shipped with to still be there.
   var pageTitle = document.getElementById("ndPageTitle");
-  var crumb = document.getElementById("ndCrumb");
-  if(mode === "ai"){
-    pageTitle.textContent = "Create a new DFMEA with AI";
-    crumb.textContent = "New DFMEA with AI";
-  }
+  var crumbEl = document.querySelector(".crumb");
+  var crumbLabel = mode === "ai" ? "New DFMEA with AI" : "New DFMEA";
+  if(crumbEl) crumbEl.innerHTML = '347352010pdp000_01 &rsaquo; <b>' + crumbLabel + '</b>';
+  if(pageTitle) pageTitle.textContent = mode === "ai" ? "Create a new DFMEA with AI" : "Create a new DFMEA";
 
   var nameInput = document.getElementById("ndName");
   var functionInput = document.getElementById("ndFunction");
