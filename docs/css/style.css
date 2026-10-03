@@ -80,6 +80,7 @@ body{background:#F4F6FB;font-family:"Inter", -apple-system, BlinkMacSystemFont, 
 .risk-tree summary:hover{background:#F6F8FC}
 .tree-chev{flex:none;display:flex;color:#94A3B8;transition:transform .16s ease}
 .risk-tree details[open]>summary>.tree-chev{transform:rotate(90deg)}
+.tree-chev-spacer{flex:none;width:11px}
 .risk-tree .tree-leaf{padding-left:21px}
 .tree-kind{display:none}
 .tree-name{flex:1;min-width:0;overflow-wrap:anywhere}

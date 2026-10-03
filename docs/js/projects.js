@@ -116,7 +116,7 @@
       var entry = document.createElement("details");
       entry.className = "tree-project inactive-project";
       entry.setAttribute("data-id", newProject.id);
-      entry.innerHTML = '<summary><span class="tree-name"></span></summary>';
+      entry.innerHTML = '<summary><span class="tree-chev-spacer"></span><span class="tree-name"></span></summary>';
       entry.querySelector(".tree-name").textContent = newProject.name;
       if(emptyState) treeNav.insertBefore(entry, emptyState);
       else treeNav.appendChild(entry);
