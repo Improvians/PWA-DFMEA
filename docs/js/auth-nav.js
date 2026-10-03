@@ -155,7 +155,17 @@
   // and dated next to the rest of the app -- swap in a small chevron
   // that rotates open, same icon language as every other control here.
   Array.prototype.slice.call(document.querySelectorAll(".risk-tree summary")).forEach(function(summary){
-    if(summary.querySelector(".tree-chev") || !summary.parentElement.querySelector(":scope > .tree-children")) return;
+    if(summary.querySelector(".tree-chev") || summary.querySelector(".tree-chev-spacer")) return;
+    if(!summary.parentElement.querySelector(":scope > .tree-children")){
+      // A project with no documents yet has nothing to expand, but its
+      // name should still line up with the sibling projects that do.
+      if(summary.parentElement.classList.contains("tree-project")){
+        var spacer = document.createElement("span");
+        spacer.className = "tree-chev-spacer";
+        summary.insertBefore(spacer, summary.firstChild);
+      }
+      return;
+    }
     var chev = document.createElementNS ? document.createElement("span") : null;
     chev.className = "tree-chev";
     chev.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
