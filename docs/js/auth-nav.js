@@ -53,37 +53,49 @@
   }
   // Every project and document name in the sidebar tree should actually
   // go somewhere, the same way the Projects pages do -- not just expand
-  // its branch. Project names go to that project's page; "Crimp DFMEA"
-  // (the one real document) opens the live dashboard; every other
-  // document name goes to its own project's page, where it's honestly
-  // listed as having no data yet rather than pretending to open one.
-  var PROJECT_IDS = {
-    "Aster EV Connector": "aster-ev-connector",
-    "Northstar Sensor Harness": "northstar-sensor-harness",
-    "Meridian Charging Inlet": "meridian-charging-inlet"
-  };
-  var REAL_DOCS = { "Crimp DFMEA": true };
-  Array.prototype.slice.call(document.querySelectorAll(".tree-project > summary .tree-name")).forEach(function(nameEl){
-    var projectId = PROJECT_IDS[nameEl.textContent.trim()];
-    if(!projectId) return;
+  // its branch. Project rows carry their real id in data-id (page-setup.js
+  // writes it, including for custom projects created on the Projects
+  // page), and document rows carry data-real -- "Crimp DFMEA" is the one
+  // real document and opens the live dashboard, every other document name
+  // goes to its own project's page, where it's honestly listed as having
+  // no data yet rather than pretending to open one.
+  Array.prototype.slice.call(document.querySelectorAll(".tree-project")).forEach(function(projectEl){
+    var projectId = projectEl.getAttribute("data-id");
+    var nameEl = projectEl.querySelector(":scope > summary .tree-name");
+    if(!projectId || !nameEl) return;
     nameEl.addEventListener("click", function(event){
       event.preventDefault();
       event.stopPropagation();
-      window.location.href = "project.html?id=" + projectId;
+      window.location.href = "project.html?id=" + encodeURIComponent(projectId);
     });
   });
-  Array.prototype.slice.call(document.querySelectorAll(".tree-document > summary .tree-name")).forEach(function(nameEl){
-    var name = nameEl.textContent.trim();
-    var projectEl = nameEl.closest(".tree-project");
-    var projectName = projectEl ? projectEl.querySelector(":scope > summary .tree-name").textContent.trim() : null;
-    var projectId = PROJECT_IDS[projectName];
+  Array.prototype.slice.call(document.querySelectorAll(".tree-document")).forEach(function(docEl){
+    var isReal = docEl.getAttribute("data-real") === "true";
+    var nameEl = docEl.querySelector(":scope > summary .tree-name");
+    var projectEl = docEl.closest(".tree-project");
+    var projectId = projectEl ? projectEl.getAttribute("data-id") : null;
+    if(!nameEl) return;
     nameEl.addEventListener("click", function(event){
       event.preventDefault();
       event.stopPropagation();
-      if(REAL_DOCS[name]) window.location.href = "index.html";
-      else if(projectId) window.location.href = "project.html?id=" + projectId;
+      if(isReal) window.location.href = "index.html";
+      else if(projectId) window.location.href = "project.html?id=" + encodeURIComponent(projectId);
     });
   });
+
+  // Clicking a project/document name navigates (above); clicking anywhere
+  // else on its row (or the chevron) expands/collapses it natively via
+  // <details>, so a single click on the row itself does both at once. On
+  // top of that, whichever project (and, on the dashboard, document) the
+  // CURRENT page actually belongs to should always show expanded in the
+  // tree, however the visitor got there -- a direct link, the back
+  // button, or a click here -- so the sidebar and the page never disagree.
+  var urlParams = new URLSearchParams(window.location.search);
+  var currentProjectId = isDashboard ? "aster-ev-connector" : urlParams.get("id");
+  if(currentProjectId){
+    var currentProjectEl = document.querySelector('.tree-project[data-id="' + currentProjectId.replace(/"/g, '\\"') + '"]');
+    if(currentProjectEl) currentProjectEl.setAttribute("open", "");
+  }
 
   // The sidebar tree relies on native <details>/<summary> for expand and
   // collapse, but the browser's own default marker looks inconsistent
