@@ -26,6 +26,44 @@
     window.location.href = "upload.html";
   });
 
+  // page-setup.js relabels whichever nav item was ".nav.on" in the static
+  // markup into "Projects" and builds the project tree -- that relabeled
+  // item is the one real entry point into the new Projects browsing
+  // pages, wired here so it works the same on every page that loads it.
+  var isDashboard = !!document.getElementById("treeWrap");
+  var projectsNav = document.getElementById("navDfmea") || document.querySelector(".nav.on");
+  if(projectsNav) projectsNav.addEventListener("click", function(){
+    window.location.href = "projects.html";
+  });
+
+  // "Contact resistance too high" / "Aster EV Connector" are hardcoded as
+  // CURRENT in the tree page-setup.js builds, because that's correct on
+  // the dashboard itself -- but the exact same tree markup is reused on
+  // every other page too, where nothing is actually "current". Strip that
+  // signal everywhere except the real dashboard, and make the tree's own
+  // project/document names navigate properly instead of just expanding.
+  if(!isDashboard){
+    var currentLeaf = document.querySelector(".tree-current");
+    if(currentLeaf){
+      currentLeaf.classList.remove("tree-current");
+      currentLeaf.removeAttribute("aria-current");
+    }
+    var currentBadge = document.querySelector(".project-state");
+    if(currentBadge) currentBadge.remove();
+  }
+  var projectLink = document.querySelector(".tree-project-active > summary .tree-name");
+  if(projectLink) projectLink.addEventListener("click", function(event){
+    event.preventDefault();
+    window.location.href = "project.html?id=aster-ev-connector";
+  });
+  var docLink = document.querySelector(".tree-document.tree-document-crimp > summary .tree-name")
+    || Array.prototype.slice.call(document.querySelectorAll(".tree-document > summary .tree-name"))
+      .find(function(el){ return el.textContent.trim() === "Crimp DFMEA"; });
+  if(docLink) docLink.addEventListener("click", function(event){
+    event.preventDefault();
+    window.location.href = "index.html";
+  });
+
   var newDfmeaBtn = document.getElementById("tabNewDfmea");
   if(newDfmeaBtn) newDfmeaBtn.addEventListener("click", function(){
     window.location.href = "new-dfmea.html?mode=blank";
