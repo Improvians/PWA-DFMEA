@@ -1692,6 +1692,15 @@
     return button.textContent.trim()==="Save";
   });
   activateControl(saveButton,persistState);
+  // Share and the notification bell had no handler at all before -- a
+  // labelled button that silently does nothing on click reads as broken,
+  // not as a feature preview, so both get an honest toast instead.
+  var shareButton=Array.prototype.slice.call(document.querySelectorAll(".top .btn")).find(function(button){
+    return button.textContent.trim()==="Share";
+  });
+  activateControl(shareButton,function(){ showToast("Sharing isn't available in this preview yet."); });
+  var notifButton=document.querySelector(".top .ibtn");
+  activateControl(notifButton,function(){ showToast("No new notifications."); });
   var expandAllButton=document.querySelector('.xps .xp[data-tip^="Expand every collapsed branch"]');
   if(expandAllButton) expandAllButton.remove();
 })();

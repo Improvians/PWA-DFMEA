@@ -154,10 +154,10 @@
   // visitor created) -- they're the same kind of override, just seeded
   // here instead of written to localStorage by New DFMEA.
   var SEED_OVERRIDES = {
-    "seed-terminal-durability": { name: "Terminal Durability DFMEA", function: "Withstand repeated mating cycles", mode: "sample" },
-    "seed-harness-design": { name: "Harness Design DFMEA", function: "Protect and route the sensor harness", mode: "sample" },
-    "seed-connector-retention": { name: "Connector Retention DFMEA", function: "Keep the sensor connector seated under vibration", mode: "sample" },
-    "seed-terminal-assembly": { name: "Terminal Assembly DFMEA", function: "Align and seat the charging terminal", mode: "sample" }
+    "seed-terminal-durability": { name: "Terminal Durability DFMEA", function: "Terminal plating", failureMode: "Plating wears through after repeated mating cycles", mode: "sample" },
+    "seed-harness-design": { name: "Harness Design DFMEA", function: "Sensor wiring harness", failureMode: "Harness insulation wears through at the routing clip", mode: "sample" },
+    "seed-connector-retention": { name: "Connector Retention DFMEA", function: "Sensor connector housing", failureMode: "Connector backs out of its housing under vibration", mode: "sample" },
+    "seed-terminal-assembly": { name: "Terminal Assembly DFMEA", function: "Charging terminal alignment", failureMode: "Terminal misaligns during assembly", mode: "sample" }
   };
   var override = null;
   if(isDashboard){
@@ -179,15 +179,55 @@
     var wsn = document.querySelector(".wsn");
     if(wsn) wsn.textContent = override.name;
 
+    // The worksheet and risk tree below are the one real dataset in this
+    // build, reused under every renamed document -- without this, a
+    // document named "Harness Design DFMEA" would still show "Crimp
+    // Contact Resistance" as its function throughout the worksheet and
+    // diagram, which reads as broken, not as a starting template. This
+    // brings the function/failure-mode text that's actually shown
+    // everywhere in line with what was typed when the document was made.
+    if(override.function){
+      Array.prototype.slice.call(document.querySelectorAll("#wsBody tr")).forEach(function(row){
+        if(!row.cells || row.cells.length < 5) return;
+        var fnEl = row.cells[2].querySelector(".t1") || row.cells[2];
+        fnEl.textContent = override.function;
+        row.cells[4].textContent = override.failureMode || override.function;
+      });
+      var fnNode = Array.prototype.slice.call(document.querySelectorAll("#treeZoom .hitbox")).find(function(g){
+        var tag = g.querySelector(".ttag");
+        return tag && tag.textContent.trim() === "FUNCTION";
+      });
+      if(fnNode){
+        var fnTitle = fnNode.querySelector(".ttl2 tspan") || fnNode.querySelector(".ttl2");
+        if(fnTitle) fnTitle.textContent = override.function;
+        var fnTip = fnNode.getAttribute("data-tip");
+        if(fnTip) fnNode.setAttribute("data-tip", fnTip.replace("Crimp Contact Resistance", override.function));
+      }
+      var fmNode = Array.prototype.slice.call(document.querySelectorAll("#treeZoom .hitbox")).find(function(g){
+        var tag = g.querySelector(".ttag");
+        return tag && tag.textContent.trim() === "FAILURE MODE";
+      });
+      if(fmNode){
+        var fmTitle = fmNode.querySelector(".ttl2 tspan") || fmNode.querySelector(".ttl2");
+        var fmText = override.failureMode || override.function;
+        if(fmTitle) fmTitle.textContent = fmText;
+        var fmTip = fmNode.getAttribute("data-tip");
+        if(fmTip) fmNode.setAttribute("data-tip", fmTip.replace("Missing or Degraded Function", fmText));
+      }
+      if(window.refreshDfmeaMetrics) window.refreshDfmeaMetrics();
+    }
+
+    // Announcing "this was generated from X" is the point when AI
+    // generation is the feature being shown off -- but sample/starter
+    // documents should just look like real documents, not carry a
+    // disclaimer banner explaining they're reused data underneath.
+    if(override.mode !== "ai") return;
+
     var banner = document.createElement("div");
     banner.style.cssText = "margin:0 0 14px;padding:10px 14px;border-radius:9px;background:#EEF2FF;"
       + "border:1px solid #C7D2FE;color:#3730A3;font-size:11.5px;display:flex;align-items:center;gap:10px";
-    var sourceText = override.mode === "ai"
-      ? ('was generated from the <b>Crimp Contact Resistance</b> reference DFMEA'
-        + (override.generatedFrom && override.generatedFrom.length ? ' and ' + override.generatedFrom.length + ' related upload' + (override.generatedFrom.length === 1 ? "" : "s") : ""))
-      : override.mode === "sample"
-      ? 'is sample data included with this demo, on the same editable structure as the Crimp DFMEA'
-      : 'was started from a default worksheet structure';
+    var sourceText = 'was generated from the <b>Crimp Contact Resistance</b> reference DFMEA'
+      + (override.generatedFrom && override.generatedFrom.length ? ' and ' + override.generatedFrom.length + ' related upload' + (override.generatedFrom.length === 1 ? "" : "s") : "");
     banner.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1M3 12h3m12 0h3M5.6 18.4l2.1-2.1m8.6-8.6l2.1-2.1"/></svg>'
       + '<span><b>' + override.name + '</b> ' + sourceText
       + '. Everything below is a real, editable starting structure, not a locked preview.</span>'
@@ -199,4 +239,36 @@
       window.location.href = "index.html";
     });
   }
+
+  // it1_app.js (dashboard only) defines a richer showToast -- this is a
+  // minimal fallback so every other page can show the same honest
+  // "not available yet" feedback instead of a nav item just doing nothing.
+  if(!window.showToast){
+    var toastTimer = null;
+    window.showToast = function(message){
+      var toast = document.getElementById("dfmeaToast");
+      if(!toast){
+        toast = document.createElement("div");
+        toast.id = "dfmeaToast";
+        document.body.appendChild(toast);
+      }
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function(){ toast.classList.remove("show"); }, 2600);
+    };
+  }
+
+  // Every other sidebar module (Requirements, DVP&R, Reports, Settings...)
+  // exists to make this look like a real product, but isn't built out --
+  // a nav item with a pointer cursor that silently does nothing on click
+  // reads as broken. Giving it the same honest toast as Import Excel and
+  // the create-DFMEA stub buttons use is cheap and closes that gap
+  // everywhere at once, without having to fake a whole module per click.
+  Array.prototype.slice.call(document.querySelectorAll(".side .nav")).forEach(function(item){
+    if(item === projectsNav || item.id === "navHome" || item.id === "navUploadData") return;
+    item.addEventListener("click", function(){
+      window.showToast(item.textContent.trim() + " isn't available in this preview yet.");
+    });
+  });
 })();
