@@ -99,6 +99,13 @@
   var navDfmea = document.getElementById("navDfmea");
   if(navHome) navHome.addEventListener("click", function(){ window.location.href = "index.html"; });
   if(navDfmea) navDfmea.addEventListener("click", function(){ window.location.href = "index.html"; });
+  // page-setup.js (loaded purely for a consistent sidebar/project tree)
+  // also overwrites .ttl and .crumb with the dashboard's own title --
+  // put this page's real title and breadcrumb back afterward.
+  var pageTitle = document.querySelector(".ttl");
+  if(pageTitle) pageTitle.textContent = "Upload legacy DFMEA data";
+  var crumbEl = document.querySelector(".crumb");
+  if(crumbEl) crumbEl.innerHTML = '347352010pdp000_01 &rsaquo; <b>Upload Data</b>';
   // page-setup.js needs a ".nav.on" item to relabel into "Projects" and
   // build the project tree from, so navDfmea is marked active in the
   // static markup for that purpose -- but we're actually ON Upload
