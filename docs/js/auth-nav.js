@@ -51,17 +51,50 @@
     var currentBadge = document.querySelector(".project-state");
     if(currentBadge) currentBadge.remove();
   }
-  var projectLink = document.querySelector(".tree-project-active > summary .tree-name");
-  if(projectLink) projectLink.addEventListener("click", function(event){
-    event.preventDefault();
-    window.location.href = "project.html?id=aster-ev-connector";
+  // Every project and document name in the sidebar tree should actually
+  // go somewhere, the same way the Projects pages do -- not just expand
+  // its branch. Project names go to that project's page; "Crimp DFMEA"
+  // (the one real document) opens the live dashboard; every other
+  // document name goes to its own project's page, where it's honestly
+  // listed as having no data yet rather than pretending to open one.
+  var PROJECT_IDS = {
+    "Aster EV Connector": "aster-ev-connector",
+    "Northstar Sensor Harness": "northstar-sensor-harness",
+    "Meridian Charging Inlet": "meridian-charging-inlet"
+  };
+  var REAL_DOCS = { "Crimp DFMEA": true };
+  Array.prototype.slice.call(document.querySelectorAll(".tree-project > summary .tree-name")).forEach(function(nameEl){
+    var projectId = PROJECT_IDS[nameEl.textContent.trim()];
+    if(!projectId) return;
+    nameEl.addEventListener("click", function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      window.location.href = "project.html?id=" + projectId;
+    });
   });
-  var docLink = document.querySelector(".tree-document.tree-document-crimp > summary .tree-name")
-    || Array.prototype.slice.call(document.querySelectorAll(".tree-document > summary .tree-name"))
-      .find(function(el){ return el.textContent.trim() === "Crimp DFMEA"; });
-  if(docLink) docLink.addEventListener("click", function(event){
-    event.preventDefault();
-    window.location.href = "index.html";
+  Array.prototype.slice.call(document.querySelectorAll(".tree-document > summary .tree-name")).forEach(function(nameEl){
+    var name = nameEl.textContent.trim();
+    var projectEl = nameEl.closest(".tree-project");
+    var projectName = projectEl ? projectEl.querySelector(":scope > summary .tree-name").textContent.trim() : null;
+    var projectId = PROJECT_IDS[projectName];
+    nameEl.addEventListener("click", function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      if(REAL_DOCS[name]) window.location.href = "index.html";
+      else if(projectId) window.location.href = "project.html?id=" + projectId;
+    });
+  });
+
+  // The sidebar tree relies on native <details>/<summary> for expand and
+  // collapse, but the browser's own default marker looks inconsistent
+  // and dated next to the rest of the app -- swap in a small chevron
+  // that rotates open, same icon language as every other control here.
+  Array.prototype.slice.call(document.querySelectorAll(".risk-tree summary")).forEach(function(summary){
+    if(summary.querySelector(".tree-chev") || !summary.parentElement.querySelector(":scope > .tree-children")) return;
+    var chev = document.createElementNS ? document.createElement("span") : null;
+    chev.className = "tree-chev";
+    chev.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+    summary.insertBefore(chev, summary.firstChild);
   });
 
   var newDfmeaBtn = document.getElementById("tabNewDfmea");

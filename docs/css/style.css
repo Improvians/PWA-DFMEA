@@ -73,12 +73,17 @@ body{background:#F4F6FB;font-family:"Inter", -apple-system, BlinkMacSystemFont, 
 .risk-tree [hidden]{display:none!important}
 .project-empty{padding:8px 7px;color:#94A3B8;font-size:10px}
 .risk-tree details{min-width:0}
-.risk-tree summary{display:flex;align-items:center;gap:0;padding:6px 7px;border-radius:6px;
- list-style-position:outside;cursor:pointer;line-height:1.3}
-.risk-tree summary::marker{color:#94A3B8;font-size:9px}
+.risk-tree summary{display:flex;align-items:center;gap:4px;padding:6px 7px;border-radius:6px;
+ list-style:none;cursor:pointer;line-height:1.3}
+.risk-tree summary::-webkit-details-marker{display:none}
+.risk-tree summary::marker{content:""}
 .risk-tree summary:hover{background:#F6F8FC}
+.tree-chev{flex:none;display:flex;color:#94A3B8;transition:transform .16s ease}
+.risk-tree details[open]>summary>.tree-chev{transform:rotate(90deg)}
+.risk-tree .tree-leaf{padding-left:21px}
 .tree-kind{display:none}
 .tree-name{flex:1;min-width:0;overflow-wrap:anywhere}
+.tree-project>summary>.tree-name:hover,.tree-document>summary>.tree-name:hover{text-decoration:underline}
 .tree-children{margin-left:8px;padding-left:8px;border-left:1px solid #E4EAF2}
 .risk-context{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:14px 17px 0;
  border:1px solid #E4EAF2;border-radius:8px;background:#F8FAFC;overflow:hidden}
@@ -102,8 +107,8 @@ body{background:#F4F6FB;font-family:"Inter", -apple-system, BlinkMacSystemFont, 
 .tree-project-active>summary::marker{color:#64748B}
 .project-state{flex:none;margin-left:5px;color:#64748B;font-size:7.5px;font-weight:800;letter-spacing:.4px}
 .tree-document>summary{color:#475569;font-weight:600}
-.inactive-project>summary{color:#94A3B8;cursor:default}
-.inactive-project .tree-document>summary{color:#B0BAC7;cursor:default}
+.inactive-project>summary{color:#94A3B8}
+.inactive-project .tree-document>summary{color:#B0BAC7}
 .inactive-project .tree-name{position:relative}
 .tree-current{background:#EEF2FF;color:#4338CA;font-weight:700;
  box-shadow:inset 2px 0 0 #6366F1}
