@@ -172,7 +172,7 @@
   }
   if(override && override.name){
     var titleEl = document.querySelector(".ttl");
-    if(titleEl && titleEl.firstChild) titleEl.firstChild.textContent = override.function || override.name;
+    if(titleEl && titleEl.firstChild) titleEl.firstChild.textContent = (override.function || override.name) + " ";
     var crumbEl = document.querySelector(".crumb");
     if(crumbEl) crumbEl.innerHTML = override.name + " &rsaquo; <b>Risk Analysis</b>";
     var wsn = document.querySelector(".wsn");
