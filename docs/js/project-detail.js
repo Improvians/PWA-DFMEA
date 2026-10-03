@@ -3,25 +3,30 @@
   var params = new URLSearchParams(window.location.search);
   var projectId = params.get("id") || "";
 
+  // Every document here is real in the sense that it opens and works --
+  // "Crimp DFMEA" is the one with its own populated data, the rest reuse
+  // that same editable structure under their own name/function (exactly
+  // like a DFMEA created through New DFMEA does), clearly labelled as
+  // sample data in the dashboard banner rather than pretending otherwise.
   var KNOWN_PROJECTS = {
     "aster-ev-connector": {
       name: "Aster EV Connector",
       docs: [
         { name: "Crimp DFMEA", real: true, meta: "26 cause paths · last updated recently" },
-        { name: "Terminal Durability DFMEA", real: false, meta: "No data yet" }
+        { name: "Terminal Durability DFMEA", real: true, docId: "seed-terminal-durability", meta: "64 causes · 26 paths (sample data)" }
       ]
     },
     "northstar-sensor-harness": {
       name: "Northstar Sensor Harness",
       docs: [
-        { name: "Harness Design DFMEA", real: false, meta: "No data yet" },
-        { name: "Connector Retention DFMEA", real: false, meta: "No data yet" }
+        { name: "Harness Design DFMEA", real: true, docId: "seed-harness-design", meta: "64 causes · 26 paths (sample data)" },
+        { name: "Connector Retention DFMEA", real: true, docId: "seed-connector-retention", meta: "64 causes · 26 paths (sample data)" }
       ]
     },
     "meridian-charging-inlet": {
       name: "Meridian Charging Inlet",
       docs: [
-        { name: "Terminal Assembly DFMEA", real: false, meta: "No data yet" }
+        { name: "Terminal Assembly DFMEA", real: true, docId: "seed-terminal-assembly", meta: "64 causes · 26 paths (sample data)" }
       ]
     }
   };
@@ -86,7 +91,9 @@
   }).join("");
   Array.prototype.slice.call(listEl.querySelectorAll(".doc-row")).forEach(function(row){
     row.addEventListener("click", function(){
-      if(row.dataset.real === "true") window.location.href = "index.html";
+      if(row.dataset.real !== "true") return;
+      var docId = row.dataset.docId;
+      window.location.href = "index.html" + (docId ? "?doc=" + encodeURIComponent(docId) : "");
     });
   });
 })();

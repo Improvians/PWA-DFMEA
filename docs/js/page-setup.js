@@ -153,7 +153,7 @@
                     </details>
                   </div>
                 </details>
-                <details class="tree-document" data-real="false">
+                <details class="tree-document" data-real="true" data-doc-id="seed-terminal-durability">
                   <summary data-tip="DFMEA document"><span class="tree-name">Terminal Durability DFMEA</span></summary>
                 </details>
               </div>
@@ -163,14 +163,14 @@
         <details class="tree-project inactive-project" data-id="northstar-sensor-harness">
           <summary><span class="tree-name">Northstar Sensor Harness</span></summary>
           <div class="tree-children">
-            <details class="tree-document" data-real="false"><summary><span class="tree-name">Harness Design DFMEA</span></summary></details>
-            <details class="tree-document" data-real="false"><summary><span class="tree-name">Connector Retention DFMEA</span></summary></details>
+            <details class="tree-document" data-real="true" data-doc-id="seed-harness-design"><summary><span class="tree-name">Harness Design DFMEA</span></summary></details>
+            <details class="tree-document" data-real="true" data-doc-id="seed-connector-retention"><summary><span class="tree-name">Connector Retention DFMEA</span></summary></details>
           </div>
         </details>
         <details class="tree-project inactive-project" data-id="meridian-charging-inlet">
           <summary><span class="tree-name">Meridian Charging Inlet</span></summary>
           <div class="tree-children">
-            <details class="tree-document" data-real="false"><summary><span class="tree-name">Terminal Assembly DFMEA</span></summary></details>
+            <details class="tree-document" data-real="true" data-doc-id="seed-terminal-assembly"><summary><span class="tree-name">Terminal Assembly DFMEA</span></summary></details>
           </div>
         </details>
         ${customProjectsHtml}
