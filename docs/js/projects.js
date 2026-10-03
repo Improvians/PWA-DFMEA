@@ -5,29 +5,34 @@
   var pageTitle = document.querySelector(".ttl");
   if(pageTitle) pageTitle.textContent = "Projects";
   var crumbEl = document.querySelector(".crumb");
-  if(crumbEl) crumbEl.innerHTML = '347352010pdp000_01 &rsaquo; <b>Projects</b>';
+  if(crumbEl) crumbEl.innerHTML = 'DFMEA Studio &rsaquo; <b>Projects</b>';
 
   var navHome = document.getElementById("navHome");
   if(navHome) navHome.addEventListener("click", function(){ window.location.href = "index.html"; });
 
-  var REAL_PROJECT = {
-    id: "aster-ev-connector",
-    name: "Aster EV Connector",
-    desc: "2 DFMEA documents",
-    real: true
-  };
-  // These two open and work just like the real project -- their DFMEA
-  // documents reuse the same underlying worksheet, relabeled, the same
-  // way AI-generated and blank DFMEAs do. They're marked "Sample data"
-  // rather than "Active" so it's honest about which project is the real
-  // one being worked on, without being a dead end that can't be opened.
-  var SAMPLE_PROJECTS = [
-    { id: "northstar-sensor-harness", name: "Northstar Sensor Harness", desc: "2 DFMEA documents" },
-    { id: "meridian-charging-inlet", name: "Meridian Charging Inlet", desc: "1 DFMEA document" }
+  // Built-in projects with their built-in document counts and a normal
+  // lifecycle status, like a real workspace would show.
+  var BUILT_IN_PROJECTS = [
+    { id: "aster-ev-connector", name: "Aster EV Connector", baseDocs: 2, status: "active" },
+    { id: "northstar-sensor-harness", name: "Northstar Sensor Harness", baseDocs: 2, status: "review" },
+    { id: "meridian-charging-inlet", name: "Meridian Charging Inlet", baseDocs: 1, status: "released" }
   ];
+  var STATUS_LABELS = { active: "Active", review: "In review", released: "Released", draft: "Draft", empty: "No DFMEA yet" };
 
   function readMyProjects(){
     try{ return JSON.parse(localStorage.getItem("dfmeaMyProjects") || "[]"); }catch(error){ return []; }
+  }
+  function readMyDocuments(){
+    try{ return JSON.parse(localStorage.getItem("dfmeaMyDocuments") || "[]"); }catch(error){ return []; }
+  }
+  function docCountLabel(count){
+    return count + " DFMEA document" + (count === 1 ? "" : "s");
+  }
+  // Older custom projects stored the count text itself as their
+  // description -- that's not a real description, so don't show it twice.
+  function realDescription(project){
+    var d = (project.description != null ? project.description : project.desc) || "";
+    return /^\d+ DFMEA documents?$/.test(d) ? "" : d;
   }
   function saveMyProjects(list){
     try{ localStorage.setItem("dfmeaMyProjects", JSON.stringify(list)); }catch(error){ /* storage unavailable */ }
@@ -38,32 +43,37 @@
     return div.innerHTML;
   }
 
-  // Every project card is clickable -- nothing in this app is a dead
-  // end. "active" is the one real, being-worked-on project; "sample" is
-  // honestly-labelled demo data on the same editable structure; "empty"
-  // is a project the visitor created here that has no DFMEA yet, same as
-  // it would be in a real tool right after creating one.
-  function cardHtml(project, state){
-    var icon = state === "active"
-      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'
-      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>';
-    var badgeClass = state === "active" ? "current" : (state === "sample" ? "sample" : "empty");
-    var badgeText = state === "active" ? "Active" : (state === "sample" ? "Sample data" : "No DFMEA yet");
-    return '<div class="proj-card" data-id="' + project.id + '" data-real="true"'
-      + (state === "sample" ? ' data-tip="Sample data on the same editable structure as the real project."' : "")
-      + (state === "empty" ? ' data-tip="Open this project, then use + New DFMEA to add one."' : "") + '>'
+  // Every project card is clickable -- nothing in this app is a dead end.
+  // A project created here with no DFMEA yet says so, same as a real tool
+  // would right after creating one.
+  function cardHtml(project, status, docCount, description){
+    var icon = status === "empty"
+      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>'
+      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>';
+    return '<div class="proj-card" data-id="' + escapeHtml(project.id) + '" data-real="true"'
+      + (status === "empty" ? ' data-tip="Open this project, then use + New DFMEA to add one."' : "") + '>'
       + '<div class="proj-icon">' + icon + '</div>'
       + '<div class="proj-name">' + escapeHtml(project.name) + '</div>'
-      + '<div class="proj-meta">' + escapeHtml(project.desc || "") + '</div>'
-      + '<span class="proj-badge ' + badgeClass + '">' + badgeText + '</span>'
+      + (description ? '<div class="proj-meta">' + escapeHtml(description) + '</div>' : "")
+      + '<div class="proj-meta">' + escapeHtml(docCountLabel(docCount)) + '</div>'
+      + '<span class="proj-badge ' + status + '">' + STATUS_LABELS[status] + '</span>'
       + '</div>';
   }
 
   function render(){
     var grid = document.getElementById("projGrid");
-    var html = cardHtml(REAL_PROJECT, "active");
-    SAMPLE_PROJECTS.forEach(function(p){ html += cardHtml(p, "sample"); });
-    readMyProjects().forEach(function(p){ html += cardHtml(p, "empty"); });
+    var myDocs = readMyDocuments();
+    function createdCount(id){
+      return myDocs.filter(function(d){ return d.projectId === id; }).length;
+    }
+    var html = "";
+    BUILT_IN_PROJECTS.forEach(function(p){
+      html += cardHtml(p, p.status, p.baseDocs + createdCount(p.id), "");
+    });
+    readMyProjects().forEach(function(p){
+      var count = createdCount(p.id);
+      html += cardHtml(p, count ? "draft" : "empty", count, realDescription(p));
+    });
     grid.innerHTML = html;
 
     Array.prototype.slice.call(grid.querySelectorAll(".proj-card")).forEach(function(card){
@@ -90,7 +100,7 @@
     var name = nameInput.value.trim();
     if(!name){ nameInput.classList.add("err"); nameInput.focus(); return; }
     var desc = document.getElementById("cpDesc").value.trim();
-    var newProject = { id: "custom-" + Date.now().toString(36), name: name, desc: desc || "0 DFMEA documents", createdAt: new Date().toLocaleString() };
+    var newProject = { id: "custom-" + Date.now().toString(36), name: name, description: desc, createdAt: new Date().toLocaleString() };
     var list = readMyProjects();
     list.push(newProject);
     saveMyProjects(list);
