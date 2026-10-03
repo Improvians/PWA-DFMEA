@@ -7,7 +7,11 @@
   if(!svg || !treeContent || !tableBody) return;
 
   var svgNs = "http://www.w3.org/2000/svg";
-  var storageKey = "dfmea-it1-local-edits-347352010pdp000_01";
+  // Every other document opens on this same page via ?doc=<id>, so edits
+  // must be stored per document -- otherwise a cause added in one shows
+  // up in all of them. The plain Crimp DFMEA keeps its original key.
+  var docParam = new URLSearchParams(window.location.search).get("doc");
+  var storageKey = "dfmea-it1-local-edits-347352010pdp000_01" + (docParam ? "--" + docParam : "");
   var failureNode = Array.prototype.slice.call(svg.querySelectorAll("g.hitbox")).find(function(node){
     var tag = node.querySelector(".ttag");
     return tag && tag.textContent.trim().indexOf("FAILURE MODE") === 0;
