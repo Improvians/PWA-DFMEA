@@ -207,7 +207,7 @@
       name: name, function: fn, failureMode: failure, mode: "blank", generatedAt: new Date().toISOString()
     });
     document.getElementById("ndDoneTitle").textContent = "“" + name + "” created";
-    document.getElementById("ndDoneBody").textContent = "This DFMEA was started from a default worksheet structure that you can fully edit. You can also regenerate it from related DFMEAs with AI instead.";
+    document.getElementById("ndDoneBody").textContent = "Started from the Electrical termination foundation template (64 causes, 26 paths). Everything is editable.";
     var actions = document.getElementById("ndDoneActions");
     actions.innerHTML = "";
     var aiBtn = document.createElement("button");
@@ -235,7 +235,7 @@
     });
 
     document.getElementById("ndDoneTitle").textContent = "“" + name + "” generated";
-    document.getElementById("ndDoneBody").textContent = "A starting cause structure was built using the reference DFMEA below. You can edit everything -- nothing is locked.";
+    document.getElementById("ndDoneBody").textContent = "A starting cause structure was built from the DFMEAs below. Everything is editable.";
     var summary = document.getElementById("ndSummaryBox");
     summary.hidden = false;
     summary.innerHTML = "<b>Function:</b> " + escapeHtml(fn) + "<br><b>Failure mode:</b> " + escapeHtml(failure)
