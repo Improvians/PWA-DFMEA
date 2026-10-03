@@ -112,16 +112,29 @@
   }
   var documentLink = document.querySelector(".subnav.on");
   if(documentLink){
+    function readCustomProjects(){
+      try{ return JSON.parse(localStorage.getItem("dfmeaMyProjects") || "[]"); }catch(error){ return []; }
+    }
+    function escapeAttr(value){
+      var div = document.createElement("div");
+      div.textContent = String(value);
+      return div.innerHTML;
+    }
+    var customProjectsHtml = readCustomProjects().map(function(p){
+      return '<details class="tree-project inactive-project" data-id="' + escapeAttr(p.id) + '">'
+        + '<summary><span class="tree-name">' + escapeAttr(p.name) + '</span></summary>'
+        + '</details>';
+    }).join("");
     documentLink.outerHTML = `<div class="project-filter">
       <label class="project-search">
         <svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
         <input id="projectSearch" type="search" aria-label="Search projects" placeholder="Find a project" autocomplete="off">
       </label>
       <nav class="risk-tree" aria-label="Projects and risk hierarchy">
-        <details class="tree-project tree-project-active" open>
+        <details class="tree-project tree-project-active" data-id="aster-ev-connector" open>
           <summary data-tip="Project"><span class="tree-name">Aster EV Connector</span><span class="project-state">CURRENT</span></summary>
           <div class="tree-children">
-            <details class="tree-document" open>
+            <details class="tree-document" data-real="true" open>
               <summary data-tip="DFMEA document"><span class="tree-name">Crimp DFMEA</span></summary>
               <div class="tree-children">
                 <details open>
@@ -140,26 +153,27 @@
                     </details>
                   </div>
                 </details>
-                <details class="tree-document">
+                <details class="tree-document" data-real="false">
                   <summary data-tip="DFMEA document"><span class="tree-name">Terminal Durability DFMEA</span></summary>
                 </details>
               </div>
             </details>
           </div>
         </details>
-        <details class="tree-project inactive-project">
+        <details class="tree-project inactive-project" data-id="northstar-sensor-harness">
           <summary><span class="tree-name">Northstar Sensor Harness</span></summary>
           <div class="tree-children">
-            <details class="tree-document"><summary><span class="tree-name">Harness Design DFMEA</span></summary></details>
-            <details class="tree-document"><summary><span class="tree-name">Connector Retention DFMEA</span></summary></details>
+            <details class="tree-document" data-real="false"><summary><span class="tree-name">Harness Design DFMEA</span></summary></details>
+            <details class="tree-document" data-real="false"><summary><span class="tree-name">Connector Retention DFMEA</span></summary></details>
           </div>
         </details>
-        <details class="tree-project inactive-project">
+        <details class="tree-project inactive-project" data-id="meridian-charging-inlet">
           <summary><span class="tree-name">Meridian Charging Inlet</span></summary>
           <div class="tree-children">
-            <details class="tree-document"><summary><span class="tree-name">Terminal Assembly DFMEA</span></summary></details>
+            <details class="tree-document" data-real="false"><summary><span class="tree-name">Terminal Assembly DFMEA</span></summary></details>
           </div>
         </details>
+        ${customProjectsHtml}
         <div class="project-empty" aria-live="polite" hidden>No matching projects</div>
       </nav>
     </div>`;
