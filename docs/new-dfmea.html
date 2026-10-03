@@ -1,0 +1,138 @@
+<!doctype html><html><head><meta charset="utf-8">
+<script>
+(function(){
+  try{
+    var auth = JSON.parse(localStorage.getItem("dfmeaAuth") || "null");
+    if(!auth || !auth.loggedIn) window.location.replace("login.html");
+  }catch(error){ window.location.replace("login.html"); }
+})();
+</script>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.nd-card{max-width:640px;background:#fff;border:1px solid #E4EAF2;border-radius:12px;padding:26px 28px}
+.nd-step{display:none}
+.nd-step.on{display:block}
+.nd-field{margin-bottom:16px}
+.nd-field label{display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:6px}
+.nd-field input,.nd-field textarea{width:100%;box-sizing:border-box;padding:9px 11px;border:1px solid #D8E0EA;
+ border-radius:8px;font-size:13px;color:#1E293B;font-family:inherit}
+.nd-field textarea{resize:vertical;min-height:64px}
+.nd-field input:focus,.nd-field textarea:focus{outline:none;border-color:#818CF8;box-shadow:0 0 0 3px #EEF2FF}
+.nd-field input.err,.nd-field textarea.err{border-color:#FCA5A5;background:#FEF2F2}
+.nd-err-msg{display:none;color:#B91C1C;font-size:10.5px;margin-top:5px;font-weight:600}
+.nd-field.has-err .nd-err-msg{display:block}
+.nd-actions{display:flex;gap:10px;margin-top:20px}
+.nd-btn{padding:9px 18px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid #D8E0EA;background:#fff;color:#334155}
+.nd-btn.primary{background:#4338CA;border-color:#4338CA;color:#fff;margin-left:auto}
+.nd-btn.primary:hover{background:#3730A3}
+.nd-btn:hover{background:#F8FAFF}
+.nd-candidate{display:flex;align-items:flex-start;gap:11px;padding:12px 13px;border:1px solid #E4EAF2;
+ border-radius:9px;margin-bottom:9px;cursor:pointer}
+.nd-candidate:hover{border-color:#C7D2FE;background:#F8FAFF}
+.nd-candidate input{margin-top:3px;flex:none}
+.nd-candidate .ndc-name{font-size:12.5px;font-weight:700;color:#1E293B}
+.nd-candidate .ndc-meta{font-size:10.5px;color:#64748B;margin-top:2px}
+.nd-candidate .ndc-badge{display:inline-flex;align-items:center;gap:4px;margin-left:7px;padding:1px 7px;
+ border-radius:5px;background:#EEF2FF;color:#4338CA;font-size:9.5px;font-weight:700}
+.nd-progress-track{height:7px;border-radius:4px;background:#E4EAF2;overflow:hidden;margin:18px 0 8px}
+.nd-progress-fill{height:100%;width:0%;background:#4F46E5;border-radius:4px;transition:width .2s ease}
+.nd-progress-label{font-size:11.5px;color:#64748B;font-weight:600;text-align:center}
+.nd-success-icon{width:46px;height:46px;border-radius:50%;background:#F0FDF4;color:#16A34A;
+ display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.nd-summary{background:#F8FAFF;border:1px solid #E4EAF2;border-radius:9px;padding:13px 15px;margin:14px 0;font-size:11.5px;color:#334155}
+.nd-summary b{color:#1E293B}
+</style>
+</head>
+<body><div class="app">
+
+<div class="side">
+  <div class="brand"><div class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h6l5 5v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v5h5"/><path d="M9.5 13.5l2 2 3.5-4"/></svg></div>
+    <div><div class="bn">DFMEA Studio</div><div class="bs">PROJECT RISK ANALYSIS</div></div></div>
+  <div class="ws"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    <div><div class="wsl">DFMEA DOCUMENT</div><div class="wsn">347352010pdp000_01</div></div>
+    <span style="margin-left:auto"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></div>
+  <div class="nav" id="navHome"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z"/></svg></span>Home</div><div class="sh">ENGINEERING</div><div class="nav"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h9l4 4v14H8z"/><path d="M17 3v4h4"/><path d="M4 7v14h9"/><path d="M11 11h6M11 15h6"/></svg></span>Requirements</div><div class="nav" id="navDfmea"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></span>DFMEA / Risk</div><div class="nav"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>DVP&amp;R</div><div class="nav"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v6l-5 9a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-5-9V3"/><path d="M8 3h8"/></svg></span>Test Execution</div><div class="nav" id="navUploadData"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5-5 5 5M12 5v12"/></svg></span>Upload Data</div><div class="sh">OVERSIGHT</div><div class="nav"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Reports</div><div class="nav"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Approvals</div><div class="sh">SETUP</div><div class="nav"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h5v16H4zM11 4h4v16h-4z"/><path d="M17 5l3 15"/></svg></span>Template Library</div><div class="nav"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M19.2 14.6a1.6 1.6 0 0 0 .32 1.77l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.6 1.6 0 0 0-1.77-.32 1.6 1.6 0 0 0-.97 1.46V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1.05-1.46 1.6 1.6 0 0 0-1.77.32l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.6 1.6 0 0 0 .32-1.77 1.6 1.6 0 0 0-1.46-.97H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.46-1.05 1.6 1.6 0 0 0-.32-1.77l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.6 1.6 0 0 0 1.77.32H9a1.6 1.6 0 0 0 .97-1.46V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 .97 1.46 1.6 1.6 0 0 0 1.77-.32l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.6 1.6 0 0 0-.32 1.77V9a1.6 1.6 0 0 0 1.46.97H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.46.97z"/></svg></span>Settings</div>
+  <div class="sfoot" id="sfootUser" data-tip="Signed in as D. Whitaker"><div class="av">DW</div>
+    <div><div class="un">D. Whitaker</div><div class="ur">Lead Design Engineer</div></div>
+    <span class="coll" id="logoutBtn" data-tip="Log out"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></span></div>
+</div>
+
+<div class="main">
+  <div class="top">
+    <div>
+      <div class="crumb">347352010pdp000_01 &rsaquo; <b id="ndCrumb">New DFMEA</b></div>
+      <div class="ttl" id="ndPageTitle">Create a new DFMEA</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Step 1: name + function + failure mode (both modes) -->
+    <div class="nd-step on" id="ndStep1">
+      <div class="seclab"><span class="secn">1</span>Basic details</div>
+      <div class="nd-card">
+        <div class="nd-field" id="ndNameField">
+          <label for="ndName">DFMEA name</label>
+          <input type="text" id="ndName" placeholder="e.g. Header Pin Retention Force">
+          <div class="nd-err-msg">Give this DFMEA a name.</div>
+        </div>
+        <div class="nd-field" id="ndFunctionField">
+          <label for="ndFunction">Function</label>
+          <input type="text" id="ndFunction" placeholder="What is the part/system supposed to do?">
+          <div class="nd-err-msg">Describe the function.</div>
+        </div>
+        <div class="nd-field" id="ndFailureField">
+          <label for="ndFailure">Failure mode / issue description</label>
+          <textarea id="ndFailure" placeholder="Describe the failure or issue this DFMEA is about."></textarea>
+          <div class="nd-err-msg">Describe the failure mode or issue.</div>
+        </div>
+        <div class="nd-actions">
+          <button type="button" class="nd-btn" onclick="window.location.href='index.html'">Cancel</button>
+          <button type="button" class="nd-btn primary" id="ndStep1Next">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 (AI mode only): related DFMEA suggestions -->
+    <div class="nd-step" id="ndStep2">
+      <div class="seclab"><span class="secn">2</span>Related DFMEAs</div>
+      <div class="nd-card">
+        <div class="sm" style="margin-bottom:14px">Based on what you described, these look related. Pre-checked ones were matched automatically -- review and adjust before generating.</div>
+        <div id="ndCandidates"></div>
+        <div class="nd-actions">
+          <button type="button" class="nd-btn" id="ndStep2Back">Back</button>
+          <button type="button" class="nd-btn primary" id="ndStep2Next">Generate boilerplate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 (AI mode only): generating -->
+    <div class="nd-step" id="ndStep3">
+      <div class="seclab"><span class="secn">3</span>Generating</div>
+      <div class="nd-card" style="text-align:center">
+        <div class="nd-progress-track"><div class="nd-progress-fill" id="ndProgressFill"></div></div>
+        <div class="nd-progress-label" id="ndProgressLabel">Analysing related DFMEAs...</div>
+      </div>
+    </div>
+
+    <!-- Step 4: done (both modes, different content) -->
+    <div class="nd-step" id="ndStep4">
+      <div class="seclab"><span class="secn">4</span>Done</div>
+      <div class="nd-card">
+        <div class="nd-success-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div id="ndDoneTitle" style="font-size:15px;font-weight:800;color:#1E293B;margin-bottom:6px">DFMEA created</div>
+        <div id="ndDoneBody" class="sm"></div>
+        <div class="nd-summary" id="ndSummaryBox" hidden></div>
+        <div class="nd-actions" id="ndDoneActions"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+<div class="qtip" id="qTooltip"></div>
+
+<script src="js/auth-nav.js"></script>
+<script src="js/new-dfmea.js"></script>
+</body></html>
