@@ -34,8 +34,14 @@
   var pageTitle = document.getElementById("ndPageTitle");
   var crumbEl = document.querySelector(".crumb");
   var crumbLabel = mode === "ai" ? "New DFMEA with AI" : "New DFMEA";
-  if(crumbEl) crumbEl.innerHTML = '347352010pdp000_01 &rsaquo; <b>' + crumbLabel + '</b>';
+  if(crumbEl) crumbEl.innerHTML = 'DFMEA Studio &rsaquo; <b>' + crumbLabel + '</b>';
   if(pageTitle) pageTitle.textContent = mode === "ai" ? "Create a new DFMEA with AI" : "Create a new DFMEA";
+
+  var templateField = document.getElementById("ndTemplateField");
+  if(templateField) templateField.hidden = mode !== "blank";
+  document.getElementById("ndCancel").addEventListener("click", function(){
+    window.location.href = requestedProject ? "project.html?id=" + encodeURIComponent(projectSelect.value) : "projects.html";
+  });
 
   var nameInput = document.getElementById("ndName");
   var functionInput = document.getElementById("ndFunction");

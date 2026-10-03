@@ -23,6 +23,7 @@
 .upload-progress .up-bar-track{height:7px;border-radius:4px;background:#E4EAF2;overflow:hidden}
 .upload-progress .up-bar-fill{height:100%;width:0%;background:#4F46E5;border-radius:4px;transition:width .2s ease}
 .upload-progress .up-label{font-size:11px;color:#64748B;margin-top:7px;font-weight:600}
+#uploadOnboarding[hidden]{display:none!important}
 .up-stages{display:none;list-style:none;margin:14px 0 0;padding:0;gap:18px;flex-wrap:wrap}
 .up-stages.show{display:flex}
 .up-stages li{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#B0BAC7;transition:color .15s ease}
@@ -60,7 +61,7 @@
 <div class="main">
   <div class="top">
     <div>
-      <div class="crumb">347352010pdp000_01 &rsaquo; <b>Upload Data</b></div>
+      <div class="crumb">DFMEA Studio &rsaquo; <b>Upload Data</b></div>
       <div class="ttl">Upload legacy DFMEA data</div>
     </div>
   </div>
@@ -123,7 +124,7 @@
   var pageTitle = document.querySelector(".ttl");
   if(pageTitle) pageTitle.textContent = "Upload legacy DFMEA data";
   var crumbEl = document.querySelector(".crumb");
-  if(crumbEl) crumbEl.innerHTML = '347352010pdp000_01 &rsaquo; <b>Upload Data</b>';
+  if(crumbEl) crumbEl.innerHTML = 'DFMEA Studio &rsaquo; <b>Upload Data</b>';
   // page-setup.js needs a ".nav.on" item to relabel into "Projects" and
   // build the project tree from, so navDfmea is marked active in the
   // static markup for that purpose -- but we're actually ON Upload
