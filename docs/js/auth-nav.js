@@ -71,6 +71,7 @@
   });
   Array.prototype.slice.call(document.querySelectorAll(".tree-document")).forEach(function(docEl){
     var isReal = docEl.getAttribute("data-real") === "true";
+    var docId = docEl.getAttribute("data-doc-id");
     var nameEl = docEl.querySelector(":scope > summary .tree-name");
     var projectEl = docEl.closest(".tree-project");
     var projectId = projectEl ? projectEl.getAttribute("data-id") : null;
@@ -78,7 +79,7 @@
     nameEl.addEventListener("click", function(event){
       event.preventDefault();
       event.stopPropagation();
-      if(isReal) window.location.href = "index.html";
+      if(isReal) window.location.href = "index.html" + (docId ? "?doc=" + encodeURIComponent(docId) : "");
       else if(projectId) window.location.href = "project.html?id=" + encodeURIComponent(projectId);
     });
   });
