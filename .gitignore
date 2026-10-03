@@ -1,0 +1,5 @@
+# Only docs/ (the hosted DFMEA Studio site) is tracked in this repo.
+# Everything else stays on disk locally but is intentionally untracked.
+/*
+!/docs
+!/.gitignore
