@@ -177,6 +177,33 @@
         <div class="project-empty" aria-live="polite" hidden>No matching projects</div>
       </nav>
     </div>`;
+    // Documents created through New DFMEA belong under their own
+    // project's branch in the tree too, same as the hardcoded ones --
+    // added after the tree markup exists so they can be appended into
+    // whichever project (built-in or custom) they were created under.
+    var treeNav = document.querySelector(".risk-tree");
+    function readMyDocuments(){
+      try{ return JSON.parse(localStorage.getItem("dfmeaMyDocuments") || "[]"); }catch(error){ return []; }
+    }
+    if(treeNav){
+      readMyDocuments().forEach(function(doc){
+        var projectEl = treeNav.querySelector('.tree-project[data-id="' + doc.projectId + '"]');
+        if(!projectEl) return;
+        var children = projectEl.querySelector(":scope > .tree-children");
+        if(!children){
+          children = document.createElement("div");
+          children.className = "tree-children";
+          projectEl.appendChild(children);
+        }
+        var docEl = document.createElement("details");
+        docEl.className = "tree-document";
+        docEl.setAttribute("data-real", "true");
+        docEl.setAttribute("data-doc-id", doc.id);
+        docEl.innerHTML = '<summary data-tip="DFMEA document"><span class="tree-name"></span></summary>';
+        docEl.querySelector(".tree-name").textContent = doc.name;
+        children.appendChild(docEl);
+      });
+    }
     var projectSearch = document.getElementById("projectSearch");
     if(projectSearch){
       var projects = Array.prototype.slice.call(document.querySelectorAll(".tree-project"));
