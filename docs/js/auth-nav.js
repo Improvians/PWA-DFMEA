@@ -42,7 +42,9 @@
   // every other page too, where nothing is actually "current". Strip that
   // signal everywhere except the real dashboard, and make the tree's own
   // project/document names navigate properly instead of just expanding.
-  if(!isDashboard){
+  var urlParams = new URLSearchParams(window.location.search);
+  var activeDocId = isDashboard ? urlParams.get("doc") : null;
+  if(!isDashboard || activeDocId){
     var currentLeaf = document.querySelector(".tree-current");
     if(currentLeaf){
       currentLeaf.classList.remove("tree-current");
@@ -106,10 +108,45 @@
   // CURRENT page actually belongs to should always show expanded in the
   // tree, however the visitor got there -- a direct link, the back
   // button, or a click here -- so the sidebar and the page never disagree.
-  var urlParams = new URLSearchParams(window.location.search);
   var currentProjectId = isDashboard ? "aster-ev-connector" : urlParams.get("id");
+  var activeDocEl = null;
+  if(activeDocId){
+    // Viewing a document other than the Crimp DFMEA: the tree should show
+    // THAT document as current (and its project expanded), not leave the
+    // Crimp DFMEA branch highlighted as if it were still the open page.
+    activeDocEl = Array.prototype.slice.call(document.querySelectorAll(".tree-document[data-doc-id]")).find(function(el){
+      return el.getAttribute("data-doc-id") === activeDocId;
+    }) || null;
+    if(activeDocEl){
+      var activeProjectEl = activeDocEl.closest(".tree-project");
+      currentProjectId = activeProjectEl ? activeProjectEl.getAttribute("data-id") : null;
+      Array.prototype.slice.call(document.querySelectorAll(".tree-project-active")).forEach(function(el){
+        el.classList.remove("tree-project-active");
+      });
+      Array.prototype.slice.call(document.querySelectorAll(".tree-document[open]")).forEach(function(el){
+        el.removeAttribute("open");
+      });
+      Array.prototype.slice.call(document.querySelectorAll(".tree-project[open]")).forEach(function(el){
+        if(el !== activeProjectEl) el.removeAttribute("open");
+      });
+      if(activeProjectEl){
+        activeProjectEl.classList.add("tree-project-active");
+        var activeSummary = activeProjectEl.querySelector(":scope > summary");
+        if(activeSummary && !activeSummary.querySelector(".project-state")){
+          var badge = document.createElement("span");
+          badge.className = "project-state";
+          badge.textContent = "CURRENT";
+          activeSummary.appendChild(badge);
+        }
+      }
+      activeDocEl.classList.add("tree-doc-current");
+      activeDocEl.setAttribute("aria-current", "page");
+    }
+  }
   if(currentProjectId){
-    var currentProjectEl = document.querySelector('.tree-project[data-id="' + currentProjectId.replace(/"/g, '\\"') + '"]');
+    var currentProjectEl = Array.prototype.slice.call(document.querySelectorAll(".tree-project")).find(function(el){
+      return el.getAttribute("data-id") === currentProjectId;
+    });
     if(currentProjectEl) currentProjectEl.setAttribute("open", "");
   }
 
@@ -129,7 +166,7 @@
   // showing (the dashboard is always Aster EV Connector; a project page
   // carries its id in the URL), so creating one doesn't force picking the
   // project again when it's already obvious from context.
-  var newDfmeaProjectId = isDashboard ? "aster-ev-connector" : urlParams.get("id");
+  var newDfmeaProjectId = currentProjectId;
   var newDfmeaSuffix = newDfmeaProjectId ? "&project=" + encodeURIComponent(newDfmeaProjectId) : "";
   var newDfmeaBtn = document.getElementById("tabNewDfmea");
   if(newDfmeaBtn) newDfmeaBtn.addEventListener("click", function(){
@@ -154,10 +191,10 @@
   // visitor created) -- they're the same kind of override, just seeded
   // here instead of written to localStorage by New DFMEA.
   var SEED_OVERRIDES = {
-    "seed-terminal-durability": { name: "Terminal Durability DFMEA", function: "Terminal plating", failureMode: "Plating wears through after repeated mating cycles", mode: "sample" },
-    "seed-harness-design": { name: "Harness Design DFMEA", function: "Sensor wiring harness", failureMode: "Harness insulation wears through at the routing clip", mode: "sample" },
-    "seed-connector-retention": { name: "Connector Retention DFMEA", function: "Sensor connector housing", failureMode: "Connector backs out of its housing under vibration", mode: "sample" },
-    "seed-terminal-assembly": { name: "Terminal Assembly DFMEA", function: "Charging terminal alignment", failureMode: "Terminal misaligns during assembly", mode: "sample" }
+    "seed-terminal-durability": { name: "Terminal Durability DFMEA", function: "Terminal Contact Resistance After Cycling", failureMode: "Missing or Degraded Function", mode: "sample" },
+    "seed-harness-design": { name: "Harness Splice DFMEA", function: "Splice Crimp Contact Resistance", failureMode: "Missing or Degraded Function", mode: "sample" },
+    "seed-connector-retention": { name: "Sensor Terminal Crimp DFMEA", function: "Sensor Terminal Crimp Resistance", failureMode: "Missing or Degraded Function", mode: "sample" },
+    "seed-terminal-assembly": { name: "Inlet Terminal Crimp DFMEA", function: "Inlet Terminal Crimp Resistance", failureMode: "Missing or Degraded Function", mode: "sample" }
   };
   var override = null;
   if(isDashboard){
@@ -175,7 +212,16 @@
     var titleEl = document.querySelector(".ttl");
     if(titleEl && titleEl.firstChild) titleEl.firstChild.textContent = (override.function || override.name) + " ";
     var crumbEl = document.querySelector(".crumb");
-    if(crumbEl) crumbEl.innerHTML = override.name + " &rsaquo; <b>Risk Analysis</b>";
+    if(crumbEl){
+      var crumbProjectEl = activeDocEl ? activeDocEl.closest(".tree-project") : null;
+      var crumbProjectName = crumbProjectEl ? crumbProjectEl.querySelector(":scope > summary .tree-name").textContent.trim() : "";
+      crumbEl.textContent = "";
+      if(crumbProjectName) crumbEl.appendChild(document.createTextNode(crumbProjectName + " › "));
+      crumbEl.appendChild(document.createTextNode(override.name + " › "));
+      var crumbLeaf = document.createElement("b");
+      crumbLeaf.textContent = "Risk Analysis";
+      crumbEl.appendChild(crumbLeaf);
+    }
     var wsn = document.querySelector(".wsn");
     if(wsn) wsn.textContent = override.name;
 
@@ -229,7 +275,7 @@
     var sourceText = 'was generated from the <b>Crimp Contact Resistance</b> reference DFMEA'
       + (override.generatedFrom && override.generatedFrom.length ? ' and ' + override.generatedFrom.length + ' related upload' + (override.generatedFrom.length === 1 ? "" : "s") : "");
     banner.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1M3 12h3m12 0h3M5.6 18.4l2.1-2.1m8.6-8.6l2.1-2.1"/></svg>'
-      + '<span><b>' + override.name + '</b> ' + sourceText
+      + '<span><b>' + String(override.name).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + '</b> ' + sourceText
       + '. Everything below is a real, editable starting structure, not a locked preview.</span>'
       + '<button type="button" id="dismissOverrideBtn" style="margin-left:auto;background:none;border:none;color:#4338CA;font-weight:700;font-size:11px;cursor:pointer;flex:none">View the original Crimp DFMEA</button>';
     var content = document.querySelector(".content");
