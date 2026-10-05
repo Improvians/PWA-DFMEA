@@ -787,3 +787,73 @@ th[data-col].sort-desc .sortarrow{transform:translateY(-50%) rotate(180deg)}
 .top{position:sticky;top:0;z-index:15}
 .tabs{position:sticky;top:var(--topbar-height,73px);z-index:14}
 .twrap thead{position:sticky;top:0;z-index:2}
+
+/* ---------- MOTION ----------
+   One shared layer of motion for the whole app: a soft page entrance, a
+   real open/close animation on every native <dialog>, a crossfade between
+   pages (Chromium's cross-document View Transitions -- a no-op, not an
+   error, in browsers that don't support it yet), and consistent hover/
+   press feedback on every clickable surface so the app feels like one
+   coherent product rather than a stack of static screens. */
+@view-transition{navigation:auto}
+
+/* .app itself is deliberately NOT animated, on anything -- opacity,
+   transform, whichever. .app is the single top-level wrapper for the
+   entire page, and ANY animated or transitioning property on it (even
+   one that only ever reaches opacity:1 / transform:none) makes Chrome
+   promote it to its own stacking context for as long as a fill-mode
+   animation holds it there, i.e. forever. #treeBackdrop, the full-screen
+   tree modal's dimmed backdrop, is a sibling of .app (outside it) with
+   z-index:110; #treeWrap's z-index:120 only beats that while .app has NO
+   stacking context of its own, so .app picking one up traps everything
+   inside it (including the modal) below the backdrop -- the modal
+   visually opened but its Close button became unclickable, clicks landing
+   on the backdrop instead. Confirmed by testing both a transform-based
+   and an opacity-only version of this animation; both broke it. Learn
+   from this: never add animation/transition to .app again. The appIn
+   keyframe below is still fine to use elsewhere, on elements that don't
+   contain #treeWrap. */
+@keyframes appIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.nav,.subnav,.btn,.xp,.tab-add,.tab,.pager button,.ibtn,.csel-btn,.proj-card,.doc-row,
+.tree-project>summary,.tree-document>summary,.proj-icon,.kp{
+  transition:background-color .15s ease,border-color .15s ease,color .15s ease,
+    transform .12s ease,box-shadow .15s ease}
+.btn:active,.xp:active,.tab-add:active,.proj-card:active,.doc-row:active,.logout-btn:active{
+  transform:scale(.97)}
+.proj-card:not(.disabled):hover,.doc-row:not(.disabled):hover{
+  transform:translateY(-2px);box-shadow:0 10px 24px rgba(15,23,42,.08)}
+.kp{transition:transform .12s ease,box-shadow .15s ease}
+.kp:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(15,23,42,.06)}
+
+/* Native <dialog> elements (cause editor, worksheet filters, create
+   project) pop open instantly by default -- this gives every one of them
+   the same gentle scale+fade whenever the browser adds [open], so no
+   per-dialog JS is needed and new dialogs get it automatically. Plain
+   @keyframes on the [open] selector, not @starting-style/allow-discrete:
+   that pairing animates the dialog's own display/top-layer promotion and
+   was unreliable in practice -- content could render before the dialog
+   was actually interactive. This only animates the opening appearance,
+   never touches display or pointer interaction, and closing stays instant
+   exactly like it was before any of this, so there is nothing to get
+   stuck mid-transition.*/
+@keyframes dialogIn{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes backdropIn{from{background:rgba(15,23,42,0)}to{background:rgba(15,23,42,.46)}}
+dialog[open]{animation:dialogIn .18s ease}
+dialog[open]::backdrop{animation:backdropIn .18s ease forwards}
+
+/* New DFMEA's steps and the Projects/Project-detail grids toggle via a
+   plain class/innerHTML swap -- a quick fade makes that read as a
+   transition instead of a jump cut. */
+.nd-step.on{animation:appIn .25s ease both}
+#projGrid .proj-card,#docList .doc-row{animation:appIn .25s ease both}
+
+@media (prefers-reduced-motion:reduce){
+  .app,.nd-step.on,#projGrid .proj-card,#docList .doc-row{animation:none}
+  .nav,.subnav,.btn,.xp,.tab-add,.tab,.pager button,.ibtn,.csel-btn,.proj-card,.doc-row,
+  .tree-project>summary,.tree-document>summary,.proj-icon,.kp,dialog,dialog::backdrop{
+    transition:none}
+  .proj-card:hover,.doc-row:hover,.kp:hover,.btn:active,.xp:active,.tab-add:active,
+  .proj-card:active,.doc-row:active{transform:none}
+  @view-transition{navigation:none}
+}
