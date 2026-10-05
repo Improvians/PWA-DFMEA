@@ -133,7 +133,7 @@
     showStep(step2);
   });
 
-  // Same shared worksheet library Upload Data shows -- a DFMEA this
+  // Same shared worksheet library AI Training Data shows -- a DFMEA this
   // workspace already has on file is exactly the kind of thing AI
   // matching should be drawing candidates from, not just the one
   // reference document and whatever the visitor personally uploaded.
