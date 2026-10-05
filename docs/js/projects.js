@@ -16,6 +16,8 @@
   function openCreateDialog(){
     form.reset();
     nameInput.classList.remove("err");
+    var cpNameFieldEl = document.getElementById("cpNameField");
+    if(cpNameFieldEl) cpNameFieldEl.classList.remove("has-err");
     dialog.showModal();
     nameInput.focus();
   }
@@ -105,13 +107,35 @@
   }
   render();
 
+  // Two projects (or two DFMEAs within one project, handled in
+  // new-dfmea.js) with the same name is exactly the kind of thing that's
+  // confusing later -- which one is which in the sidebar tree, in a
+  // dropdown, in a search result -- so it's blocked at creation time,
+  // the same way an empty name already was meant to be.
+  var cpNameField = document.getElementById("cpNameField");
+  var cpNameErr = document.getElementById("cpNameErr");
+  function existingProjectNames(){
+    return BUILT_IN_PROJECTS.map(function(p){ return p.name; })
+      .concat(readMyProjects().map(function(p){ return p.name; }));
+  }
   document.getElementById("createProjectBtn").addEventListener("click", openCreateDialog);
   document.getElementById("cpCancel").addEventListener("click", function(){ dialog.close(); });
   dialog.addEventListener("click", function(event){ if(event.target === dialog) dialog.close(); });
+  nameInput.addEventListener("input", function(){
+    cpNameField.classList.remove("has-err");
+    nameInput.classList.remove("err");
+  });
   form.addEventListener("submit", function(event){
     event.preventDefault();
     var name = nameInput.value.trim();
-    if(!name){ nameInput.classList.add("err"); nameInput.focus(); return; }
+    var duplicate = !!name && existingProjectNames().some(function(n){ return n.toLowerCase() === name.toLowerCase(); });
+    if(!name || duplicate){
+      cpNameErr.textContent = !name ? "Give this project a name." : "A project named “" + name + "” already exists.";
+      cpNameField.classList.add("has-err");
+      nameInput.classList.add("err");
+      nameInput.focus();
+      return;
+    }
     var desc = document.getElementById("cpDesc").value.trim();
     var newProject = { id: "custom-" + Date.now().toString(36), name: name, description: desc, createdAt: new Date().toLocaleString() };
     var list = readMyProjects();
