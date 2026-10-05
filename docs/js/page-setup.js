@@ -1,15 +1,12 @@
 
 (function(){
-  var projectCard = document.querySelector(".ws");
-  if(projectCard) projectCard.remove();
+  // The sidebar's "Projects" label/icon and which nav item is highlighted
+  // are baked directly into each page's HTML now (used to be rewritten
+  // here after the page had already painted, which is exactly what
+  // caused a visible flash/shift in the sidebar on every page load).
   document.querySelectorAll(".sh").forEach(function(section){
     if(section.textContent.trim() === "ENGINEERING") section.remove();
   });
-  var activeModule = document.querySelector(".nav.on");
-  if(activeModule){
-    activeModule.innerHTML = '<span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span>Projects';
-    activeModule.setAttribute("aria-current", "page");
-  }
   var breadcrumb = document.querySelector(".crumb");
   if(breadcrumb){
     breadcrumb.innerHTML = "Aster EV Connector &rsaquo; Crimp DFMEA &rsaquo; Conductor Crimp &rsaquo; Carry electrical current";
