@@ -17,6 +17,22 @@
   function readCustomProjects(){
     try{ return JSON.parse(localStorage.getItem("dfmeaMyProjects") || "[]"); }catch(error){ return []; }
   }
+  // Same document names project.html already shows for each built-in
+  // project -- kept in sync with KNOWN_PROJECTS in project-detail.js.
+  var KNOWN_PROJECT_DOCS = {
+    "aster-ev-connector": ["Crimp DFMEA", "Terminal Durability DFMEA"],
+    "northstar-sensor-harness": ["Harness Splice DFMEA", "Sensor Terminal Crimp DFMEA"],
+    "meridian-charging-inlet": ["Inlet Terminal Crimp DFMEA"]
+  };
+  function existingDocNames(projectId){
+    var names = (KNOWN_PROJECT_DOCS[projectId] || []).slice();
+    try{
+      JSON.parse(localStorage.getItem("dfmeaMyDocuments") || "[]").forEach(function(d){
+        if(d.projectId === projectId) names.push(d.name);
+      });
+    }catch(error){ /* no custom documents to add */ }
+    return names;
+  }
   var projectSelect = document.getElementById("ndProject");
   var allProjects = KNOWN_PROJECTS.concat(readCustomProjects());
   projectSelect.innerHTML = allProjects.map(function(p){
@@ -59,7 +75,7 @@
 
   function validateStep1(){
     var ok = true;
-    [["ndNameField", nameInput], ["ndFunctionField", functionInput], ["ndFailureField", failureInput]].forEach(function(pair){
+    [["ndFunctionField", functionInput], ["ndFailureField", failureInput]].forEach(function(pair){
       var field = document.getElementById(pair[0]);
       var input = pair[1];
       var filled = input.value.trim().length > 0;
@@ -67,6 +83,22 @@
       input.classList.toggle("err", !filled);
       if(!filled) ok = false;
     });
+    // A second DFMEA with the same name as one that already exists in
+    // this project is exactly the kind of mix-up that's confusing later
+    // (which one is which in the sidebar, in a project's document list),
+    // so it's blocked here the same way an empty name is.
+    var nameField = document.getElementById("ndNameField");
+    var nameErr = document.getElementById("ndNameErr");
+    var typedName = nameInput.value.trim();
+    var duplicateName = !!typedName && existingDocNames(projectSelect.value).some(function(n){
+      return n.toLowerCase() === typedName.toLowerCase();
+    });
+    var nameOk = !!typedName && !duplicateName;
+    nameErr.textContent = !typedName ? "Give this DFMEA a name."
+      : "A DFMEA named “" + typedName + "” already exists in this project.";
+    nameField.classList.toggle("has-err", !nameOk);
+    nameInput.classList.toggle("err", !nameOk);
+    if(!nameOk) ok = false;
     var severityField = document.getElementById("ndSeverityField");
     var severityValue = Number(severityInput.value);
     var severityOk = severityInput.value.trim().length > 0 && severityValue >= 1 && severityValue <= 10 && Number.isInteger(severityValue);
