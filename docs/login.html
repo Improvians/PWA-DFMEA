@@ -2,28 +2,8 @@
 <title>Sign in - DFMEA Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css">
 <style>
-html,body{height:100%}
-body.login-body{display:flex;min-height:100vh;background:#F7F9FC;margin:0;
+body.login-body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#F7F9FC;
  font-family:"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif}
-/* A lone centered card on an empty page is the first thing a client sees --
-   this half gives that moment some substance (what the product actually
-   does), instead of making them guess from a bare login form alone. */
-.login-aside{flex:1 1 46%;max-width:560px;min-width:0;background:
-  radial-gradient(900px 500px at 10% 0%, rgba(255,255,255,.10), transparent 60%),
-  linear-gradient(160deg,#4338CA 0%,#4F46E5 48%,#6366F1 100%);
- color:#fff;padding:56px 52px;display:flex;flex-direction:column;justify-content:center}
-.login-aside .logo{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.14);
- display:flex;align-items:center;justify-content:center;margin-bottom:28px}
-.login-aside h1{font-size:28px;font-weight:800;line-height:1.25;letter-spacing:-.3px;max-width:380px}
-.login-aside .lead{font-size:13.5px;color:#E0E7FF;margin-top:12px;max-width:360px;line-height:1.6}
-.login-features{list-style:none;margin:36px 0 0;padding:0;display:flex;flex-direction:column;gap:18px}
-.login-features li{display:flex;align-items:flex-start;gap:13px}
-.login-features .lf-icon{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.14);
- display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
-.login-features .lf-title{font-size:12.5px;font-weight:700;color:#fff}
-.login-features .lf-sub{font-size:11px;color:#C7D2FE;margin-top:2px;line-height:1.5}
-.login-main{flex:1 1 54%;display:flex;align-items:center;justify-content:center;padding:24px}
-@media (max-width:860px){.login-aside{display:none}.login-main{flex:1 1 100%}}
 .login-card{width:360px;max-width:calc(100vw - 32px);background:#fff;border:1px solid #E4EAF2;border-radius:14px;
  box-shadow:0 20px 50px rgba(15,23,42,.08);padding:30px 28px}
 .login-brand{display:flex;align-items:center;gap:10px;margin-bottom:22px}
@@ -50,20 +30,6 @@ body.login-body{display:flex;min-height:100vh;background:#F7F9FC;margin:0;
 </style>
 </head>
 <body class="login-body">
-  <div class="login-aside">
-    <div class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h6l5 5v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v5h5"/><path d="M9.5 13.5l2 2 3.5-4"/></svg></div>
-    <h1>Design risk analysis, done the way engineers actually work.</h1>
-    <div class="lead">DFMEA Studio maps every function, failure mode and cause into one connected risk tree, with AI assistance to speed up building new analyses from what you already have.</div>
-    <ul class="login-features">
-      <li><span class="lf-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M19 9l-5 5-4-4-4 4"/></svg></span>
-        <div><div class="lf-title">Full cause-tree risk analysis</div><div class="lf-sub">Every failure path from function to root cause, scored and traceable.</div></div></li>
-      <li><span class="lf-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1M3 12h3m12 0h3M5.6 18.4l2.1-2.1m8.6-8.6l2.1-2.1"/></svg></span>
-        <div><div class="lf-title">AI-assisted DFMEA creation</div><div class="lf-sub">Start new analyses from related DFMEAs already in your workspace.</div></div></li>
-      <li><span class="lf-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5-5 5 5M12 5v12"/></svg></span>
-        <div><div class="lf-title">Import your existing worksheets</div><div class="lf-sub">Bring legacy Excel DFMEAs in directly, no reformatting required.</div></div></li>
-    </ul>
-  </div>
-  <div class="login-main">
   <div class="login-card">
     <div class="login-brand">
       <div class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h6l5 5v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v5h5"/><path d="M9.5 13.5l2 2 3.5-4"/></svg></div>
@@ -85,7 +51,6 @@ body.login-body{display:flex;min-height:100vh;background:#F7F9FC;margin:0;
       </div>
       <button type="submit" class="login-btn">Sign in</button>
     </form>
-  </div>
   </div>
 <script>
 (function(){
