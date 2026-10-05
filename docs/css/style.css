@@ -787,7 +787,9 @@ th[data-col].sort-desc .sortarrow{transform:translateY(-50%) rotate(180deg)}
    Only the content pane (and, within it, the worksheet) scrolls. Measured
    heights: .top = 73px, .tabs = 44px, so the worksheet header sticks right
    below both instead of guessing an offset and leaving a gap or overlap. */
-.side{position:sticky;top:0;height:100vh;overflow-y:auto;z-index:20;scrollbar-width:thin}
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;z-index:20;
+ scrollbar-width:none;-ms-overflow-style:none}
+.side::-webkit-scrollbar{display:none}
 .top{position:sticky;top:0;z-index:15}
 .tabs{position:sticky;top:var(--topbar-height,73px);z-index:14}
 .twrap thead{position:sticky;top:0;z-index:2}
