@@ -81,6 +81,83 @@
     var treeScale = 1.3;
     treeContent.setAttribute("transform", "matrix(" + treeScale + " 0 0 " + treeScale + " " + (-192 * treeScale) + " " + (16 * treeScale) + ")");
     treeSvg.appendChild(treeContent);
+
+    // The generator pre-computed where to break each title into lines,
+    // and some titles (like "Excessive conductor back chamfer angle")
+    // break wrong and spill text past the card's right edge into the
+    // next card. Re-wrap every title here using its ACTUAL rendered
+    // width (getComputedTextLength, against the real Inter font this
+    // renders with) instead of trusting that estimate -- cards keep
+    // their fixed height/width (unlike titles, nothing else was shown
+    // to overflow, and growing cards individually previously desynced
+    // aligned siblings, per the note above), so a title that still can't
+    // fit in the two lines a card budgets for is truncated with an
+    // ellipsis as a last resort, same as the user asked for. Must run
+    // after treeContent is actually attached above -- getComputedTextLength
+    // on a detached node returns 0, silently measuring nothing.
+    (function fitTreeTitles(){
+      // RIGHT_PAD is larger than the card's actual right padding on
+      // purpose: getComputedTextLength() (geometric glyph advances) and
+      // the text's real rendered/anti-aliased bounding box differ by a
+      // couple of px in practice, so the safety margin has to absorb that
+      // gap too, not just the card's own padding.
+      var MAX_LINES = 2, LINE_HEIGHT = 11, RIGHT_PAD = 16;
+      var measurer = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      measurer.setAttribute("class", "ttl2");
+      measurer.style.visibility = "hidden";
+      treeContent.appendChild(measurer);
+      function measure(str){
+        measurer.textContent = str;
+        return measurer.getComputedTextLength();
+      }
+      function wrapAll(text, maxWidth){
+        var words = text.split(" ");
+        var lines = [];
+        var current = "";
+        words.forEach(function(word){
+          var test = current ? current + " " + word : word;
+          if(current && measure(test) > maxWidth){
+            lines.push(current);
+            current = word;
+          }else{
+            current = test;
+          }
+        });
+        if(current) lines.push(current);
+        return lines;
+      }
+      Array.prototype.slice.call(treeContent.querySelectorAll(".ttl2")).forEach(function(titleEl){
+        var tspans = Array.prototype.slice.call(titleEl.querySelectorAll("tspan"));
+        if(!tspans.length) return;
+        var fullText = tspans.map(function(t){ return t.textContent; }).join(" ").replace(/\s+/g, " ").trim();
+        var x = tspans[0].getAttribute("x") || titleEl.getAttribute("x");
+        var g = titleEl.closest("g.hitbox");
+        var innerRect = g ? g.querySelectorAll("rect")[1] : null;
+        if(!innerRect) return;
+        var maxWidth = (Number(innerRect.getAttribute("x")) + Number(innerRect.getAttribute("width"))) - Number(x) - RIGHT_PAD;
+        if(!Number.isFinite(maxWidth) || maxWidth <= 0) return;
+
+        var lines = wrapAll(fullText, maxWidth);
+        if(lines.length > MAX_LINES){
+          lines = lines.slice(0, MAX_LINES - 1);
+          var remainder = fullText.split(" ").slice(lines.join(" ").split(" ").length).join(" ");
+          while(remainder.length > 1 && measure(remainder + "…") > maxWidth){
+            remainder = remainder.slice(0, -1).trim();
+          }
+          lines.push(remainder + "…");
+        }
+
+        titleEl.textContent = "";
+        lines.forEach(function(line, i){
+          var tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+          tspan.setAttribute("x", x);
+          tspan.setAttribute("dy", i === 0 ? "0" : LINE_HEIGHT);
+          tspan.textContent = line;
+          titleEl.appendChild(tspan);
+        });
+      });
+      measurer.remove();
+    })();
     var originalViewBox = treeSvg.viewBox.baseVal;
     var originalTreeHeight = originalViewBox.height;
     var treeWidth = Math.max(800, (originalViewBox.width - 192) * treeScale) + 60;
