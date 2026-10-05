@@ -126,6 +126,18 @@
     showStep(step2);
   });
 
+  // Same shared worksheet library Upload Data shows -- a DFMEA this
+  // workspace already has on file is exactly the kind of thing AI
+  // matching should be drawing candidates from, not just the one
+  // reference document and whatever the visitor personally uploaded.
+  var DEFAULT_LIBRARY = [
+    { name: "Sensor_Bracket_DFMEA.xlsx", size: "142 KB", when: "Mar 28, 2024, 10:33 AM" },
+    { name: "Busbar_Joint_DFMEA.xlsx", size: "198 KB", when: "Jun 5, 2024, 2:10 PM" },
+    { name: "Wire_Harness_DFMEA_2023.xlsx", size: "156 KB", when: "Aug 19, 2024, 11:20 AM" },
+    { name: "Connector_Housing_DFMEA.xlsx", size: "211 KB", when: "Nov 2, 2024, 3:45 PM" },
+    { name: "Terminal_Retention_DFMEA_Rev3.xlsx", size: "184 KB", when: "Jan 14, 2025, 9:02 AM" }
+  ];
+
   function buildCandidates(){
     var queryText = functionInput.value + " " + failureInput.value;
     candidates = [{
@@ -134,6 +146,14 @@
       meta: "Reference DFMEA in this workspace · 64 causes · 26 paths · 11 levels deep",
       isReference: true
     }];
+    DEFAULT_LIBRARY.forEach(function(file, index){
+      candidates.push({
+        id: "library-" + index,
+        name: file.name,
+        meta: "In this workspace's library · uploaded " + file.when + " · " + file.size,
+        isReference: false
+      });
+    });
     readUploadHistory().forEach(function(file, index){
       candidates.push({
         id: "upload-" + index,

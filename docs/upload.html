@@ -70,7 +70,7 @@
     <div class="seclab"><span class="secn">1</span>Upload a worksheet</div>
     <div class="card" id="uploadOnboarding" hidden style="margin-bottom:14px;padding:11px 14px;border-radius:9px;background:#EEF2FF;border:1px solid #C7D2FE;color:#3730A3;font-size:11.5px;display:flex;align-items:center;gap:10px">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1M3 12h3m12 0h3M5.6 18.4l2.1-2.1m8.6-8.6l2.1-2.1"/></svg>
-      <span>No worksheets uploaded yet. Add one below -- it's what the AI model uses to suggest related DFMEAs and starter structures elsewhere in the app.</span>
+      <span>This workspace already has a shared worksheet library below. Add your own here too -- it's what the AI model uses to suggest related DFMEAs and starter structures elsewhere in the app.</span>
     </div>
     <div class="card" style="margin-bottom:14px;padding:22px">
       <div class="sm" style="margin-bottom:16px">Upload an existing DFMEA Excel workbook. It will be stored for this project and used for further ML-based risk analysis.</div>
@@ -154,6 +154,18 @@
   var historyEmpty = document.getElementById("uploadHistoryEmpty");
   var historyKey = "dfmeaUploadHistory";
 
+  // A shared library this workspace already has on file, same idea as
+  // the Crimp DFMEA being the one document that's already populated --
+  // real uploads (readHistory/saveHistory below) are entirely separate
+  // from this and are what the "no data yet" checks elsewhere key off of.
+  var DEFAULT_LIBRARY = [
+    { name: "Sensor_Bracket_DFMEA.xlsx", size: "142 KB", when: "Mar 28, 2024, 10:33 AM", rows: 33 },
+    { name: "Busbar_Joint_DFMEA.xlsx", size: "198 KB", when: "Jun 5, 2024, 2:10 PM", rows: 55 },
+    { name: "Wire_Harness_DFMEA_2023.xlsx", size: "156 KB", when: "Aug 19, 2024, 11:20 AM", rows: 39 },
+    { name: "Connector_Housing_DFMEA.xlsx", size: "211 KB", when: "Nov 2, 2024, 3:45 PM", rows: 61 },
+    { name: "Terminal_Retention_DFMEA_Rev3.xlsx", size: "184 KB", when: "Jan 14, 2025, 9:02 AM", rows: 48 }
+  ];
+
   function readHistory(){
     try{ return JSON.parse(localStorage.getItem(historyKey) || "[]"); }catch(error){ return []; }
   }
@@ -166,12 +178,13 @@
     return (bytes / (1024 * 1024)).toFixed(2) + " MB";
   }
   function renderHistory(){
-    var list = readHistory();
+    var realList = readHistory();
+    var displayList = DEFAULT_LIBRARY.concat(realList);
     historyBody.innerHTML = "";
-    historyEmpty.hidden = list.length > 0;
+    historyEmpty.hidden = displayList.length > 0;
     var onboarding = document.getElementById("uploadOnboarding");
-    if(onboarding) onboarding.hidden = list.length > 0;
-    list.slice().reverse().forEach(function(item){
+    if(onboarding) onboarding.hidden = realList.length > 0;
+    displayList.slice().reverse().forEach(function(item){
       var row = document.createElement("tr");
       row.innerHTML = "<td>" + escapeHtml(item.name) + "</td>"
         + "<td>" + escapeHtml(item.size) + "</td>"
