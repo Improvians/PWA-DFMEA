@@ -92,6 +92,11 @@
           <textarea id="ndFailure" placeholder="Describe the failure or issue this DFMEA is about."></textarea>
           <div class="nd-err-msg">Describe the failure mode or issue.</div>
         </div>
+        <div class="nd-field" id="ndSeverityField">
+          <label for="ndSeverity">Severity (1&ndash;10)</label>
+          <input type="number" id="ndSeverity" min="1" max="10" step="1" placeholder="How serious is the effect if this fails? 1 = no effect, 10 = safety-critical">
+          <div class="nd-err-msg">Enter a severity rating from 1 to 10.</div>
+        </div>
         <div class="nd-field" id="ndTemplateField" hidden>
           <label>Starting structure</label>
           <div class="nd-template">

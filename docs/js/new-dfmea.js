@@ -46,6 +46,7 @@
   var nameInput = document.getElementById("ndName");
   var functionInput = document.getElementById("ndFunction");
   var failureInput = document.getElementById("ndFailure");
+  var severityInput = document.getElementById("ndSeverity");
   var step1 = document.getElementById("ndStep1");
   var step2 = document.getElementById("ndStep2");
   var step3 = document.getElementById("ndStep3");
@@ -66,9 +67,15 @@
       input.classList.toggle("err", !filled);
       if(!filled) ok = false;
     });
+    var severityField = document.getElementById("ndSeverityField");
+    var severityValue = Number(severityInput.value);
+    var severityOk = severityInput.value.trim().length > 0 && severityValue >= 1 && severityValue <= 10 && Number.isInteger(severityValue);
+    severityField.classList.toggle("has-err", !severityOk);
+    severityInput.classList.toggle("err", !severityOk);
+    if(!severityOk) ok = false;
     return ok;
   }
-  [nameInput, functionInput, failureInput].forEach(function(input){
+  [nameInput, functionInput, failureInput, severityInput].forEach(function(input){
     input.addEventListener("input", function(){
       var field = input.closest(".nd-field");
       field.classList.remove("has-err");
@@ -216,15 +223,16 @@
     var name = nameInput.value.trim();
     var fn = functionInput.value.trim();
     var failure = failureInput.value.trim();
+    var severity = Number(severityInput.value);
     var projectId = projectSelect.value;
     var docId = makeDocId();
-    saveDocRecord({ id: docId, name: name, function: fn, projectId: projectId, mode: "blank", createdAt: new Date().toLocaleString() });
+    saveDocRecord({ id: docId, name: name, function: fn, severity: severity, projectId: projectId, mode: "blank", createdAt: new Date().toLocaleString() });
     // A brand new DFMEA still needs *something* to open -- rather than a
     // dead end, it starts from the same default worksheet structure every
     // new document gets here, clearly labelled as a starting point you're
     // meant to edit, not a locked example.
     saveOverride(docId, {
-      name: name, function: fn, failureMode: failure, mode: "blank", generatedAt: new Date().toISOString()
+      name: name, function: fn, failureMode: failure, severity: severity, mode: "blank", generatedAt: new Date().toISOString()
     });
     document.getElementById("ndDoneTitle").textContent = "“" + name + "” created";
     document.getElementById("ndDoneBody").textContent = "Started from the Electrical termination foundation template (64 causes, 26 paths). Everything is editable.";
@@ -245,13 +253,14 @@
     var name = nameInput.value.trim();
     var fn = functionInput.value.trim();
     var failure = failureInput.value.trim();
+    var severity = Number(severityInput.value);
     var projectId = projectSelect.value;
     var docId = makeDocId();
     var fromNames = selected.map(function(c){ return c.name; });
     var relatedUploadNames = selected.filter(function(c){ return !c.isReference; }).map(function(c){ return c.name; });
-    saveDocRecord({ id: docId, name: name, function: fn, projectId: projectId, mode: "ai", generatedFrom: fromNames, relatedUploads: relatedUploadNames, createdAt: new Date().toLocaleString() });
+    saveDocRecord({ id: docId, name: name, function: fn, severity: severity, projectId: projectId, mode: "ai", generatedFrom: fromNames, relatedUploads: relatedUploadNames, createdAt: new Date().toLocaleString() });
     saveOverride(docId, {
-      name: name, function: fn, failureMode: failure, mode: "ai", generatedFrom: relatedUploadNames, generatedAt: new Date().toISOString()
+      name: name, function: fn, failureMode: failure, severity: severity, mode: "ai", generatedFrom: relatedUploadNames, generatedAt: new Date().toISOString()
     });
 
     document.getElementById("ndDoneTitle").textContent = "“" + name + "” generated";
@@ -259,6 +268,7 @@
     var summary = document.getElementById("ndSummaryBox");
     summary.hidden = false;
     summary.innerHTML = "<b>Function:</b> " + escapeHtml(fn) + "<br><b>Failure mode:</b> " + escapeHtml(failure)
+      + "<br><b>Severity:</b> " + severity
       + "<br><b>Built from:</b> " + (fromNames.length ? escapeHtml(fromNames.join(", ")) : "Crimp Contact Resistance (default reference)")
       + "<br><b>Structure:</b> 64 causes across 26 paths, up to 11 levels deep";
 
