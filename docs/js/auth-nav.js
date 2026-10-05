@@ -242,11 +242,25 @@
     // brings the function/failure-mode text that's actually shown
     // everywhere in line with what was typed when the document was made.
     if(override.function){
+      // Severity belongs to the failure mode/effect, same for every cause
+      // path under it (see the readonly note on the worksheet's own
+      // Severity field) -- so one value from the creation form applies to
+      // every row here too, exactly like Crimp DFMEA's own severity does.
+      var sevValue = Number(override.severity);
+      var sevValid = Number.isInteger(sevValue) && sevValue >= 1 && sevValue <= 10;
+      var sevTier = sevValue >= 9 ? "s-crit" : (sevValue >= 6 ? "s-high" : "s-low");
       Array.prototype.slice.call(document.querySelectorAll("#wsBody tr")).forEach(function(row){
         if(!row.cells || row.cells.length < 5) return;
         var fnEl = row.cells[2].querySelector(".t1") || row.cells[2];
         fnEl.textContent = override.function;
         row.cells[4].textContent = override.failureMode || override.function;
+        if(sevValid){
+          var sevChip = row.cells[6].querySelector(".chip");
+          if(sevChip){
+            sevChip.textContent = sevValue;
+            sevChip.className = "chip " + sevTier;
+          }
+        }
       });
       var fnNode = Array.prototype.slice.call(document.querySelectorAll("#treeZoom .hitbox")).find(function(g){
         var tag = g.querySelector(".ttag");
@@ -268,6 +282,12 @@
         if(fmTitle) fmTitle.textContent = fmText;
         var fmTip = fmNode.getAttribute("data-tip");
         if(fmTip) fmNode.setAttribute("data-tip", fmTip.replace("Missing or Degraded Function", fmText));
+        if(sevValid){
+          var fmSub = fmNode.querySelector(".tsub");
+          if(fmSub) fmSub.textContent = "Severity " + sevValue;
+          var fmTip2 = fmNode.getAttribute("data-tip");
+          if(fmTip2) fmNode.setAttribute("data-tip", fmTip2.replace(/Severity \d+/, "Severity " + sevValue));
+        }
       }
       if(window.refreshDfmeaMetrics) window.refreshDfmeaMetrics();
     }
