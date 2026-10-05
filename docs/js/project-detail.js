@@ -59,7 +59,7 @@
   if(crumbEl) crumbEl.innerHTML = 'DFMEA Studio &rsaquo; <a href="projects.html" style="color:inherit">Projects</a> &rsaquo; <b>' + escapeHtml(project.name) + '</b>';
 
   var navHome = document.getElementById("navHome");
-  if(navHome) navHome.addEventListener("click", function(){ window.location.href = "index.html"; });
+  if(navHome) navHome.addEventListener("click", function(){ window.location.href = "projects.html"; });
 
   var newDfmeaBtn = document.getElementById("tabNewDfmea");
   if(newDfmeaBtn) newDfmeaBtn.addEventListener("click", function(){ window.location.href = "new-dfmea.html?mode=blank&project=" + encodeURIComponent(projectId); });
