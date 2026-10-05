@@ -153,11 +153,11 @@ body{background:#F4F6FB;font-family:"Inter", -apple-system, BlinkMacSystemFont, 
  color:#334155;font:inherit}
 .srch input::placeholder{color:#94A3B8;opacity:1}
 .ibtn{width:35px;height:35px;border:1px solid #E4EAF2;border-radius:8px;display:flex;
- align-items:center;justify-content:center;color:#64748B;background:#fff;position:relative}
+ align-items:center;justify-content:center;color:#64748B;background:#fff;position:relative;cursor:pointer}
 .dot{position:absolute;top:7px;right:8px;width:7px;height:7px;border-radius:50%;background:#F87171;
  border:1.5px solid #fff}
 .btn{display:flex;align-items:center;gap:6px;padding:6px 11px;border-radius:7px;font-size:11px;
- font-weight:600;border:1px solid #E4EAF2;background:#fff;color:#334155;white-space:nowrap}
+ font-weight:600;border:1px solid #E4EAF2;background:#fff;color:#334155;white-space:nowrap;cursor:pointer}
 .btn.acc{background:#6366F1;border-color:#6366F1;color:#fff}
 .btn.pri{background:#6366F1;border-color:#6366F1;color:#fff}
 .saved{font-size:11px;color:#16A34A;display:flex;align-items:center;gap:5px}
@@ -630,6 +630,9 @@ tr.sel td:first-child{box-shadow:inset 3px 0 0 #4F46E5}
 .cause-editor .csel{width:100%}
 .cause-editor .csel .csel-btn{min-height:38px;font-size:12px;font-weight:500}
 .cause-editor input:focus,.cause-editor select:focus{border-color:#818CF8;box-shadow:0 0 0 3px #EEF2FF}
+.cause-editor input.err{border-color:#FCA5A5;background:#FEF2F2}
+.ce-err-msg{display:none;color:#B91C1C;font-size:10.5px;font-weight:600;margin-top:-2px}
+.ce-field.has-err .ce-err-msg{display:block}
 .cause-editor .ce-level{padding:9px 11px;border-radius:7px;background:#F8FAFC;color:#64748B;font-size:11px}
 .cause-editor .rate-grid{display:grid;grid-template-columns:0.7fr 1fr 1fr;gap:8px;margin-top:6px}
 .cause-editor .rate-card{border:1px solid #E4EAF2;border-radius:9px;background:#FBFCFE;padding:10px;
