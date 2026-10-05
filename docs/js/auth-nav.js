@@ -26,12 +26,11 @@
     window.location.href = "upload.html";
   });
 
-  // page-setup.js relabels whichever nav item was ".nav.on" in the static
-  // markup into "Projects" and builds the project tree -- that relabeled
-  // item is the one real entry point into the new Projects browsing
+  // "Projects" (id="navDfmea" in the markup, named for the sidebar slot
+  // it occupies) is the one real entry point into the Projects browsing
   // pages, wired here so it works the same on every page that loads it.
   var isDashboard = !!document.getElementById("treeWrap");
-  var projectsNav = document.getElementById("navDfmea") || document.querySelector(".nav.on");
+  var projectsNav = document.getElementById("navDfmea");
   if(projectsNav) projectsNav.addEventListener("click", function(){
     window.location.href = "projects.html";
   });
