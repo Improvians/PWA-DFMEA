@@ -789,13 +789,15 @@ th[data-col].sort-desc .sortarrow{transform:translateY(-50%) rotate(180deg)}
 .twrap thead{position:sticky;top:0;z-index:2}
 
 /* ---------- MOTION ----------
-   One shared layer of motion for the whole app: a soft page entrance, a
-   real open/close animation on every native <dialog>, a crossfade between
-   pages (Chromium's cross-document View Transitions -- a no-op, not an
-   error, in browsers that don't support it yet), and consistent hover/
-   press feedback on every clickable surface so the app feels like one
-   coherent product rather than a stack of static screens. */
-@view-transition{navigation:auto}
+   One shared layer of motion for the whole app: a real open/close
+   animation on every native <dialog>, and consistent hover/press
+   feedback on every clickable surface, so the app feels like one
+   coherent product rather than a stack of static screens.
+   A cross-document View Transition (a crossfade between page navigations)
+   was tried here and removed -- it threw a real, visible console error
+   ("ViewTransition opt-in disabled") on some navigations in testing, and
+   nothing about page-to-page navigation is worth that risk again after
+   the .app animation incident above. Do not re-add @view-transition. */
 
 /* .app itself is deliberately NOT animated, on anything -- opacity,
    transform, whichever. .app is the single top-level wrapper for the
@@ -849,11 +851,10 @@ dialog[open]::backdrop{animation:backdropIn .18s ease forwards}
 #projGrid .proj-card,#docList .doc-row{animation:appIn .25s ease both}
 
 @media (prefers-reduced-motion:reduce){
-  .app,.nd-step.on,#projGrid .proj-card,#docList .doc-row{animation:none}
+  .nd-step.on,#projGrid .proj-card,#docList .doc-row,.project-filter{animation:none}
   .nav,.subnav,.btn,.xp,.tab-add,.tab,.pager button,.ibtn,.csel-btn,.proj-card,.doc-row,
   .tree-project>summary,.tree-document>summary,.proj-icon,.kp,dialog,dialog::backdrop{
     transition:none}
   .proj-card:hover,.doc-row:hover,.kp:hover,.btn:active,.xp:active,.tab-add:active,
   .proj-card:active,.doc-row:active{transform:none}
-  @view-transition{navigation:none}
 }
