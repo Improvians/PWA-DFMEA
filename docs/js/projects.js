@@ -8,7 +8,7 @@
   if(crumbEl) crumbEl.innerHTML = 'DFMEA Studio &rsaquo; <b>Projects</b>';
 
   var navHome = document.getElementById("navHome");
-  if(navHome) navHome.addEventListener("click", function(){ window.location.href = "index.html"; });
+  if(navHome) navHome.addEventListener("click", function(){ window.location.href = "projects.html"; });
 
   // Built-in projects with their built-in document counts and a normal
   // lifecycle status, like a real workspace would show.
