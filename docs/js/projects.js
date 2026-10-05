@@ -10,6 +10,16 @@
   var navHome = document.getElementById("navHome");
   if(navHome) navHome.addEventListener("click", function(){ window.location.href = "projects.html"; });
 
+  var dialog = document.getElementById("createProjectDialog");
+  var form = document.getElementById("createProjectForm");
+  var nameInput = document.getElementById("cpName");
+  function openCreateDialog(){
+    form.reset();
+    nameInput.classList.remove("err");
+    dialog.showModal();
+    nameInput.focus();
+  }
+
   // Built-in projects with their built-in document counts and a normal
   // lifecycle status, like a real workspace would show.
   var BUILT_IN_PROJECTS = [
@@ -74,25 +84,28 @@
       var count = createdCount(p.id);
       html += cardHtml(p, count ? "draft" : "empty", count, realDescription(p));
     });
+    // A grid that ends mid-row with nothing after it reads as unfinished,
+    // and the only way to create a project was a small button up in the
+    // header -- a ghost card in the grid itself is a second, more
+    // discoverable entry point exactly where someone's eye already is
+    // after scanning the existing projects.
+    html += '<button type="button" class="proj-card proj-card-add" id="projAddCard">'
+      + '<div class="proj-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></div>'
+      + '<div class="proj-name">Create project</div>'
+      + '<div class="proj-meta">Start a new product or system</div>'
+      + '</button>';
     grid.innerHTML = html;
 
-    Array.prototype.slice.call(grid.querySelectorAll(".proj-card")).forEach(function(card){
+    Array.prototype.slice.call(grid.querySelectorAll(".proj-card:not(.proj-card-add)")).forEach(function(card){
       card.addEventListener("click", function(){
         if(card.dataset.real === "true") window.location.href = "project.html?id=" + encodeURIComponent(card.dataset.id);
       });
     });
+    document.getElementById("projAddCard").addEventListener("click", openCreateDialog);
   }
   render();
 
-  var dialog = document.getElementById("createProjectDialog");
-  var form = document.getElementById("createProjectForm");
-  var nameInput = document.getElementById("cpName");
-  document.getElementById("createProjectBtn").addEventListener("click", function(){
-    form.reset();
-    nameInput.classList.remove("err");
-    dialog.showModal();
-    nameInput.focus();
-  });
+  document.getElementById("createProjectBtn").addEventListener("click", openCreateDialog);
   document.getElementById("cpCancel").addEventListener("click", function(){ dialog.close(); });
   dialog.addEventListener("click", function(event){ if(event.target === dialog) dialog.close(); });
   form.addEventListener("submit", function(event){
