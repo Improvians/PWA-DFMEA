@@ -157,7 +157,7 @@ body{background:#F4F6FB;font-family:"Inter", -apple-system, BlinkMacSystemFont, 
 .dot{position:absolute;top:7px;right:8px;width:7px;height:7px;border-radius:50%;background:#F87171;
  border:1.5px solid #fff}
 .btn{display:flex;align-items:center;gap:6px;padding:6px 11px;border-radius:7px;font-size:11px;
- font-weight:600;border:1px solid #E4EAF2;background:#fff;color:#334155;white-space:nowrap;cursor:pointer}
+ font-weight:600;border:1px solid #E4EAF2;background:#fff;color:#334155;white-space:nowrap;cursor:pointer;text-decoration:none}
 .btn.acc{background:#6366F1;border-color:#6366F1;color:#fff}
 .btn.pri{background:#6366F1;border-color:#6366F1;color:#fff}
 .saved{font-size:11px;color:#16A34A;display:flex;align-items:center;gap:5px}

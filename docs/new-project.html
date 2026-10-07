@@ -1,0 +1,152 @@
+<!doctype html><html><head><meta charset="utf-8">
+<script>
+(function(){
+  try{
+    var auth = JSON.parse(localStorage.getItem("dfmeaAuth") || "null");
+    if(!auth || !auth.loggedIn) window.location.replace("login.html");
+  }catch(error){ window.location.replace("login.html"); }
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css">
+<style>
+.nd-card{max-width:680px;background:#fff;border:1px solid #E4EAF2;border-radius:12px;padding:26px 28px}
+.nd-step{display:none}
+.nd-step.on{display:block}
+.nd-field{margin-bottom:16px}
+.nd-field label{display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:6px}
+.nd-field input,.nd-field textarea,.nd-field select{width:100%;box-sizing:border-box;padding:9px 11px;border:1px solid #D8E0EA;
+ border-radius:8px;font-size:13px;color:#1E293B;font-family:inherit;background:#fff;cursor:pointer}
+.nd-field textarea{resize:vertical;min-height:64px;cursor:text}
+.nd-field input:focus,.nd-field textarea:focus,.nd-field select:focus{outline:none;border-color:#818CF8;box-shadow:0 0 0 3px #EEF2FF}
+.nd-field input.err,.nd-field textarea.err{border-color:#FCA5A5;background:#FEF2F2}
+.nd-err-msg{display:none;color:#B91C1C;font-size:10.5px;margin-top:5px;font-weight:600}
+.nd-field.has-err .nd-err-msg{display:block}
+.nd-actions{display:flex;gap:10px;margin-top:20px}
+.nd-btn{padding:9px 18px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid #D8E0EA;background:#fff;color:#334155}
+.nd-btn.primary{background:#4338CA;border-color:#4338CA;color:#fff;margin-left:auto}
+.nd-btn.primary:hover{background:#3730A3}
+.nd-btn:hover{background:#F8FAFF}
+.nd-progress-track{height:7px;border-radius:4px;background:#E4EAF2;overflow:hidden;margin:18px 0 8px}
+.nd-progress-fill{height:100%;width:0%;background:#4F46E5;border-radius:4px;transition:width .2s ease}
+.nd-progress-label{font-size:11.5px;color:#64748B;font-weight:600;text-align:center}
+.nd-success-icon{width:46px;height:46px;border-radius:50%;background:#F0FDF4;color:#16A34A;
+ display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.np-reqcard{border:1px solid #E4EAF2;border-radius:10px;padding:16px 18px;margin:16px 0;background:#FBFCFE}
+.np-reqhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.np-reqhead .np-prod{font-size:13px;font-weight:700;color:#1E293B}
+.np-standard{display:inline-flex;align-items:center;padding:2px 9px;border-radius:5px;background:#EEF2FF;color:#4338CA;font-size:10px;font-weight:700}
+.np-speclist{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.np-speclist li{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#334155;line-height:1.5}
+.np-speclist li svg{flex:none;margin-top:2px;color:#16A34A}
+.np-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px}
+.np-table th{text-align:left;padding:7px 9px;color:#64748B;font-weight:700;font-size:9.5px;
+ text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #E4EAF2}
+.np-table td{padding:8px 9px;border-bottom:1px solid #F1F5F9;color:#334155}
+.np-table tr.clickable{cursor:pointer}
+.np-table tr.clickable:hover td{background:#F8FAFF}
+.np-sectitle{font-size:11.5px;font-weight:700;color:#1E293B;margin:18px 0 4px}
+.np-secsub{font-size:10.5px;color:#64748B;margin-bottom:8px}
+</style>
+</head>
+<body><div class="app">
+
+<div class="side">
+  <div class="brand"><div class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h6l5 5v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v5h5"/><path d="M9.5 13.5l2 2 3.5-4"/></svg></div>
+    <div><div class="bn">DFMEA Studio</div><div class="bs">PROJECT RISK ANALYSIS</div></div></div>
+  <div class="nav" id="navHome"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z"/></svg></span>Home</div><div class="nav" id="navUploadData"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5-5 5 5M12 5v12"/></svg></span>Data Warehouse</div><div class="nav" id="navDfmea"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span>Projects</div><div class="subnav on"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>Crimp DFMEA</span></div>
+  <div class="sfoot" id="sfootUser" data-tip="Signed in as D. Whitaker"><div class="av">DW</div>
+    <div><div class="un">D. Whitaker</div><div class="ur">Lead Design Engineer</div></div>
+    <span class="coll" id="logoutBtn" data-tip="Log out"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></span></div>
+</div>
+
+<div class="main">
+  <div class="top">
+    <div>
+      <div class="crumb">DFMEA Studio &rsaquo; <a href="projects.html" style="color:inherit">Projects</a> &rsaquo; <b>New Project with AI</b></div>
+      <div class="ttl">Create a new project with AI</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Step 1: basic details -->
+    <div class="nd-step on" id="npStep1">
+      <div class="seclab"><span class="secn">1</span>Product details</div>
+      <div class="nd-card">
+        <div class="nd-field" id="npNameField">
+          <label for="npName">Project name</label>
+          <input type="text" id="npName" placeholder="e.g. Orion Battery Busbar">
+          <div class="nd-err-msg" id="npNameErr">Give this project a name.</div>
+        </div>
+        <div class="nd-field" id="npDescField">
+          <label for="npDesc">What are you building?</label>
+          <textarea id="npDesc" placeholder="Describe the product, e.g. a crimped terminal connector for a battery pack, sealed housing, high current."></textarea>
+          <div class="nd-err-msg">Describe the product so AI can generate relevant specifications.</div>
+        </div>
+        <div class="nd-field" id="npStandardField">
+          <label for="npStandard">Reference standard</label>
+          <select id="npStandard">
+            <option value="LV214">LV 214 (automotive connector standard)</option>
+            <option value="USCAR-2">USCAR-2 (automotive connector standard)</option>
+            <option value="None">No specific standard</option>
+          </select>
+        </div>
+        <div class="nd-actions">
+          <button type="button" class="nd-btn" id="npCancel">Cancel</button>
+          <button type="button" class="nd-btn primary" id="npStep1Next">Generate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: generating -->
+    <div class="nd-step" id="npStep2">
+      <div class="seclab"><span class="secn">2</span>Generating</div>
+      <div class="nd-card" style="text-align:center">
+        <div class="nd-progress-track"><div class="nd-progress-fill" id="npProgressFill"></div></div>
+        <div class="nd-progress-label" id="npProgressLabel">Analysing product description...</div>
+      </div>
+    </div>
+
+    <!-- Step 3: done -->
+    <div class="nd-step" id="npStep3">
+      <div class="seclab"><span class="secn">3</span>Done</div>
+      <div class="nd-card">
+        <div class="nd-success-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div id="npDoneTitle" style="font-size:15px;font-weight:800;color:#1E293B;margin-bottom:6px">Project created</div>
+        <div id="npDoneBody" class="sm">A design requirement specification and starting DFMEAs were generated for this project.</div>
+
+        <div class="np-sectitle">Design requirement specification</div>
+        <div class="np-reqcard">
+          <div class="np-reqhead"><span class="np-prod" id="npReqProduct"></span><span class="np-standard" id="npReqStandard"></span></div>
+          <ul class="np-speclist" id="npReqSpecs"></ul>
+        </div>
+
+        <div class="np-sectitle">DFMEAs generated for this project</div>
+        <div class="np-secsub">Each one opens as a real, editable DFMEA -- click to open.</div>
+        <table class="np-table"><thead><tr><th>Name</th><th>Function</th><th>Severity</th></tr></thead><tbody id="npDfmeaTable"></tbody></table>
+
+        <div class="np-sectitle" id="npMatchedTitle" hidden>Related DFMEAs used as reference</div>
+        <div class="np-secsub" id="npMatchedSub" hidden>These existing DFMEAs matched the product description and informed the generated structure.</div>
+        <table class="np-table" id="npMatchedTable" hidden><thead><tr><th>Name</th><th>Source</th></tr></thead><tbody id="npMatchedBody"></tbody></table>
+
+        <div class="nd-actions" id="npDoneActions"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+<div class="qtip" id="qTooltip"></div>
+
+<script src="js/page-setup.js"></script>
+<script src="js/worksheet-ui.js"></script>
+<script src="js/auth-nav.js"></script>
+<script>
+(function(){
+  var navHome = document.getElementById("navHome");
+  if(navHome) navHome.addEventListener("click", function(){ window.location.href = "projects.html"; });
+})();
+</script>
+<script src="js/new-project.js"></script>
+</body></html>
