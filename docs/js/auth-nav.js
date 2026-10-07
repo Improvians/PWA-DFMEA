@@ -264,8 +264,13 @@
         return tag && tag.textContent.trim() === "FUNCTION";
       });
       if(fnNode){
-        var fnTitle = fnNode.querySelector(".ttl2 tspan") || fnNode.querySelector(".ttl2");
-        if(fnTitle) fnTitle.textContent = override.function;
+        var fnTitle = fnNode.querySelector(".ttl2");
+        // Re-wraps to fit the card (same logic page-setup.js uses for
+        // every other title) instead of dumping unwrapped text into one
+        // line -- a plain textContent assignment here was why renamed
+        // function/failure titles longer than the original spilled past
+        // the card's right edge.
+        if(fnTitle && window.fitSvgCardTitle) window.fitSvgCardTitle(fnTitle, override.function);
         var fnTip = fnNode.getAttribute("data-tip");
         if(fnTip) fnNode.setAttribute("data-tip", fnTip.replace("Crimp Contact Resistance", override.function));
       }
@@ -274,9 +279,9 @@
         return tag && tag.textContent.trim() === "FAILURE MODE";
       });
       if(fmNode){
-        var fmTitle = fmNode.querySelector(".ttl2 tspan") || fmNode.querySelector(".ttl2");
+        var fmTitle = fmNode.querySelector(".ttl2");
         var fmText = override.failureMode || override.function;
-        if(fmTitle) fmTitle.textContent = fmText;
+        if(fmTitle && window.fitSvgCardTitle) window.fitSvgCardTitle(fmTitle, fmText);
         var fmTip = fmNode.getAttribute("data-tip");
         if(fmTip) fmNode.setAttribute("data-tip", fmTip.replace("Missing or Degraded Function", fmText));
         if(sevValid){
