@@ -485,6 +485,13 @@
       sectionHeads.forEach(function(section){
         if(section.getBoundingClientRect().top <= 150) current = section;
       });
+      // Near the bottom of the page there may not be enough scrollable
+      // room left for the last section's top to ever cross the 150px
+      // threshold above (its own content is all that's left to scroll
+      // through) -- "can't scroll any further" should still count as
+      // "the last section is the one being viewed".
+      var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      if(atBottom) current = sectionHeads[sectionHeads.length - 1];
       setActiveTab(current.id);
     }
     sectionTabs.forEach(function(tab){
