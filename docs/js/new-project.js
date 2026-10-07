@@ -131,9 +131,7 @@
   }
   function saveRequirementDoc(doc){
     try{
-      var list = JSON.parse(localStorage.getItem("dfmeaRequirementDocs") || "[]");
-      list.push(doc);
-      localStorage.setItem("dfmeaRequirementDocs", JSON.stringify(list));
+      window.DfmeaReqDocs.add(doc);
     }catch(error){ /* storage unavailable -- the project still works, just has no spec card */ }
   }
   function saveProject(project){
