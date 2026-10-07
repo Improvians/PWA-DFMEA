@@ -17,6 +17,7 @@
     if(cpNameFieldEl) cpNameFieldEl.classList.remove("has-err");
     dialog.showModal();
     nameInput.focus();
+    nameInput.select();
   }
 
   // Built-in projects with their built-in document counts and a normal
