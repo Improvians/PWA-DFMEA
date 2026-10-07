@@ -8,16 +8,28 @@
   var KEY = "dfmeaRequirementDocs";
   var DEFAULTS = [
     { id: "default-0", projectId: null, productName: "Titan Connector Housing", standard: "USCAR-2", createdAt: "Feb 11, 2024", specs: [
-      "Housing material flammability rating UL94 V-0",
-      "Housing sealing rated to IP67 at the connector mating face",
-      "Minimum 50 mating/unmating cycles without contact degradation",
-      "Operating temperature range -40°C to +105°C"
+      "Housing material flammability rating UL94 V-0, verified per USCAR-2 Section 5.4 flame test",
+      "Housing sealing rated to IP67 (1m, 30 min submersion) at the connector mating face per IEC 60529",
+      "Minimum 50 mating/unmating cycles without contact degradation, verified per USCAR-2 durability test method",
+      "Operating temperature range -40°C to +105°C per USCAR-2 thermal cycling requirements",
+      "Connector mating force ≤ 60 N, unmating force ≤ 50 N per USCAR-2 Section 5.2",
+      "Housing dimensional tolerance ±0.15mm on all mating interface features",
+      "Vibration resistance per USCAR-2 Section 5.6, random vibration 10-2000 Hz, no electrical discontinuity >1μs",
+      "Thermal shock resistance: 100 cycles -40°C to +105°C, 30 min dwell each, no cracking or deformation",
+      "UV resistance: 500 hours per SAE J2527, no significant color change or material degradation",
+      "Locking mechanism retention force ≥ 80 N before primary lock release"
     ]},
     { id: "default-1", projectId: null, productName: "Nova Terminal Block", standard: "LV214", createdAt: "Sep 3, 2024", specs: [
-      "Crimp pull-out force ≥ 70 N per terminal",
-      "Contact resistance ≤ 0.6 mΩ after crimping",
-      "Terminal retention force ≥ 55 N in the housing cavity",
-      "Salt spray resistance per ISO 9227, 96h minimum"
+      "Crimp pull-out force ≥ 70 N per terminal, verified per LV214 Section 4.2 tensile test",
+      "Contact resistance ≤ 0.6 mΩ after crimping, measured per LV214 4-wire Kelvin method",
+      "Terminal retention force ≥ 55 N in the housing cavity per LV214 Section 4.5",
+      "Salt spray resistance per ISO 9227, 96h minimum, no red rust on base metal",
+      "Insertion/extraction force within LV214 Table 6 limits for the terminal size class",
+      "Crimp height and width within ±0.05mm of nominal per LV214 crimp cross-section inspection",
+      "Current rating verified per LV214 Section 7, temperature rise ≤ 40K at rated current",
+      "Insulation resistance ≥ 100 MΩ at 500V DC between adjacent terminals",
+      "Mechanical shock resistance per LV214 Section 4.8, 50g half-sine pulse, 11ms duration",
+      "Humidity resistance: 10 cycles per LV214 Annex, no corrosion or contact resistance drift >20%"
     ]}
   ];
 
