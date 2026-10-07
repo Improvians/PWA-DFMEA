@@ -454,8 +454,8 @@
 
   var sectionHeads = Array.prototype.slice.call(document.querySelectorAll(".content > .seclab"));
   var tabContainer = document.querySelector(".tabs");
-  var sectionLabels = ["Overview", "Risk Tree", "Worksheet"];
-  var sectionIds = ["dfmea-overview", "dfmea-risk-tree", "dfmea-worksheet"];
+  var sectionLabels = ["Risk Tree", "Worksheet"];
+  var sectionIds = ["dfmea-risk-tree", "dfmea-worksheet"];
   if(tabContainer && sectionHeads.length >= sectionIds.length){
     sectionHeads = sectionHeads.slice(0, sectionIds.length);
     sectionHeads.forEach(function(section, index){ section.id = sectionIds[index]; });
