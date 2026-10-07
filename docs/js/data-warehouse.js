@@ -236,23 +236,6 @@
   // Section 2: design requirement specifications
   // ============================================================
   (function(){
-    var DEFAULT_REQ_LIBRARY = [
-      { product: "Titan Connector Housing", standard: "USCAR-2", when: "Feb 11, 2024", specs: [
-        "Housing material flammability rating UL94 V-0",
-        "Housing sealing rated to IP67 at the connector mating face",
-        "Minimum 50 mating/unmating cycles without contact degradation",
-        "Operating temperature range -40°C to +105°C"
-      ]},
-      { product: "Nova Terminal Block", standard: "LV214", when: "Sep 3, 2024", specs: [
-        "Crimp pull-out force ≥ 70 N per terminal",
-        "Contact resistance ≤ 0.6 mΩ after crimping",
-        "Terminal retention force ≥ 55 N in the housing cavity",
-        "Salt spray resistance per ISO 9227, 96h minimum"
-      ]}
-    ];
-    function readRequirementDocs(){
-      try{ return JSON.parse(localStorage.getItem("dfmeaRequirementDocs") || "[]"); }catch(error){ return []; }
-    }
     function readMyProjectsForReq(){
       try{ return JSON.parse(localStorage.getItem("dfmeaMyProjects") || "[]"); }catch(error){ return []; }
     }
@@ -264,11 +247,10 @@
 
     function allDocs(){
       var myProjects = readMyProjectsForReq();
-      var real = readRequirementDocs().map(function(r){
+      return window.DfmeaReqDocs.readAll().map(function(r){
         var project = myProjects.find(function(p){ return p.id === r.projectId; });
         return { id: r.id, product: r.productName, standard: r.standard, when: r.createdAt, specs: r.specs, projectId: project ? r.projectId : null };
-      });
-      return DEFAULT_REQ_LIBRARY.map(function(d, i){ return Object.assign({ id: "default-" + i }, d); }).concat(real).slice().reverse();
+      }).slice().reverse();
     }
 
     function populateStandardFilter(docs){
