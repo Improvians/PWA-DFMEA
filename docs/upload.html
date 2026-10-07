@@ -9,39 +9,49 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css">
 <style>
-.upload-zone{border:2px dashed #C7D2FE;border-radius:12px;background:#F8FAFF;padding:40px 24px;
- text-align:center;cursor:pointer;transition:border-color .15s ease,background .15s ease}
-.upload-zone:hover,.upload-zone.drag{border-color:#818CF8;background:#EEF2FF}
-.upload-zone svg{color:#6366F1;margin-bottom:10px}
-.upload-zone .uz-title{font-size:14px;font-weight:700;color:#1E293B;margin-bottom:4px}
-.upload-zone .uz-sub{font-size:11.5px;color:#64748B}
-.upload-err{display:none;margin-top:12px;padding:9px 11px;border-left:3px solid #DC2626;background:#FEF2F2;
- color:#B91C1C;font-size:11.5px;font-weight:600;border-radius:4px}
-.upload-err.show{display:block}
-.upload-progress{display:none;margin-top:16px}
-.upload-progress.show{display:block}
-.upload-progress .up-bar-track{height:7px;border-radius:4px;background:#E4EAF2;overflow:hidden}
-.upload-progress .up-bar-fill{height:100%;width:0%;background:#4F46E5;border-radius:4px;transition:width .2s ease}
-.upload-progress .up-label{font-size:11px;color:#64748B;margin-top:7px;font-weight:600}
-#uploadOnboarding[hidden]{display:none!important}
-.up-stages{display:none;list-style:none;margin:14px 0 0;padding:0;gap:18px;flex-wrap:wrap}
-.up-stages.show{display:flex}
+.dw-card{background:#fff;border:1px solid #E4EAF2;border-radius:12px;overflow:hidden;margin-bottom:14px}
+.dw-card.drag{border-color:#818CF8;box-shadow:0 0 0 3px #EEF2FF}
+.dw-tbar .fsel{border:1px solid #E4EAF2;border-radius:7px;padding:6px 26px 6px 10px;font-size:11px;color:#475569;background:#fff}
+.dw-tbar .spacer{margin-left:auto}
+.up-progress{display:none;padding:12px 17px;border-bottom:1px solid #EEF2F7}
+.up-progress.show{display:block}
+.up-bar-track{height:7px;border-radius:4px;background:#E4EAF2;overflow:hidden}
+.up-bar-fill{height:100%;width:0%;background:#4F46E5;border-radius:4px;transition:width .2s ease}
+.up-label{font-size:11px;color:#64748B;margin-top:7px;font-weight:600}
+.up-stages{display:flex;list-style:none;margin:10px 0 0;padding:0;gap:18px;flex-wrap:wrap}
 .up-stages li{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#B0BAC7;transition:color .15s ease}
 .us-dot{width:7px;height:7px;border-radius:50%;background:#E4EAF2;flex:none;transition:background .15s ease,box-shadow .15s ease}
 .up-stages li.active{color:#4F46E5}
 .up-stages li.active .us-dot{background:#4F46E5;box-shadow:0 0 0 3px #E0E7FF}
 .up-stages li.done{color:#16A34A}
 .up-stages li.done .us-dot{background:#16A34A}
-.upload-success{display:none;margin-top:16px;padding:11px 13px;border-left:3px solid #16A34A;background:#F0FDF4;
- color:#166534;font-size:11.5px;font-weight:600;border-radius:4px}
-.upload-success.show{display:block}
+.up-msg{display:none;padding:10px 17px;font-size:11.5px;font-weight:600;border-bottom:1px solid #EEF2F7}
+.up-msg.show{display:block}
+.up-msg.err{color:#B91C1C;background:#FEF2F2}
+.up-msg.ok{color:#166534;background:#F0FDF4}
 .uh-table{width:100%;border-collapse:collapse;font-size:11.5px}
 .uh-table th{text-align:left;padding:8px 10px;color:#64748B;font-weight:700;font-size:10px;
  text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #E4EAF2}
 .uh-table td{padding:9px 10px;border-bottom:1px solid #F1F5F9;color:#334155}
+.uh-table tbody tr{cursor:pointer}
+.uh-table tbody tr:hover td{background:#F8FAFF}
 .uh-empty{padding:22px;text-align:center;color:#94A3B8;font-size:12px}
 .uh-status{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700}
 .uh-status.ok{background:#F0FDF4;color:#166534}
+.uh-source{display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;background:#F1F5F9;color:#64748B}
+.uh-source.mine{background:#EEF2FF;color:#4338CA}
+.req-row{cursor:pointer}
+.req-row:hover td{background:#F8FAFF}
+.req-row .req-chev{transition:transform .15s ease;color:#94A3B8}
+.req-row.open .req-chev{transform:rotate(90deg)}
+.req-detail{display:none}
+.req-detail.open{display:table-row}
+.req-detail td{padding:0 10px 14px;border-bottom:1px solid #F1F5F9;background:#FBFCFE}
+.np-speclist{list-style:none;margin:0;padding:10px 0 0;display:grid;gap:7px}
+.np-speclist li{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#334155;line-height:1.5}
+.np-speclist li svg{flex:none;margin-top:2px;color:#16A34A}
+.np-standard{display:inline-flex;align-items:center;padding:2px 9px;border-radius:5px;background:#EEF2FF;color:#4338CA;font-size:10px;font-weight:700}
+.np-reqlink{font-size:10.5px;font-weight:700;color:#4338CA;text-decoration:none;margin-top:8px;display:inline-block}
 </style>
 </head>
 <body><div class="app">
@@ -64,21 +74,22 @@
   </div>
 
   <div class="content">
-    <div class="seclab"><span class="secn">1</span>Upload a worksheet</div>
-    <div class="card" id="uploadOnboarding" hidden style="margin-bottom:14px;padding:11px 14px;border-radius:9px;background:#EEF2FF;border:1px solid #C7D2FE;color:#3730A3;font-size:11.5px;display:flex;align-items:center;gap:10px">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1M3 12h3m12 0h3M5.6 18.4l2.1-2.1m8.6-8.6l2.1-2.1"/></svg>
-      <span>This workspace already has a shared worksheet library below. Add your own here too -- it's what the AI model uses to suggest related DFMEAs and starter structures elsewhere in the app.</span>
-    </div>
-    <div class="card" style="margin-bottom:14px;padding:22px">
-      <div class="sm" style="margin-bottom:16px">Upload an existing DFMEA Excel workbook. It will be stored for this project and used for further ML-based risk analysis.</div>
-      <div class="upload-zone" id="uploadZone" tabindex="0" role="button" aria-label="Upload Excel file">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5-5 5 5M12 5v12"/></svg>
-        <div class="uz-title">Click to choose a file, or drag it here</div>
-        <div class="uz-sub">.xlsx or .xls only, up to 20&nbsp;MB</div>
+    <div class="seclab"><span class="secn">1</span>Uploaded worksheets</div>
+    <div class="dw-card" id="uploadCard">
+      <div class="tbar dw-tbar">
+        <div class="wsearch" data-tip="Search by file name"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input type="text" id="uhSearch" placeholder="Search files"></div>
+        <select class="fsel" id="uhSourceFilter" data-tip="Filter by where the file came from">
+          <option value="all">All sources</option>
+          <option value="library">Library</option>
+          <option value="mine">Uploaded by you</option>
+        </select>
+        <div class="spacer"></div>
+        <button type="button" class="fl" id="uhExportBtn" data-tip="Download the visible rows as a CSV file"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Export</button>
+        <button type="button" class="fl act" id="uhUploadBtn" data-tip="Upload a .xlsx or .xls DFMEA worksheet"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5-5 5 5M12 5v12"/></svg>Upload</button>
         <input type="file" id="uploadInput" accept=".xlsx,.xls" hidden>
       </div>
-      <div class="upload-err" id="uploadErr"></div>
-      <div class="upload-progress" id="uploadProgress">
+      <div class="up-msg" id="uploadErr"></div>
+      <div class="up-progress" id="uploadProgress">
         <div class="up-bar-track"><div class="up-bar-fill" id="uploadBarFill"></div></div>
         <div class="up-label" id="uploadLabel">Uploading...</div>
         <ol class="up-stages" id="uploadStages">
@@ -88,16 +99,31 @@
           <li data-stage="3"><span class="us-dot"></span>Done</li>
         </ol>
       </div>
-      <div class="upload-success" id="uploadSuccess"></div>
-    </div>
-
-    <div class="seclab"><span class="secn">2</span>Previously uploaded files</div>
-    <div class="card" style="padding:0;overflow:hidden">
+      <div class="up-msg" id="uploadSuccess"></div>
       <table class="uh-table" id="uploadHistoryTable">
-        <thead><tr><th>File</th><th>Size</th><th>Rows parsed</th><th>Uploaded</th><th>Status</th></tr></thead>
+        <thead><tr><th>File</th><th>Size</th><th>Rows parsed</th><th>Uploaded</th><th>Source</th><th>Status</th></tr></thead>
         <tbody id="uploadHistoryBody"></tbody>
       </table>
-      <div class="uh-empty" id="uploadHistoryEmpty">No files uploaded yet. Upload a worksheet above to get started.</div>
+      <div class="uh-empty" id="uploadHistoryEmpty">No files match this search/filter.</div>
+    </div>
+
+    <div class="seclab"><span class="secn">2</span>Design requirement specifications</div>
+    <div class="sm" style="margin-bottom:12px">Production specifications generated for a project (via "Create project with AI") land here too, alongside the library this workspace already has on file.</div>
+    <div class="dw-card">
+      <div class="tbar dw-tbar">
+        <div class="wsearch" data-tip="Search by product name or spec text"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input type="text" id="reqSearch" placeholder="Search specifications"></div>
+        <select class="fsel" id="reqStandardFilter" data-tip="Filter by referenced standard">
+          <option value="all">All standards</option>
+        </select>
+        <div class="spacer"></div>
+        <button type="button" class="fl" id="reqExportBtn" data-tip="Download the visible rows as a CSV file"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Export</button>
+        <a href="new-project.html" class="fl act" style="text-decoration:none" data-tip="Describe a product and generate a new specification with AI"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1M3 12h3m12 0h3M5.6 18.4l2.1-2.1m8.6-8.6l2.1-2.1"/></svg>New with AI</a>
+      </div>
+      <table class="uh-table" id="reqTable">
+        <thead><tr><th style="width:28px"></th><th>Product</th><th>Standard</th><th>Specs</th><th>Date</th></tr></thead>
+        <tbody id="reqTableBody"></tbody>
+      </table>
+      <div class="uh-empty" id="reqEmpty">No specifications match this search/filter.</div>
     </div>
   </div>
 </div>
@@ -108,181 +134,5 @@
 <script src="js/page-setup.js"></script>
 <script src="js/worksheet-ui.js"></script>
 <script src="js/auth-nav.js"></script>
-<script>
-(function(){
-  "use strict";
-  // navDfmea's own click -> projects.html is wired once, centrally, in
-  // auth-nav.js (it's the item page-setup.js relabels to "Projects").
-  // page-setup.js (loaded purely for a consistent sidebar/project tree)
-  // also overwrites .ttl and .crumb with the dashboard's own title --
-  // put this page's real title and breadcrumb back afterward.
-  var pageTitle = document.querySelector(".ttl");
-  if(pageTitle) pageTitle.textContent = "Data warehouse";
-  var crumbEl = document.querySelector(".crumb");
-  if(crumbEl) crumbEl.innerHTML = 'DFMEA Studio &rsaquo; <b>Data Warehouse</b>';
-  // Data Warehouse is marked the active nav item directly in this
-  // page's own HTML now, so there's nothing to move at runtime here.
-
-  var zone = document.getElementById("uploadZone");
-  var input = document.getElementById("uploadInput");
-  var errBox = document.getElementById("uploadErr");
-  var progressBox = document.getElementById("uploadProgress");
-  var barFill = document.getElementById("uploadBarFill");
-  var progressLabel = document.getElementById("uploadLabel");
-  var stageList = document.getElementById("uploadStages");
-  var stageItems = Array.prototype.slice.call(stageList.querySelectorAll("li"));
-  function setStage(index, state){
-    var item = stageItems[index];
-    if(!item) return;
-    item.classList.remove("active", "done");
-    if(state) item.classList.add(state);
-  }
-  var successBox = document.getElementById("uploadSuccess");
-  var historyBody = document.getElementById("uploadHistoryBody");
-  var historyEmpty = document.getElementById("uploadHistoryEmpty");
-  var historyKey = "dfmeaUploadHistory";
-
-  // A shared library this workspace already has on file, same idea as
-  // the Crimp DFMEA being the one document that's already populated --
-  // real uploads (readHistory/saveHistory below) are entirely separate
-  // from this and are what the "no data yet" checks elsewhere key off of.
-  var DEFAULT_LIBRARY = [
-    { name: "Sensor_Bracket_DFMEA.xlsx", size: "142 KB", when: "Mar 28, 2024, 10:33 AM", rows: 33 },
-    { name: "Busbar_Joint_DFMEA.xlsx", size: "198 KB", when: "Jun 5, 2024, 2:10 PM", rows: 55 },
-    { name: "Wire_Harness_DFMEA_2023.xlsx", size: "156 KB", when: "Aug 19, 2024, 11:20 AM", rows: 39 },
-    { name: "Connector_Housing_DFMEA.xlsx", size: "211 KB", when: "Nov 2, 2024, 3:45 PM", rows: 61 },
-    { name: "Terminal_Retention_DFMEA_Rev3.xlsx", size: "184 KB", when: "Jan 14, 2025, 9:02 AM", rows: 48 }
-  ];
-
-  function readHistory(){
-    try{ return JSON.parse(localStorage.getItem(historyKey) || "[]"); }catch(error){ return []; }
-  }
-  function saveHistory(list){
-    try{ localStorage.setItem(historyKey, JSON.stringify(list)); }catch(error){ /* storage unavailable */ }
-  }
-  function formatSize(bytes){
-    if(bytes < 1024) return bytes + " B";
-    if(bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-    return (bytes / (1024 * 1024)).toFixed(2) + " MB";
-  }
-  function renderHistory(){
-    var realList = readHistory();
-    var displayList = DEFAULT_LIBRARY.concat(realList);
-    historyBody.innerHTML = "";
-    historyEmpty.hidden = displayList.length > 0;
-    var onboarding = document.getElementById("uploadOnboarding");
-    if(onboarding) onboarding.hidden = realList.length > 0;
-    displayList.slice().reverse().forEach(function(item){
-      var row = document.createElement("tr");
-      row.innerHTML = "<td>" + escapeHtml(item.name) + "</td>"
-        + "<td>" + escapeHtml(item.size) + "</td>"
-        + "<td>" + escapeHtml(item.rows != null ? item.rows + " rows" : "—") + "</td>"
-        + "<td>" + escapeHtml(item.when) + "</td>"
-        + "<td><span class=\"uh-status ok\">Trained</span></td>";
-      historyBody.appendChild(row);
-    });
-  }
-  function escapeHtml(value){
-    var div = document.createElement("div");
-    div.textContent = String(value);
-    return div.innerHTML;
-  }
-
-  function showError(message){
-    errBox.textContent = message;
-    errBox.classList.add("show");
-    successBox.classList.remove("show");
-  }
-  function clearError(){ errBox.classList.remove("show"); }
-
-  function isExcelFile(file){
-    var name = file.name.toLowerCase();
-    return name.endsWith(".xlsx") || name.endsWith(".xls");
-  }
-
-  function handleFile(file){
-    clearError();
-    successBox.classList.remove("show");
-    if(!file){ return; }
-    if(!isExcelFile(file)){
-      showError("\"" + file.name + "\" is not an Excel file. Please choose a .xlsx or .xls file.");
-      return;
-    }
-    if(file.size === 0){
-      showError("\"" + file.name + "\" is empty. Choose a file that actually has data in it.");
-      return;
-    }
-    var maxBytes = 20 * 1024 * 1024;
-    if(file.size > maxBytes){
-      showError("\"" + file.name + "\" is larger than the 20 MB limit for this preview.");
-      return;
-    }
-
-    // There's no real backend or ML pipeline behind this preview -- this
-    // honestly simulates the upload as what it's pitched as (a worksheet
-    // that gets parsed and fed into model training), with a progress bar
-    // that actually tracks time and named stages, not an instant fake
-    // success or a plain "uploading a picture" bar.
-    progressBox.classList.add("show");
-    barFill.style.width = "0%";
-    stageList.classList.add("show");
-    setStage(0, "active");
-    var STAGES = [
-      { upto: 30, label: "Uploading “" + file.name + "”…" },
-      { upto: 62, label: "Parsing worksheet rows and cause paths…" },
-      { upto: 90, label: "Training risk-prediction model on this data…" },
-      { upto: 100, label: "Finishing up…" }
-    ];
-    var pct = 0;
-    var stageIndex = 0;
-    progressLabel.textContent = STAGES[0].label;
-    var timer = setInterval(function(){
-      pct = Math.min(100, pct + 4 + Math.random() * 6);
-      barFill.style.width = pct + "%";
-      while(stageIndex < STAGES.length - 1 && pct >= STAGES[stageIndex].upto){
-        setStage(stageIndex, "done");
-        stageIndex++;
-        setStage(stageIndex, "active");
-        progressLabel.textContent = STAGES[stageIndex].label;
-      }
-      if(pct >= 100){
-        clearInterval(timer);
-        setStage(stageIndex, "done");
-        setTimeout(function(){
-          progressBox.classList.remove("show");
-          stageList.classList.remove("show");
-          successBox.innerHTML = "<b>“" + escapeHtml(file.name) + "”</b> uploaded and parsed. "
-            + "The model has been retrained with this data included, so future risk suggestions for this project will reflect it.";
-          successBox.classList.add("show");
-          var list = readHistory();
-          list.push({ name: file.name, size: formatSize(file.size), when: new Date().toLocaleString(), rows: 20 + Math.floor(Math.random() * 40) });
-          saveHistory(list);
-          renderHistory();
-        }, 450);
-      }
-    }, 130);
-  }
-
-  zone.addEventListener("click", function(){ input.click(); });
-  zone.addEventListener("keydown", function(event){
-    if(event.key === "Enter" || event.key === " "){ event.preventDefault(); input.click(); }
-  });
-  input.addEventListener("change", function(){
-    handleFile(input.files && input.files[0]);
-    input.value = "";
-  });
-  ["dragenter", "dragover"].forEach(function(evt){
-    zone.addEventListener(evt, function(event){ event.preventDefault(); zone.classList.add("drag"); });
-  });
-  ["dragleave", "drop"].forEach(function(evt){
-    zone.addEventListener(evt, function(event){ event.preventDefault(); zone.classList.remove("drag"); });
-  });
-  zone.addEventListener("drop", function(event){
-    var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
-    handleFile(file);
-  });
-
-  renderHistory();
-})();
-</script>
+<script src="js/data-warehouse.js"></script>
 </body></html>
