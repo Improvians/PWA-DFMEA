@@ -295,26 +295,18 @@
       emptyEl.hidden = visible.length > 0;
       tableBody.innerHTML = visible.map(function(doc){
         var standardLabel = doc.standard === "None" ? "No specific standard" : doc.standard;
-        var isOpen = !!openIds[doc.id];
-        var detailHtml = '<ul class="np-speclist">' + (doc.specs || []).map(function(s){
-            return '<li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' + escapeHtml(s) + '</li>';
-          }).join("") + '</ul>'
-          + (doc.projectId ? '<a class="np-reqlink" href="project.html?id=' + encodeURIComponent(doc.projectId) + '">View project &rsaquo;</a>' : "");
-        return '<tr class="req-row' + (isOpen ? " open" : "") + '" data-id="' + doc.id + '">'
-          + '<td><svg class="req-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></td>'
+        return '<tr class="req-row" data-id="' + doc.id + '" data-tip="Open this specification">'
+          + '<td><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:#94A3B8"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg></td>'
           + '<td>' + escapeHtml(doc.product) + '</td>'
           + '<td><span class="np-standard">' + escapeHtml(standardLabel) + '</span></td>'
           + '<td>' + (doc.specs || []).length + ' specs</td>'
           + '<td>' + escapeHtml(doc.when) + '</td>'
-          + '</tr>'
-          + '<tr class="req-detail' + (isOpen ? " open" : "") + '" data-detail-for="' + doc.id + '"><td colspan="5">' + detailHtml + '</td></tr>';
+          + '</tr>';
       }).join("");
 
       Array.prototype.slice.call(tableBody.querySelectorAll(".req-row")).forEach(function(row){
         row.addEventListener("click", function(){
-          var id = row.dataset.id;
-          openIds[id] = !openIds[id];
-          render();
+          window.open("requirement-view.html?id=" + encodeURIComponent(row.dataset.id), "_blank");
         });
       });
 
