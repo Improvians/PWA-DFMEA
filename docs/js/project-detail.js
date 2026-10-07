@@ -15,19 +15,6 @@
         { name: "Crimp DFMEA", real: true, meta: "64 causes · 26 paths · updated today" },
         { name: "Terminal Durability DFMEA", real: true, docId: "seed-terminal-durability", meta: "64 causes · 26 paths · updated 3 days ago" }
       ]
-    },
-    "northstar-sensor-harness": {
-      name: "Northstar Sensor Harness",
-      docs: [
-        { name: "Harness Splice DFMEA", real: true, docId: "seed-harness-design", meta: "64 causes · 26 paths · updated last week" },
-        { name: "Sensor Terminal Crimp DFMEA", real: true, docId: "seed-connector-retention", meta: "64 causes · 26 paths · updated 2 weeks ago" }
-      ]
-    },
-    "meridian-charging-inlet": {
-      name: "Meridian Charging Inlet",
-      docs: [
-        { name: "Inlet Terminal Crimp DFMEA", real: true, docId: "seed-terminal-assembly", meta: "64 causes · 26 paths · released last month" }
-      ]
     }
   };
 
@@ -57,9 +44,6 @@
   if(pageTitle) pageTitle.textContent = project.name;
   var crumbEl = document.querySelector(".crumb");
   if(crumbEl) crumbEl.innerHTML = 'DFMEA Studio &rsaquo; <a href="projects.html" style="color:inherit">Projects</a> &rsaquo; <b>' + escapeHtml(project.name) + '</b>';
-
-  var navHome = document.getElementById("navHome");
-  if(navHome) navHome.addEventListener("click", function(){ window.location.href = "projects.html"; });
 
   var newDfmeaBtn = document.getElementById("tabNewDfmea");
   if(newDfmeaBtn) newDfmeaBtn.addEventListener("click", function(){ window.location.href = "new-dfmea.html?mode=blank&project=" + encodeURIComponent(projectId); });
