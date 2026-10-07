@@ -7,9 +7,6 @@
   var crumbEl = document.querySelector(".crumb");
   if(crumbEl) crumbEl.innerHTML = 'DFMEA Studio &rsaquo; <b>Projects</b>';
 
-  var navHome = document.getElementById("navHome");
-  if(navHome) navHome.addEventListener("click", function(){ window.location.href = "projects.html"; });
-
   var dialog = document.getElementById("createProjectDialog");
   var form = document.getElementById("createProjectForm");
   var nameInput = document.getElementById("cpName");
@@ -25,9 +22,7 @@
   // Built-in projects with their built-in document counts and a normal
   // lifecycle status, like a real workspace would show.
   var BUILT_IN_PROJECTS = [
-    { id: "aster-ev-connector", name: "Aster EV Connector", baseDocs: 2, status: "active" },
-    { id: "northstar-sensor-harness", name: "Northstar Sensor Harness", baseDocs: 2, status: "review" },
-    { id: "meridian-charging-inlet", name: "Meridian Charging Inlet", baseDocs: 1, status: "released" }
+    { id: "aster-ev-connector", name: "Aster EV Connector", baseDocs: 2, status: "active" }
   ];
   var STATUS_LABELS = { active: "Active", review: "In review", released: "Released", draft: "Draft", empty: "No DFMEA yet" };
 

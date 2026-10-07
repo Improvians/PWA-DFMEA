@@ -25,7 +25,7 @@
 
   // Same built-in project list projects.js uses, kept in sync, so the
   // duplicate-name check here means the same thing it does there.
-  var BUILT_IN_PROJECT_NAMES = ["Aster EV Connector", "Northstar Sensor Harness", "Meridian Charging Inlet"];
+  var BUILT_IN_PROJECT_NAMES = ["Aster EV Connector"];
   function readMyProjects(){
     try{ return JSON.parse(localStorage.getItem("dfmeaMyProjects") || "[]"); }catch(error){ return []; }
   }
