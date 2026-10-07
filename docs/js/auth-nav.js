@@ -200,10 +200,7 @@
   // visitor created) -- they're the same kind of override, just seeded
   // here instead of written to localStorage by New DFMEA.
   var SEED_OVERRIDES = {
-    "seed-terminal-durability": { name: "Terminal Durability DFMEA", function: "Terminal Contact Resistance After Cycling", failureMode: "Missing or Degraded Function", mode: "sample" },
-    "seed-harness-design": { name: "Harness Splice DFMEA", function: "Splice Crimp Contact Resistance", failureMode: "Missing or Degraded Function", mode: "sample" },
-    "seed-connector-retention": { name: "Sensor Terminal Crimp DFMEA", function: "Sensor Terminal Crimp Resistance", failureMode: "Missing or Degraded Function", mode: "sample" },
-    "seed-terminal-assembly": { name: "Inlet Terminal Crimp DFMEA", function: "Inlet Terminal Crimp Resistance", failureMode: "Missing or Degraded Function", mode: "sample" }
+    "seed-terminal-durability": { name: "Terminal Durability DFMEA", function: "Terminal Contact Resistance After Cycling", failureMode: "Missing or Degraded Function", mode: "sample" }
   };
   var override = null;
   if(isDashboard){
@@ -341,7 +338,7 @@
   // the create-DFMEA stub buttons use is cheap and closes that gap
   // everywhere at once, without having to fake a whole module per click.
   Array.prototype.slice.call(document.querySelectorAll(".side .nav")).forEach(function(item){
-    if(item === projectsNav || item.id === "navHome" || item.id === "navUploadData") return;
+    if(item === projectsNav || item.id === "navUploadData") return;
     item.addEventListener("click", function(){
       window.showToast(item.textContent.trim() + " isn't available in this preview yet.");
     });
