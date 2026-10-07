@@ -72,6 +72,25 @@
     return div.innerHTML;
   }
 
+  // A project created through "Create project with AI" has a generated
+  // design requirement specification attached to it -- shown above the
+  // document list when one exists, same section-numbering pattern as
+  // everywhere else in the app (not hardcoded, since most projects won't
+  // have one).
+  function readRequirementDocs(){
+    try{ return JSON.parse(localStorage.getItem("dfmeaRequirementDocs") || "[]"); }catch(error){ return []; }
+  }
+  var reqDoc = readRequirementDocs().find(function(r){ return r.projectId === projectId; });
+  if(reqDoc){
+    document.getElementById("reqSection").hidden = false;
+    document.getElementById("reqProduct").textContent = reqDoc.productName;
+    document.getElementById("reqStandard").textContent = reqDoc.standard === "None" ? "No specific standard" : reqDoc.standard;
+    document.getElementById("reqSpecs").innerHTML = (reqDoc.specs || []).map(function(s){
+      return '<li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' + escapeHtml(s) + '</li>';
+    }).join("");
+    document.getElementById("docsSecn").textContent = "2";
+  }
+
   var listEl = document.getElementById("docList");
   if(!project.docs.length){
     listEl.innerHTML = '<div class="uh-empty" style="padding:30px;text-align:center;color:#94A3B8;border:1px dashed #E4EAF2;border-radius:11px">'
