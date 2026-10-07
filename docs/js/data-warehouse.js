@@ -98,7 +98,7 @@
       try{
         var map = JSON.parse(localStorage.getItem("dfmeaDocOverrides") || "{}");
         if(!map[docId]){
-          var title = item.name.replace(/\.(xlsx|xls)$/i, "");
+          var title = item.name.replace(/\.(xlsx|xls)$/i, "").replace(/[_-]+/g, " ").trim();
           map[docId] = { name: title, function: title, failureMode: "Missing or Degraded Function", severity: 9, mode: "sample" };
           localStorage.setItem("dfmeaDocOverrides", JSON.stringify(map));
         }
