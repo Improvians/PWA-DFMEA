@@ -10,9 +10,7 @@
   // (project.html passes ?project=<id>) pre-selects that project instead
   // of defaulting to Aster EV Connector every time.
   var KNOWN_PROJECTS = [
-    { id: "aster-ev-connector", name: "Aster EV Connector" },
-    { id: "northstar-sensor-harness", name: "Northstar Sensor Harness" },
-    { id: "meridian-charging-inlet", name: "Meridian Charging Inlet" }
+    { id: "aster-ev-connector", name: "Aster EV Connector" }
   ];
   function readCustomProjects(){
     try{ return JSON.parse(localStorage.getItem("dfmeaMyProjects") || "[]"); }catch(error){ return []; }
@@ -20,9 +18,7 @@
   // Same document names project.html already shows for each built-in
   // project -- kept in sync with KNOWN_PROJECTS in project-detail.js.
   var KNOWN_PROJECT_DOCS = {
-    "aster-ev-connector": ["Crimp DFMEA", "Terminal Durability DFMEA"],
-    "northstar-sensor-harness": ["Harness Splice DFMEA", "Sensor Terminal Crimp DFMEA"],
-    "meridian-charging-inlet": ["Inlet Terminal Crimp DFMEA"]
+    "aster-ev-connector": ["Crimp DFMEA", "Terminal Durability DFMEA"]
   };
   function existingDocNames(projectId){
     var names = (KNOWN_PROJECT_DOCS[projectId] || []).slice();
