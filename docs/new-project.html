@@ -117,22 +117,27 @@
     <!-- Step 3: done -->
     <div class="nd-step" id="npStep3">
       <div class="seclab"><span class="secn">3</span>Done</div>
-      <div class="nd-card">
+      <div class="nd-card nd-card-wide">
         <div class="nd-success-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
         <div id="npDoneTitle" style="font-size:15px;font-weight:800;color:#1E293B;margin-bottom:6px">Project created</div>
         <div id="npDoneBody" class="sm">A design requirement specification and starting DFMEAs were generated for this project.</div>
 
-        <div class="np-sectitle">Design requirement specification</div>
-        <div class="np-reqcard">
-          <div class="np-reqhead"><span class="np-prod" id="npReqProduct"></span><span class="np-standard" id="npReqStandard"></span></div>
-          <ul class="np-speclist" id="npReqSpecs"></ul>
+        <div class="np-top-grid" style="margin-top:18px">
+          <div class="np-col">
+            <div class="np-sectitle">Design requirement specification</div>
+            <div class="np-reqcard">
+              <div class="np-reqhead"><span class="np-prod" id="npReqProduct"></span><span class="np-standard" id="npReqStandard"></span></div>
+              <ul class="np-speclist" id="npReqSpecs"></ul>
+            </div>
+          </div>
+          <div class="np-col">
+            <div class="np-sectitle">DFMEAs generated for this project</div>
+            <div class="np-secsub">Each one opens as a real, editable DFMEA -- click to open.</div>
+            <table class="np-table"><thead><tr><th>Name</th><th>Function</th><th>Severity</th></tr></thead><tbody id="npDfmeaTable"></tbody></table>
+          </div>
         </div>
 
-        <div class="np-sectitle">DFMEAs generated for this project</div>
-        <div class="np-secsub">Each one opens as a real, editable DFMEA -- click to open.</div>
-        <table class="np-table"><thead><tr><th>Name</th><th>Function</th><th>Severity</th></tr></thead><tbody id="npDfmeaTable"></tbody></table>
-
-        <div class="np-sectitle" id="npMatchedTitle" hidden>Generated using these references</div>
+        <div class="np-sectitle" id="npMatchedTitle" hidden>Generated using these references from Data Warehouse</div>
         <table class="np-table" id="npMatchedTable" hidden><thead><tr><th>Reference</th><th>Type</th></tr></thead><tbody id="npMatchedBody"></tbody></table>
 
         <div class="nd-actions" id="npDoneActions"></div>
