@@ -6,30 +6,52 @@
   // duplicated per page) so editing a spec on the viewer page, listing it
   // in Data Warehouse, and showing it on a project's page all agree.
   var KEY = "dfmeaRequirementDocs";
+  var DEFAULTS_VERSION_KEY = "dfmeaRequirementDocsDefaultsVersion";
+  var DEFAULTS_VERSION = "2";
   var DEFAULTS = [
     { id: "default-0", projectId: null, productName: "Titan Connector Housing", standard: "USCAR-2", createdAt: "Feb 11, 2024", specs: [
-      "Housing material flammability rating UL94 V-0, verified per USCAR-2 Section 5.4 flame test",
-      "Housing sealing rated to IP67 (1m, 30 min submersion) at the connector mating face per IEC 60529",
-      "Minimum 50 mating/unmating cycles without contact degradation, verified per USCAR-2 durability test method",
-      "Operating temperature range -40°C to +105°C per USCAR-2 thermal cycling requirements",
-      "Connector mating force ≤ 60 N, unmating force ≤ 50 N per USCAR-2 Section 5.2",
-      "Housing dimensional tolerance ±0.15mm on all mating interface features",
-      "Vibration resistance per USCAR-2 Section 5.6, random vibration 10-2000 Hz, no electrical discontinuity >1μs",
-      "Thermal shock resistance: 100 cycles -40°C to +105°C, 30 min dwell each, no cracking or deformation",
-      "UV resistance: 500 hours per SAE J2527, no significant color change or material degradation",
-      "Locking mechanism retention force ≥ 80 N before primary lock release"
+      "Mechanical — Housing dimensional tolerance ±0.15mm on all mating interface features, verified by CMM inspection",
+      "Mechanical — Connector mating force ≤ 60 N, unmating force ≤ 50 N per USCAR-2 Section 5.2",
+      "Mechanical — Locking mechanism retention force ≥ 80 N before primary lock release",
+      "Mechanical — Secondary lock (TPA) must prevent terminal insertion unless fully seated, verified per USCAR-2 Section 5.3",
+      "Mechanical — Minimum 50 mating/unmating cycles without contact degradation, verified per USCAR-2 durability test method",
+      "Mechanical — Polarization features prevent incorrect orientation assembly under 20 N applied force",
+      "Electrical — Dielectric withstand voltage 1500V AC for 60 seconds between adjacent terminal positions, no breakdown",
+      "Electrical — Insulation resistance ≥ 100 MΩ at 500V DC, measured after humidity conditioning",
+      "Electrical — Low-level contact resistance ≤ 10 mΩ per terminal position across the full mating cycle life",
+      "Environmental — Housing sealing rated to IP67 (1m, 30 min submersion) at the connector mating face per IEC 60529",
+      "Environmental — Operating temperature range -40°C to +105°C per USCAR-2 thermal cycling requirements",
+      "Environmental — Thermal shock resistance: 100 cycles -40°C to +105°C, 30 min dwell each, no cracking or deformation",
+      "Environmental — Vibration resistance per USCAR-2 Section 5.6, random vibration 10-2000 Hz, no electrical discontinuity >1μs",
+      "Environmental — UV resistance: 500 hours per SAE J2527, no significant color change or material degradation",
+      "Environmental — Chemical resistance to engine bay fluids (coolant, brake fluid, fuel) per USCAR-2 Section 5.8, no swelling or cracking",
+      "Material — Housing material flammability rating UL94 V-0, verified per USCAR-2 Section 5.4 flame test",
+      "Material — Housing resin must retain ≥ 80% tensile strength after 1000h at +105°C thermal aging",
+      "Manufacturing — Process capability Cpk ≥ 1.33 on all critical-to-function housing dimensions at full production rate",
+      "Manufacturing — Mold flow analysis required to confirm no sink marks or voids on load-bearing wall sections",
+      "Quality — 100% automated vision inspection of locking tab geometry at final assembly, zero escape rate target"
     ]},
     { id: "default-1", projectId: null, productName: "Nova Terminal Block", standard: "LV214", createdAt: "Sep 3, 2024", specs: [
-      "Crimp pull-out force ≥ 70 N per terminal, verified per LV214 Section 4.2 tensile test",
-      "Contact resistance ≤ 0.6 mΩ after crimping, measured per LV214 4-wire Kelvin method",
-      "Terminal retention force ≥ 55 N in the housing cavity per LV214 Section 4.5",
-      "Salt spray resistance per ISO 9227, 96h minimum, no red rust on base metal",
-      "Insertion/extraction force within LV214 Table 6 limits for the terminal size class",
-      "Crimp height and width within ±0.05mm of nominal per LV214 crimp cross-section inspection",
-      "Current rating verified per LV214 Section 7, temperature rise ≤ 40K at rated current",
-      "Insulation resistance ≥ 100 MΩ at 500V DC between adjacent terminals",
-      "Mechanical shock resistance per LV214 Section 4.8, 50g half-sine pulse, 11ms duration",
-      "Humidity resistance: 10 cycles per LV214 Annex, no corrosion or contact resistance drift >20%"
+      "Mechanical — Crimp pull-out force ≥ 70 N per terminal, verified per LV214 Section 4.2 tensile test",
+      "Mechanical — Terminal retention force ≥ 55 N in the housing cavity per LV214 Section 4.5",
+      "Mechanical — Insertion/extraction force within LV214 Table 6 limits for the terminal size class",
+      "Mechanical — Crimp height and width within ±0.05mm of nominal per LV214 crimp cross-section inspection",
+      "Mechanical — Mechanical shock resistance per LV214 Section 4.8, 50g half-sine pulse, 11ms duration",
+      "Mechanical — Wire strain relief must withstand 5 N axial pull for 1 minute with no conductor movement at the crimp",
+      "Electrical — Contact resistance ≤ 0.6 mΩ after crimping, measured per LV214 4-wire Kelvin method",
+      "Electrical — Current rating verified per LV214 Section 7, temperature rise ≤ 40K at rated current",
+      "Electrical — Insulation resistance ≥ 100 MΩ at 500V DC between adjacent terminals",
+      "Electrical — Voltage drop ≤ 30 mV at rated current across the full crimp joint after thermal cycling",
+      "Environmental — Salt spray resistance per ISO 9227, 96h minimum, no red rust on base metal",
+      "Environmental — Humidity resistance: 10 cycles per LV214 Annex, no corrosion or contact resistance drift >20%",
+      "Environmental — Operating temperature range -40°C to +120°C with no plating discoloration or base metal exposure",
+      "Environmental — Fretting corrosion resistance under micro-vibration per LV214 Section 4.9, no resistance increase >10%",
+      "Material — Terminal base material and plating thickness per drawing, verified by cross-section metallurgical analysis",
+      "Material — Tin plating minimum 2μm thickness over copper alloy base, no exposed base metal after crimping",
+      "Manufacturing — Crimp force monitoring on 100% of production units with automatic reject of out-of-window crimps",
+      "Manufacturing — Process capability Cpk ≥ 1.33 on crimp height, width, and pull-out force at full production rate",
+      "Quality — First-article crimp cross-sections reviewed and approved before production release, per LV214 Annex C",
+      "Quality — Lot traceability required for terminal plating batch and wire conductor batch used in each crimp"
     ]}
   ];
 
@@ -42,12 +64,29 @@
     if(!list){
       list = DEFAULTS.slice();
       save(list);
+      try{ localStorage.setItem(DEFAULTS_VERSION_KEY, DEFAULTS_VERSION); }catch(error){ /* storage unavailable */ }
     }else if(!list.some(function(d){ return d.id === "default-0"; })){
       // Seeded once, on whichever page loads first -- if an earlier
       // session already has real docs saved, the samples just get
       // prepended ahead of them rather than replacing anything.
       list = DEFAULTS.concat(list);
       save(list);
+      try{ localStorage.setItem(DEFAULTS_VERSION_KEY, DEFAULTS_VERSION); }catch(error){ /* storage unavailable */ }
+    }else{
+      // The two sample docs got a lot more detailed in a later build --
+      // refresh their content in-place for anyone whose browser already
+      // cached the older, shorter version, without touching any real
+      // project docs that came after them.
+      var storedVersion = null;
+      try{ storedVersion = localStorage.getItem(DEFAULTS_VERSION_KEY); }catch(error){ storedVersion = null; }
+      if(storedVersion !== DEFAULTS_VERSION){
+        list = list.map(function(d){
+          var fresh = DEFAULTS.find(function(f){ return f.id === d.id; });
+          return fresh ? fresh : d;
+        });
+        save(list);
+        try{ localStorage.setItem(DEFAULTS_VERSION_KEY, DEFAULTS_VERSION); }catch(error){ /* storage unavailable */ }
+      }
     }
     return list;
   }

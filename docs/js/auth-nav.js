@@ -295,9 +295,9 @@
     }
 
     // Surface the project's design requirement specification from right
-    // inside the DFMEA itself -- not just on the project page and Data
-    // Warehouse -- so an engineer reading the document can jump straight
-    // to the requirements it's meant to satisfy.
+    // inside the DFMEA itself -- not just a link out, the full list is
+    // shown in-page -- so an engineer reading the document can see every
+    // requirement it's meant to satisfy without leaving the page.
     if(override.projectId && window.DfmeaReqDocs){
       var reqDoc = window.DfmeaReqDocs.readAll().find(function(r){ return r.projectId === override.projectId; });
       if(reqDoc){
@@ -308,8 +308,36 @@
           reqLink.href = "requirement-view.html?id=" + encodeURIComponent(reqDoc.id);
           reqLink.target = "_blank";
           reqLink.style.cssText = "margin-left:14px;align-self:center;font-size:11.5px;font-weight:700;color:#4338CA;text-decoration:none;white-space:nowrap";
-          reqLink.textContent = "View design requirements ›";
+          reqLink.textContent = "Open full requirement spec ›";
           topEl.appendChild(reqLink);
+        }
+        var contentEl = document.querySelector(".content");
+        if(contentEl && !document.getElementById("reqSpecPanel")){
+          var panel = document.createElement("details");
+          panel.id = "reqSpecPanel";
+          panel.style.cssText = "margin:0 0 14px;border:1px solid #E4EAF2;border-radius:10px;background:#FBFCFE;padding:0;overflow:hidden";
+          var summary = document.createElement("summary");
+          summary.style.cssText = "cursor:pointer;padding:12px 16px;font-size:12px;font-weight:700;color:#1E293B;list-style:none;display:flex;align-items:center;gap:8px";
+          var standardChip = document.createElement("span");
+          standardChip.style.cssText = "display:inline-flex;align-items:center;padding:2px 9px;border-radius:5px;background:#EEF2FF;color:#4338CA;font-size:10px;font-weight:700";
+          standardChip.textContent = reqDoc.standard === "None" ? "No specific standard" : reqDoc.standard;
+          summary.appendChild(document.createTextNode("Design requirement specification — " + (reqDoc.specs || []).length + " requirements "));
+          summary.appendChild(standardChip);
+          panel.appendChild(summary);
+          var listWrap = document.createElement("div");
+          listWrap.style.cssText = "padding:4px 16px 16px";
+          var list = document.createElement("ul");
+          list.style.cssText = "list-style:none;margin:0;padding:0;display:grid;gap:7px";
+          (reqDoc.specs || []).forEach(function(s){
+            var li = document.createElement("li");
+            li.style.cssText = "display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#334155;line-height:1.5";
+            li.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px;color:#16A34A"><path d="M20 6L9 17l-5-5"/></svg>';
+            li.appendChild(document.createTextNode(s));
+            list.appendChild(li);
+          });
+          listWrap.appendChild(list);
+          panel.appendChild(listWrap);
+          contentEl.insertBefore(panel, contentEl.firstChild);
         }
       }
     }

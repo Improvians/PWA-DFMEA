@@ -62,24 +62,30 @@
   // same honest, visible substitute used everywhere else in this build --
   // no real model behind this, a static front-end can't run one.
   var SPEC_POOL = [
-    { words: ["crimp", "terminal", "wire", "conductor"], spec: "Crimp pull-out force ≥ 80 N per terminal, verified per tensile test to the chosen reference standard" },
-    { words: ["crimp", "terminal", "resistance", "contact", "current"], spec: "Contact resistance ≤ 0.55 mΩ after crimping, measured by 4-wire Kelvin method" },
-    { words: ["housing", "seal", "waterproof", "ip", "moisture"], spec: "Housing sealing rated to IP67 (1m, 30 min submersion) at the connector mating face per IEC 60529" },
-    { words: ["mating", "cycle", "connector", "durability"], spec: "Minimum 50 mating/unmating cycles without contact degradation or increased insertion force" },
-    { words: ["retention", "lock", "latch", "housing"], spec: "Terminal retention force ≥ 60 N in the housing cavity; locking mechanism ≥ 80 N before primary lock release" },
-    { words: ["vibration", "shock", "mount"], spec: "Withstand random vibration per ISO 16750-3, 10-2000 Hz, with no electrical discontinuity greater than 1μs" },
-    { words: ["temperature", "thermal", "heat", "battery", "power"], spec: "Operating temperature range -40°C to +125°C; 100 thermal cycles with no cracking or deformation" },
-    { words: ["current", "power", "busbar", "battery", "high"], spec: "Continuous current rating meets design load with ≤ 20K temperature rise at rated current" },
-    { words: ["corrosion", "salt", "humidity", "outdoor"], spec: "Salt spray resistance per ISO 9227, 96h minimum, no red rust on base metal" },
-    { words: ["connector", "plastic", "housing", "material"], spec: "Housing material flammability rating UL94 V-0, verified by flame test" },
-    { words: ["dimension", "tolerance", "fit", "housing", "mold"], spec: "Housing dimensional tolerance ±0.15mm on all mating interface features" },
-    { words: ["humidity", "moisture", "outdoor", "environment"], spec: "Humidity resistance: 10 cycles minimum, no corrosion or contact resistance drift greater than 20%" },
-    { words: ["insulation", "voltage", "electrical", "power"], spec: "Insulation resistance ≥ 100 MΩ at 500V DC between adjacent current-carrying paths" },
-    { words: ["uv", "outdoor", "sun", "exposure"], spec: "UV resistance: 500 hours per SAE J2527 with no significant color change or material degradation" },
-    { words: ["shock", "drop", "impact"], spec: "Mechanical shock resistance: 50g half-sine pulse, 11ms duration, no functional degradation" },
-    { words: ["assembly", "manufacture", "production", "quality"], spec: "Process capability Cpk ≥ 1.33 on all critical-to-function dimensions at full production rate" }
+    { words: ["crimp", "terminal", "wire", "conductor"], spec: "Mechanical — Crimp pull-out force ≥ 80 N per terminal, verified per tensile test to the chosen reference standard" },
+    { words: ["crimp", "terminal", "resistance", "contact", "current"], spec: "Electrical — Contact resistance ≤ 0.55 mΩ after crimping, measured by 4-wire Kelvin method" },
+    { words: ["housing", "seal", "waterproof", "ip", "moisture"], spec: "Environmental — Housing sealing rated to IP67 (1m, 30 min submersion) at the connector mating face per IEC 60529" },
+    { words: ["mating", "cycle", "connector", "durability"], spec: "Mechanical — Minimum 50 mating/unmating cycles without contact degradation or increased insertion force" },
+    { words: ["retention", "lock", "latch", "housing"], spec: "Mechanical — Terminal retention force ≥ 60 N in the housing cavity; locking mechanism ≥ 80 N before primary lock release" },
+    { words: ["vibration", "shock", "mount"], spec: "Environmental — Withstand random vibration per ISO 16750-3, 10-2000 Hz, with no electrical discontinuity greater than 1μs" },
+    { words: ["temperature", "thermal", "heat", "battery", "power"], spec: "Environmental — Operating temperature range -40°C to +125°C; 100 thermal cycles with no cracking or deformation" },
+    { words: ["current", "power", "busbar", "battery", "high"], spec: "Electrical — Continuous current rating meets design load with ≤ 20K temperature rise at rated current" },
+    { words: ["corrosion", "salt", "humidity", "outdoor"], spec: "Environmental — Salt spray resistance per ISO 9227, 96h minimum, no red rust on base metal" },
+    { words: ["connector", "plastic", "housing", "material"], spec: "Material — Housing material flammability rating UL94 V-0, verified by flame test" },
+    { words: ["dimension", "tolerance", "fit", "housing", "mold"], spec: "Mechanical — Housing dimensional tolerance ±0.15mm on all mating interface features, verified by CMM inspection" },
+    { words: ["humidity", "moisture", "outdoor", "environment"], spec: "Environmental — Humidity resistance: 10 cycles minimum, no corrosion or contact resistance drift greater than 20%" },
+    { words: ["insulation", "voltage", "electrical", "power"], spec: "Electrical — Insulation resistance ≥ 100 MΩ at 500V DC between adjacent current-carrying paths" },
+    { words: ["uv", "outdoor", "sun", "exposure"], spec: "Environmental — UV resistance: 500 hours per SAE J2527 with no significant color change or material degradation" },
+    { words: ["shock", "drop", "impact"], spec: "Mechanical — Mechanical shock resistance: 50g half-sine pulse, 11ms duration, no functional degradation" },
+    { words: ["assembly", "manufacture", "production", "quality"], spec: "Manufacturing — Process capability Cpk ≥ 1.33 on all critical-to-function dimensions at full production rate" },
+    { words: ["wire", "conductor", "strain", "pull"], spec: "Mechanical — Wire strain relief must withstand 5 N axial pull for 1 minute with no conductor movement at the termination" },
+    { words: ["plating", "corrosion", "contact", "material"], spec: "Material — Contact plating minimum 2μm thickness over base alloy, no exposed base metal after assembly" },
+    { words: ["voltage", "dielectric", "power", "electrical"], spec: "Electrical — Dielectric withstand voltage 1500V AC for 60 seconds between adjacent conductive paths, no breakdown" },
+    { words: ["fretting", "vibration", "micro", "contact"], spec: "Environmental — Fretting corrosion resistance under micro-vibration, no contact resistance increase greater than 10%" },
+    { words: ["quality", "production", "inspection", "trace"], spec: "Quality — Lot traceability required for all critical raw material and plating batches used in production" },
+    { words: ["mold", "manufacture", "production", "void"], spec: "Manufacturing — Mold flow analysis required to confirm no sink marks or voids on load-bearing wall sections" }
   ];
-  var DEFAULT_SPECS = [0, 1, 2, 3, 10, 12].map(function(i){ return SPEC_POOL[i].spec; });
+  var DEFAULT_SPECS = [0, 1, 2, 3, 4, 5, 6, 10, 12, 15].map(function(i){ return SPEC_POOL[i].spec; });
 
   // One DFMEA per major function a connector-style product needs covered
   // -- fixed, not derived from the description, so generation is always
@@ -191,7 +197,7 @@
     var matchedSpecs = SPEC_POOL.filter(function(entry){
       return wordsOf(description).some(function(w){ return w.length > 3 && entry.words.indexOf(w) !== -1; });
     }).map(function(entry){ return entry.spec; });
-    var specs = Array.from(new Set(matchedSpecs.concat(DEFAULT_SPECS))).slice(0, 11);
+    var specs = Array.from(new Set(matchedSpecs.concat(DEFAULT_SPECS))).slice(0, 18);
 
     // --- related DFMEAs that matched the description, shown as reference ---
     var matched = REFERENCE_DOCS.filter(function(doc){ return sharesWord(description, doc.name); });
