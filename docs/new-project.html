@@ -46,13 +46,19 @@
 .np-table tr.clickable:hover td{background:#F8FAFF}
 .np-sectitle{font-size:11.5px;font-weight:700;color:#1E293B;margin:18px 0 4px}
 .np-secsub{font-size:10.5px;color:#64748B;margin-bottom:8px}
-.np-reftype{display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:9.5px;font-weight:700;background:#F1F5F9;color:#64748B}
-.np-reftype.spec{background:#EEF2FF;color:#4338CA}
-.nd-card-wide{max-width:960px}
-.np-top-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
-.np-reqcard{max-height:420px;overflow-y:auto;margin-top:0}
-.np-col .np-sectitle{margin-top:0}
-@media (max-width:760px){.np-top-grid{grid-template-columns:1fr}}
+.nd-card-wide{max-width:none}
+.np-top-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.np-reqcard{max-height:460px;overflow-y:auto;margin-top:0;border-left:3px solid #818CF8}
+.np-col .np-sectitle{margin-top:0;display:flex;align-items:center;gap:7px}
+.np-col-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.np-col-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none}
+.np-col-icon.spec{background:#EEF2FF;color:#4338CA}
+.np-col-icon.dfmea{background:#FFF7ED;color:#C2410C}
+.np-basedon{font-size:10.5px;color:#64748B;margin:4px 0 10px;display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.np-basedon b{color:#475569;font-weight:700}
+#npDfmeaTable tr.clickable td:first-child{border-left:3px solid #FDBA74}
+.np-reqcard{padding-left:16px}
+@media (max-width:860px){.np-top-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body><div class="app">
@@ -124,21 +130,26 @@
 
         <div class="np-top-grid" style="margin-top:18px">
           <div class="np-col">
-            <div class="np-sectitle">Design requirement specification</div>
+            <div class="np-col-head">
+              <div class="np-col-icon spec"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></div>
+              <div class="np-sectitle" style="margin:0">Design requirement specification</div>
+            </div>
+            <div class="np-basedon" id="npReqBasedOn" hidden>Based on <b id="npReqBasedOnName"></b> in Data Warehouse</div>
             <div class="np-reqcard">
               <div class="np-reqhead"><span class="np-prod" id="npReqProduct"></span><span class="np-standard" id="npReqStandard"></span></div>
               <ul class="np-speclist" id="npReqSpecs"></ul>
             </div>
           </div>
           <div class="np-col">
-            <div class="np-sectitle">DFMEAs generated for this project</div>
+            <div class="np-col-head">
+              <div class="np-col-icon dfmea"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></div>
+              <div class="np-sectitle" style="margin:0">DFMEAs generated for this project</div>
+            </div>
+            <div class="np-basedon" id="npDfmeaBasedOn" hidden>Based on <b id="npDfmeaBasedOnNames"></b> in Data Warehouse</div>
             <div class="np-secsub">Each one opens as a real, editable DFMEA -- click to open.</div>
             <table class="np-table"><thead><tr><th>Name</th><th>Function</th><th>Severity</th></tr></thead><tbody id="npDfmeaTable"></tbody></table>
           </div>
         </div>
-
-        <div class="np-sectitle" id="npMatchedTitle" hidden>Generated using these references from Data Warehouse</div>
-        <table class="np-table" id="npMatchedTable" hidden><thead><tr><th>Reference</th><th>Type</th></tr></thead><tbody id="npMatchedBody"></tbody></table>
 
         <div class="nd-actions" id="npDoneActions"></div>
       </div>

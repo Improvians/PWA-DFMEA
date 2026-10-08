@@ -251,18 +251,17 @@
       });
     });
 
-    // Capped to a handful -- this is meant to explain the result at a
-    // glance, not list every loose keyword match.
-    var references = matched.map(function(m){ return { name: m.name, type: "DFMEA" }; })
-      .concat(matchedReqDocs.map(function(d){ return { name: d.productName, type: "Requirement spec" }; }))
-      .slice(0, 4);
-    if(references.length){
-      document.getElementById("npMatchedTitle").hidden = false;
-      document.getElementById("npMatchedTable").hidden = false;
-      document.getElementById("npMatchedBody").innerHTML = references.map(function(r){
-        var badgeClass = r.type === "DFMEA" ? "np-reftype" : "np-reftype spec";
-        return '<tr><td>' + escapeHtml(r.name) + '</td><td><span class="' + badgeClass + '">' + escapeHtml(r.type) + '</span></td></tr>';
-      }).join("");
+    // Shown right next to the thing it informed -- which existing spec
+    // fed the new requirement doc (left column), which existing DFMEAs fed
+    // the generated ones (right column) -- capped to a couple of names
+    // each so it reads as a quick "based on", not another table to scan.
+    if(matchedReqDocs.length){
+      document.getElementById("npReqBasedOn").hidden = false;
+      document.getElementById("npReqBasedOnName").textContent = matchedReqDocs.slice(0, 2).map(function(d){ return d.productName; }).join(", ");
+    }
+    if(matched.length){
+      document.getElementById("npDfmeaBasedOn").hidden = false;
+      document.getElementById("npDfmeaBasedOnNames").textContent = matched.slice(0, 2).map(function(m){ return m.name; }).join(", ");
     }
 
     var actions = document.getElementById("npDoneActions");

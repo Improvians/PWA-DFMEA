@@ -339,6 +339,33 @@
           window.blinkSidebarEl(treeNav.querySelector('.tree-document[data-doc-id="' + justDocId + '"]'));
         }
       }catch(error){ /* sessionStorage unavailable -- nothing to blink */ }
+
+      // Creating a project/document on ANOTHER already-open tab (Data
+      // Warehouse or a project page left open while "Create project with
+      // AI" runs in a new tab) doesn't touch this tab's DOM at all -- the
+      // browser's own "storage" event fires here whenever localStorage
+      // changes in another tab of this app, which is what patches this
+      // tree live instead of leaving it stale until a manual refresh.
+      window.addEventListener("storage", function(event){
+        if(event.key === "dfmeaMyProjects" && event.newValue){
+          try{
+            JSON.parse(event.newValue).forEach(function(p){
+              if(!treeNav.querySelector('.tree-project[data-id="' + p.id + '"]')){
+                window.blinkSidebarEl(window.addProjectToSidebarTree(p));
+              }
+            });
+          }catch(error){ /* malformed storage value -- ignore */ }
+        }
+        if(event.key === "dfmeaMyDocuments" && event.newValue){
+          try{
+            JSON.parse(event.newValue).forEach(function(d){
+              if(!treeNav.querySelector('.tree-document[data-doc-id="' + d.id + '"]')){
+                window.blinkSidebarEl(window.addDocToSidebarTree(d));
+              }
+            });
+          }catch(error){ /* malformed storage value -- ignore */ }
+        }
+      });
     }
     // Recorded once per project node, including ones added live later (see
     // addProjectToSidebarTree above), so search can restore each one's own
