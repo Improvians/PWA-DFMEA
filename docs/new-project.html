@@ -54,10 +54,21 @@
 .np-col-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none}
 .np-col-icon.spec{background:#EEF2FF;color:#4338CA}
 .np-col-icon.dfmea{background:#FFF7ED;color:#C2410C}
-.np-basedon{font-size:10.5px;color:#64748B;margin:10px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:5px}
-.np-basedon b{color:#475569;font-weight:700}
 #npDfmeaTable tr.clickable td:first-child{border-left:3px solid #FDBA74}
 .np-reqcard{padding-left:16px}
+.np-basedon{margin:12px 0 0;padding:12px 14px;border:1px solid #E4EAF2;border-radius:10px;background:#FBFCFE}
+.np-basedon-label{display:flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;color:#94A3B8;
+ text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px}
+.np-chiprow{display:flex;flex-wrap:wrap;gap:7px}
+.np-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:600;
+ border:1px solid #E4EAF2;background:#fff;color:#475569;cursor:pointer;text-decoration:none;
+ transition:border-color .15s ease,background-color .15s ease,transform .12s ease,box-shadow .15s ease}
+.np-chip:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(15,23,42,.06)}
+.np-chip svg{flex:none}
+.np-chip.spec{color:#4338CA;border-color:#E0E7FF}
+.np-chip.spec:hover{background:#EEF2FF;border-color:#C7D2FE}
+.np-chip.dfmea{color:#C2410C;border-color:#FED7AA}
+.np-chip.dfmea:hover{background:#FFF7ED;border-color:#FDBA74}
 @media (max-width:860px){.np-top-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -138,7 +149,10 @@
               <div class="np-reqhead"><span class="np-prod" id="npReqProduct"></span><span class="np-standard" id="npReqStandard"></span></div>
               <ul class="np-speclist" id="npReqSpecs"></ul>
             </div>
-            <div class="np-basedon" id="npReqBasedOn" hidden>Based on <b id="npReqBasedOnName"></b> in Data Warehouse</div>
+            <div class="np-basedon" id="npReqBasedOn" hidden>
+              <div class="np-basedon-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Referenced from Data Warehouse</div>
+              <div class="np-chiprow" id="npReqBasedOnChips"></div>
+            </div>
           </div>
           <div class="np-col">
             <div class="np-col-head">
@@ -147,7 +161,10 @@
             </div>
             <div class="np-secsub">Each one opens as a real, editable DFMEA -- click to open.</div>
             <table class="np-table"><thead><tr><th>Name</th><th>Function</th><th>Severity</th></tr></thead><tbody id="npDfmeaTable"></tbody></table>
-            <div class="np-basedon" id="npDfmeaBasedOn" hidden>Based on <b id="npDfmeaBasedOnNames"></b> in Data Warehouse</div>
+            <div class="np-basedon" id="npDfmeaBasedOn" hidden>
+              <div class="np-basedon-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Referenced from Data Warehouse</div>
+              <div class="np-chiprow" id="npDfmeaBasedOnChips"></div>
+            </div>
           </div>
         </div>
 

@@ -45,6 +45,31 @@
     var setB = new Set(wordsOf(b));
     return wordsOf(a).some(function(w){ return w.length > 3 && setB.has(w); });
   }
+  function slugify(text){
+    return String(text).toLowerCase().replace(/\.(xlsx|xls)$/i, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  }
+  var dfmeaIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg>';
+  var specIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';
+  // The real Crimp DFMEA opens directly -- every other reference name here
+  // matches a file in Data Warehouse's uploaded-worksheets library, which
+  // opens the same way clicking that row there does: seeded once with the
+  // same "upload-<slug>" override id data-warehouse.js uses, so the title
+  // shown in the opened worksheet matches the chip's label.
+  function dfmeaReferenceUrl(refName){
+    if(refName === "Crimp Contact Resistance") return "index.html";
+    var docId = "upload-" + slugify(refName);
+    try{
+      var map = JSON.parse(localStorage.getItem("dfmeaDocOverrides") || "{}");
+      if(!map[docId]){
+        // Same trailing-"DFMEA" trim data-warehouse.js uses, so the title
+        // doesn't repeat the page's own DFMEA badge right next to it.
+        var title = refName.replace(/\.(xlsx|xls)$/i, "").replace(/[_-]+/g, " ").replace(/\s+dfmea\s*$/i, "").trim();
+        map[docId] = { name: title, function: title, failureMode: "Missing or Degraded Function", severity: 9, mode: "sample" };
+        localStorage.setItem("dfmeaDocOverrides", JSON.stringify(map));
+      }
+    }catch(error){ /* override just won't persist -- the chip still opens, unlabeled */ }
+    return "worksheet-view.html?doc=" + encodeURIComponent(docId);
+  }
 
   // Same shared library Data Warehouse and New DFMEA with AI both draw
   // on -- used here to find which existing DFMEAs "match" the product
@@ -251,17 +276,21 @@
       });
     });
 
-    // Shown right next to the thing it informed -- which existing spec
-    // fed the new requirement doc (left column), which existing DFMEAs fed
-    // the generated ones (right column) -- capped to a couple of names
-    // each so it reads as a quick "based on", not another table to scan.
+    // Shown right next to the thing it informed -- which existing spec fed
+    // the new requirement doc (left column), which existing DFMEAs fed the
+    // generated ones (right column) -- each one a real, clickable chip that
+    // opens that exact source record, not just its name as plain text.
     if(matchedReqDocs.length){
       document.getElementById("npReqBasedOn").hidden = false;
-      document.getElementById("npReqBasedOnName").textContent = matchedReqDocs.slice(0, 2).map(function(d){ return d.productName; }).join(", ");
+      document.getElementById("npReqBasedOnChips").innerHTML = matchedReqDocs.slice(0, 3).map(function(d){
+        return '<a class="np-chip spec" href="requirement-view.html?id=' + encodeURIComponent(d.id) + '" target="_blank">' + specIcon + escapeHtml(d.productName) + '</a>';
+      }).join("");
     }
     if(matched.length){
       document.getElementById("npDfmeaBasedOn").hidden = false;
-      document.getElementById("npDfmeaBasedOnNames").textContent = matched.slice(0, 2).map(function(m){ return m.name; }).join(", ");
+      document.getElementById("npDfmeaBasedOnChips").innerHTML = matched.slice(0, 3).map(function(m){
+        return '<a class="np-chip dfmea" href="' + dfmeaReferenceUrl(m.name) + '" target="_blank">' + dfmeaIcon + escapeHtml(m.name) + '</a>';
+      }).join("");
     }
 
     var actions = document.getElementById("npDoneActions");
