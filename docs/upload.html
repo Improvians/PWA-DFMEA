@@ -100,7 +100,7 @@
 
     <div class="seclab"><span class="secn">2</span>Design requirement specifications</div>
     <div class="sm" style="margin-bottom:12px">Production specifications generated for a project (via "Create project with AI") land here too, alongside the library this workspace already has on file.</div>
-    <div class="dw-card">
+    <div class="dw-card" id="reqCard">
       <div class="tbar dw-tbar">
         <div class="wsearch" data-tip="Search by product name or spec text"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input type="text" id="reqSearch" placeholder="Search specifications"></div>
         <select class="fsel" id="reqStandardFilter" data-tip="Filter by referenced standard">
@@ -108,8 +108,22 @@
         </select>
         <div class="spacer"></div>
         <button type="button" class="fl" id="reqExportBtn" data-tip="Download the visible rows as a CSV file"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Export</button>
+        <button type="button" class="fl act" id="reqUploadBtn" data-tip="Upload a .pdf or .docx requirement specification document"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5-5 5 5M12 5v12"/></svg>Upload</button>
+        <input type="file" id="reqUploadInput" accept=".pdf,.doc,.docx" hidden>
         <a href="new-project.html" class="fl act" style="text-decoration:none" data-tip="Describe a product and generate a new specification with AI"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1M3 12h3m12 0h3M5.6 18.4l2.1-2.1m8.6-8.6l2.1-2.1"/></svg>New with AI</a>
       </div>
+      <div class="up-msg" id="reqUploadErr"></div>
+      <div class="up-progress" id="reqUploadProgress">
+        <div class="up-bar-track"><div class="up-bar-fill" id="reqUploadBarFill"></div></div>
+        <div class="up-label" id="reqUploadLabel">Uploading...</div>
+        <ol class="up-stages" id="reqUploadStages">
+          <li data-stage="0"><span class="us-dot"></span>Upload file</li>
+          <li data-stage="1"><span class="us-dot"></span>Extract requirements</li>
+          <li data-stage="2"><span class="us-dot"></span>Structure specification</li>
+          <li data-stage="3"><span class="us-dot"></span>Done</li>
+        </ol>
+      </div>
+      <div class="up-msg" id="reqUploadSuccess"></div>
       <table class="uh-table" id="reqTable">
         <thead><tr><th style="width:28px"></th><th>Product</th><th>Standard</th><th>Specs</th><th>Date</th></tr></thead>
         <tbody id="reqTableBody"></tbody>

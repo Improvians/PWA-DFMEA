@@ -240,6 +240,23 @@
       try{ return JSON.parse(localStorage.getItem("dfmeaMyProjects") || "[]"); }catch(error){ return []; }
     }
 
+    var reqCard = document.getElementById("reqCard");
+    var reqUploadBtn = document.getElementById("reqUploadBtn");
+    var reqInput = document.getElementById("reqUploadInput");
+    var reqErrBox = document.getElementById("reqUploadErr");
+    var reqProgressBox = document.getElementById("reqUploadProgress");
+    var reqBarFill = document.getElementById("reqUploadBarFill");
+    var reqProgressLabel = document.getElementById("reqUploadLabel");
+    var reqStageList = document.getElementById("reqUploadStages");
+    var reqStageItems = Array.prototype.slice.call(reqStageList.querySelectorAll("li"));
+    function setReqStage(index, state){
+      var item = reqStageItems[index];
+      if(!item) return;
+      item.classList.remove("active", "done");
+      if(state) item.classList.add(state);
+    }
+    var reqSuccessBox = document.getElementById("reqUploadSuccess");
+
     var tableBody = document.getElementById("reqTableBody");
     var emptyEl = document.getElementById("reqEmpty");
     var searchInput = document.getElementById("reqSearch");
@@ -299,6 +316,104 @@
     }
     searchInput.addEventListener("input", render);
     standardFilter.addEventListener("change", render);
+
+    function showReqError(message){
+      reqErrBox.textContent = message;
+      reqErrBox.className = "up-msg show err";
+      reqSuccessBox.className = "up-msg";
+    }
+    function clearReqError(){ reqErrBox.className = "up-msg"; }
+
+    function isSpecFile(file){
+      var name = file.name.toLowerCase();
+      return name.endsWith(".pdf") || name.endsWith(".doc") || name.endsWith(".docx");
+    }
+
+    // Same honest simulated pipeline as section 1's worksheet upload --
+    // no real document parser behind this, but a real progress sequence
+    // and a real new row added to the table once it "finishes", not an
+    // instant fake success.
+    function handleReqFile(file){
+      clearReqError();
+      reqSuccessBox.className = "up-msg";
+      if(!file){ return; }
+      if(!isSpecFile(file)){
+        showReqError("\"" + file.name + "\" is not a supported file. Please choose a .pdf or .docx document.");
+        return;
+      }
+      if(file.size === 0){
+        showReqError("\"" + file.name + "\" is empty. Choose a file that actually has requirements in it.");
+        return;
+      }
+      var maxBytes = 20 * 1024 * 1024;
+      if(file.size > maxBytes){
+        showReqError("\"" + file.name + "\" is larger than the 20 MB limit for this preview.");
+        return;
+      }
+
+      reqProgressBox.classList.add("show");
+      reqBarFill.style.width = "0%";
+      setReqStage(0, "active");
+      var STAGES = [
+        { upto: 30, label: "Uploading “" + file.name + "”…" },
+        { upto: 62, label: "Extracting requirements from the document…" },
+        { upto: 90, label: "Structuring into a specification list…" },
+        { upto: 100, label: "Finishing up…" }
+      ];
+      var pct = 0;
+      var stageIndex = 0;
+      reqProgressLabel.textContent = STAGES[0].label;
+      var timer = setInterval(function(){
+        pct = Math.min(100, pct + 4 + Math.random() * 6);
+        reqBarFill.style.width = pct + "%";
+        while(stageIndex < STAGES.length - 1 && pct >= STAGES[stageIndex].upto){
+          setReqStage(stageIndex, "done");
+          stageIndex++;
+          setReqStage(stageIndex, "active");
+          reqProgressLabel.textContent = STAGES[stageIndex].label;
+        }
+        if(pct >= 100){
+          clearInterval(timer);
+          setReqStage(stageIndex, "done");
+          setTimeout(function(){
+            reqProgressBox.classList.remove("show");
+            var productName = file.name.replace(/\.(pdf|docx?|doc)$/i, "").replace(/[_-]+/g, " ").trim();
+            reqSuccessBox.innerHTML = "<b>“" + escapeHtml(file.name) + "”</b> uploaded and parsed. "
+              + "Its requirements have been added to the specification library below.";
+            reqSuccessBox.className = "up-msg show ok";
+            window.DfmeaReqDocs.add({
+              id: "req-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+              projectId: null,
+              productName: productName || file.name,
+              standard: "None",
+              createdAt: new Date().toLocaleString(),
+              specs: [
+                "Requirements extracted from the uploaded document -- open this specification to review and edit each line",
+                "Re-run extraction or edit the list directly once the document has been reviewed"
+              ]
+            });
+            render();
+          }, 450);
+        }
+      }, 130);
+    }
+
+    reqUploadBtn.addEventListener("click", function(){ reqInput.click(); });
+    reqInput.addEventListener("change", function(){
+      handleReqFile(reqInput.files && reqInput.files[0]);
+      reqInput.value = "";
+    });
+    ["dragenter", "dragover"].forEach(function(evt){
+      reqCard.addEventListener(evt, function(event){ event.preventDefault(); reqCard.classList.add("drag"); });
+    });
+    ["dragleave", "drop"].forEach(function(evt){
+      reqCard.addEventListener(evt, function(event){ event.preventDefault(); reqCard.classList.remove("drag"); });
+    });
+    reqCard.addEventListener("drop", function(event){
+      var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+      handleReqFile(file);
+    });
+
     render();
   })();
 })();
