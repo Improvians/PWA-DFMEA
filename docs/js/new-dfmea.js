@@ -256,6 +256,10 @@
     var projectId = projectSelect.value;
     var docId = makeDocId();
     saveDocRecord({ id: docId, name: name, function: fn, severity: severity, projectId: projectId, mode: "blank", createdAt: new Date().toLocaleString() });
+    if(window.addDocToSidebarTree){
+      var newBlankDocEl = window.addDocToSidebarTree({ id: docId, name: name, projectId: projectId });
+      if(newBlankDocEl && window.blinkSidebarEl) window.blinkSidebarEl(newBlankDocEl);
+    }
     // A brand new DFMEA still needs *something* to open -- rather than a
     // dead end, it starts from the same default worksheet structure every
     // new document gets here, clearly labelled as a starting point you're
@@ -288,6 +292,10 @@
     var fromNames = selected.map(function(c){ return c.name; });
     var relatedUploadNames = selected.filter(function(c){ return !c.isReference; }).map(function(c){ return c.name; });
     saveDocRecord({ id: docId, name: name, function: fn, severity: severity, projectId: projectId, mode: "ai", generatedFrom: fromNames, relatedUploads: relatedUploadNames, createdAt: new Date().toLocaleString() });
+    if(window.addDocToSidebarTree){
+      var newAiDocEl = window.addDocToSidebarTree({ id: docId, name: name, projectId: projectId });
+      if(newAiDocEl && window.blinkSidebarEl) window.blinkSidebarEl(newAiDocEl);
+    }
     saveOverride(docId, {
       name: name, function: fn, failureMode: failure, severity: severity, mode: "ai", projectId: projectId, generatedFrom: relatedUploadNames, generatedAt: new Date().toISOString()
     });

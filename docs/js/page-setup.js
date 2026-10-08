@@ -278,44 +278,89 @@
       });
     }
 
-    // Whichever project/document was just created (Create project with AI,
-    // New DFMEA) gets a brief highlight pulse wherever it landed in this
-    // tree -- one-time, cleared from sessionStorage immediately so it only
-    // ever fires on the page load right after creation, not on every
-    // later visit.
-    if(treeNav){
-      function blinkOnce(el){
-        if(!el) return;
-        el.classList.add("tree-blink");
-        setTimeout(function(){ el.classList.remove("tree-blink"); }, 3000);
+    // Exposed so a page that just created a project/document (Create
+    // project with AI, New DFMEA) can update THIS tree live, in the DOM,
+    // right away -- instead of only taking effect on the next full page
+    // load, which read like the app needed a manual refresh to catch up.
+    window.blinkSidebarEl = function(el){
+      if(!el) return;
+      el.classList.add("tree-blink");
+      setTimeout(function(){ el.classList.remove("tree-blink"); }, 3000);
+    };
+    window.addProjectToSidebarTree = function(project){
+      if(!treeNav) return null;
+      var existing = treeNav.querySelector('.tree-project[data-id="' + project.id + '"]');
+      if(existing) return existing;
+      var el = document.createElement("details");
+      el.className = "tree-project inactive-project";
+      el.setAttribute("data-id", project.id);
+      el.innerHTML = '<summary><span class="tree-name"></span></summary>';
+      el.querySelector(".tree-name").textContent = project.name;
+      var emptyEl = treeNav.querySelector(".project-empty");
+      treeNav.insertBefore(el, emptyEl);
+      return el;
+    };
+    window.addDocToSidebarTree = function(doc){
+      if(!treeNav) return null;
+      var existing = treeNav.querySelector('.tree-document[data-doc-id="' + doc.id + '"]');
+      if(existing) return existing;
+      var projectEl = treeNav.querySelector('.tree-project[data-id="' + doc.projectId + '"]');
+      if(!projectEl) return null;
+      var children = projectEl.querySelector(":scope > .tree-children");
+      if(!children){
+        children = document.createElement("div");
+        children.className = "tree-children";
+        projectEl.appendChild(children);
       }
+      var docEl = document.createElement("details");
+      docEl.className = "tree-document";
+      docEl.setAttribute("data-real", "true");
+      docEl.setAttribute("data-doc-id", doc.id);
+      docEl.innerHTML = '<summary data-tip="DFMEA document"><span class="tree-name"></span></summary>';
+      docEl.querySelector(".tree-name").textContent = doc.name;
+      children.appendChild(docEl);
+      return docEl;
+    };
+
+    // Whichever project/document was just created gets a brief highlight
+    // pulse wherever it landed in this tree -- one-time, cleared from
+    // sessionStorage immediately so it only ever fires on the page load
+    // right after creation, not on every later visit.
+    if(treeNav){
       try{
         var justProjectId = sessionStorage.getItem("dfmeaJustCreatedProjectId");
         if(justProjectId){
           sessionStorage.removeItem("dfmeaJustCreatedProjectId");
-          blinkOnce(treeNav.querySelector('.tree-project[data-id="' + justProjectId + '"]'));
+          window.blinkSidebarEl(treeNav.querySelector('.tree-project[data-id="' + justProjectId + '"]'));
         }
         var justDocId = sessionStorage.getItem("dfmeaJustCreatedDocId");
         if(justDocId){
           sessionStorage.removeItem("dfmeaJustCreatedDocId");
-          blinkOnce(treeNav.querySelector('.tree-document[data-doc-id="' + justDocId + '"]'));
+          window.blinkSidebarEl(treeNav.querySelector('.tree-document[data-doc-id="' + justDocId + '"]'));
         }
       }catch(error){ /* sessionStorage unavailable -- nothing to blink */ }
     }
+    // Recorded once per project node, including ones added live later (see
+    // addProjectToSidebarTree above), so search can restore each one's own
+    // original open/closed state when the query is cleared.
+    Array.prototype.slice.call(document.querySelectorAll(".tree-project")).forEach(function(project){
+      if(project.dataset.initialOpen === undefined) project.dataset.initialOpen = project.open ? "1" : "";
+    });
     var projectSearch = document.getElementById("projectSearch");
     if(projectSearch){
-      var projects = Array.prototype.slice.call(document.querySelectorAll(".tree-project"));
-      var initiallyOpen = projects.map(function(project){ return project.open; });
       var emptyState = document.querySelector(".project-empty");
       projectSearch.addEventListener("input", function(){
+        // Re-queried on every input rather than captured once, so a
+        // project/document added live after setup is searchable immediately.
+        var projects = Array.prototype.slice.call(document.querySelectorAll(".tree-project"));
         var query = projectSearch.value.trim().toLowerCase();
         var visible = 0;
-        projects.forEach(function(project, index){
+        projects.forEach(function(project){
+          if(project.dataset.initialOpen === undefined) project.dataset.initialOpen = project.open ? "1" : "";
           var name = project.querySelector(":scope > summary").textContent.toLowerCase();
           var matches = !query || name.indexOf(query) !== -1;
           project.hidden = !matches;
-          if(query) project.open = matches;
-          else project.open = initiallyOpen[index];
+          project.open = query ? matches : !!project.dataset.initialOpen;
           if(matches) visible++;
         });
         emptyState.hidden = visible > 0;

@@ -207,7 +207,15 @@
     var matchedReqDocs = window.DfmeaReqDocs.readAll().filter(function(d){ return sharesWord(description, d.productName); });
 
     // --- project ---
-    saveProject({ id: projectId, name: name, description: description, createdAt: new Date().toLocaleString() });
+    var projectRecord = { id: projectId, name: name, description: description, createdAt: new Date().toLocaleString() };
+    saveProject(projectRecord);
+    // Updates this page's own sidebar immediately instead of only taking
+    // effect on the next full page load -- creating a project used to
+    // look like it needed a manual refresh to show up.
+    if(window.addProjectToSidebarTree){
+      var newProjectEl = window.addProjectToSidebarTree(projectRecord);
+      if(newProjectEl && window.blinkSidebarEl) window.blinkSidebarEl(newProjectEl);
+    }
 
     // --- requirement doc ---
     saveRequirementDoc({ id: "req-" + Date.now().toString(36), projectId: projectId, productName: name,
@@ -221,6 +229,7 @@
         mode: "ai", generatedFrom: matched.map(function(m){ return m.name; }), createdAt: new Date().toLocaleString() });
       saveOverride(docId, { name: docName, function: f.suffix, failureMode: f.failure, severity: f.severity,
         mode: "ai", projectId: projectId, generatedFrom: matched.map(function(m){ return m.name; }), generatedAt: new Date().toISOString() });
+      if(window.addDocToSidebarTree) window.addDocToSidebarTree({ id: docId, name: docName, projectId: projectId });
       return { docId: docId, name: docName, fn: f.suffix, severity: f.severity };
     });
 
