@@ -1514,7 +1514,7 @@
     if(button) button.setAttribute("aria-busy", "true");
     try{
       var workbook = new ExcelJS.Workbook();
-      workbook.creator = "DFMEA Studio";
+      workbook.creator = "DFMEA";
       workbook.subject = "Crimp DFMEA worksheet and complete risk tree";
       workbook.calcProperties.fullCalcOnLoad = true;
       var sheet = workbook.addWorksheet("DFMEA");

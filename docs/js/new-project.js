@@ -4,7 +4,7 @@
   // page-setup.js overwrites .crumb/.ttl with the dashboard's own title --
   // this page sets its own right after, same pattern as new-dfmea.js.
   var crumbEl = document.querySelector(".crumb");
-  if(crumbEl) crumbEl.innerHTML = 'DFMEA Studio &rsaquo; <a href="projects.html" style="color:inherit">Projects</a> &rsaquo; <b>New Project with AI</b>';
+  if(crumbEl) crumbEl.innerHTML = 'DFMEA &rsaquo; <a href="projects.html" style="color:inherit">Projects</a> &rsaquo; <b>New Project with AI</b>';
   var pageTitle = document.querySelector(".ttl");
   if(pageTitle) pageTitle.textContent = "Create a new project with AI";
 
@@ -51,7 +51,7 @@
   var dfmeaIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg>';
   var specIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';
   // The real Crimp DFMEA opens directly -- every other reference name here
-  // matches a file in Data Warehouse's uploaded-worksheets library, which
+  // matches a file in Legacy DFMEA's uploaded-worksheets library, which
   // opens the same way clicking that row there does: seeded once with the
   // same "upload-<slug>" override id data-warehouse.js uses, so the title
   // shown in the opened worksheet matches the chip's label.
@@ -71,7 +71,7 @@
     return "worksheet-view.html?doc=" + encodeURIComponent(docId);
   }
 
-  // Same shared library Data Warehouse and New DFMEA with AI both draw
+  // Same shared library Legacy DFMEA and New DFMEA with AI both draw
   // on -- used here to find which existing DFMEAs "match" the product
   // description, shown as the reference table on the results screen.
   var REFERENCE_DOCS = [

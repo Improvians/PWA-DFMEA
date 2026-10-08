@@ -46,7 +46,7 @@
   var pageTitle = document.querySelector(".ttl");
   if(pageTitle) pageTitle.textContent = project.name;
   var crumbEl = document.querySelector(".crumb");
-  if(crumbEl) crumbEl.innerHTML = 'DFMEA Studio &rsaquo; <a href="projects.html" style="color:inherit">Projects</a> &rsaquo; <b>' + escapeHtml(project.name) + '</b>';
+  if(crumbEl) crumbEl.innerHTML = 'DFMEA &rsaquo; <a href="projects.html" style="color:inherit">Projects</a> &rsaquo; <b>' + escapeHtml(project.name) + '</b>';
 
   var newDfmeaBtn = document.getElementById("tabNewDfmea");
   if(newDfmeaBtn) newDfmeaBtn.addEventListener("click", function(){ window.location.href = "new-dfmea.html?mode=blank&project=" + encodeURIComponent(projectId); });

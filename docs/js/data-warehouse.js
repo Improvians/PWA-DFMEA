@@ -3,10 +3,10 @@
   // page-setup.js overwrites .ttl/.crumb with the dashboard's own title --
   // put this page's real title back afterward.
   var pageTitle = document.querySelector(".ttl");
-  if(pageTitle) pageTitle.textContent = "Data warehouse";
+  if(pageTitle) pageTitle.textContent = "Legacy DFMEA";
   var crumbEl = document.querySelector(".crumb");
-  if(crumbEl) crumbEl.innerHTML = 'DFMEA Studio &rsaquo; <b>Data Warehouse</b>';
-  // Data Warehouse is marked the active nav item directly in this
+  if(crumbEl) crumbEl.innerHTML = 'DFMEA &rsaquo; <b>Legacy DFMEA</b>';
+  // Legacy DFMEA is marked the active nav item directly in this
   // page's own HTML, so there's nothing to move at runtime here.
 
   function escapeHtml(value){
@@ -63,19 +63,25 @@
     // the Crimp DFMEA being the one document that's already populated --
     // real uploads (readHistory/saveHistory below) are entirely separate
     // from this and are what the "no data yet" checks elsewhere key off of.
+    // Two kinds of pre-existing files: ones the client themselves shared
+    // (external, authoritative, kept pinned at the top) and this
+    // workspace's own library of prior work (everything else).
     var DEFAULT_LIBRARY = [
-      { name: "Sensor_Bracket_DFMEA.xlsx", size: "142 KB", when: "Mar 28, 2024, 10:33 AM", rows: 33 },
-      { name: "Busbar_Joint_DFMEA.xlsx", size: "198 KB", when: "Jun 5, 2024, 2:10 PM", rows: 55 },
-      { name: "Wire_Harness_DFMEA_2023.xlsx", size: "156 KB", when: "Aug 19, 2024, 11:20 AM", rows: 39 },
-      { name: "Connector_Housing_DFMEA.xlsx", size: "211 KB", when: "Nov 2, 2024, 3:45 PM", rows: 61 },
-      { name: "Terminal_Retention_DFMEA_Rev3.xlsx", size: "184 KB", when: "Jan 14, 2025, 9:02 AM", rows: 48 },
-      { name: "Battery_Tray_Mounting_DFMEA.xlsx", size: "167 KB", when: "Feb 7, 2025, 1:18 PM", rows: 42 },
-      { name: "Coolant_Hose_Fitting_DFMEA.xlsx", size: "129 KB", when: "Mar 3, 2025, 9:54 AM", rows: 27 },
-      { name: "PCB_Connector_Interface_DFMEA.xlsx", size: "203 KB", when: "Mar 21, 2025, 4:02 PM", rows: 58 },
-      { name: "Door_Latch_Actuator_DFMEA.xlsx", size: "176 KB", when: "Apr 9, 2025, 10:47 AM", rows: 45 },
-      { name: "Seat_Belt_Buckle_DFMEA.xlsx", size: "151 KB", when: "Apr 30, 2025, 2:36 PM", rows: 36 },
-      { name: "Headlamp_Housing_Seal_DFMEA.xlsx", size: "188 KB", when: "May 16, 2025, 11:09 AM", rows: 50 },
-      { name: "Charging_Port_Cover_DFMEA.xlsx", size: "160 KB", when: "Jun 2, 2025, 3:27 PM", rows: 38 }
+      { name: "OEM_Connector_Interface_DFMEA.xlsx", size: "224 KB", when: "Jul 18, 2025, 2:45 PM", rows: 64, source: "client" },
+      { name: "Customer_Battery_Terminal_DFMEA.xlsx", size: "196 KB", when: "Aug 5, 2025, 10:12 AM", rows: 52, source: "client" },
+      { name: "Tier1_Harness_Routing_DFMEA.xlsx", size: "178 KB", when: "Sep 12, 2025, 3:30 PM", rows: 47, source: "client" },
+      { name: "Sensor_Bracket_DFMEA.xlsx", size: "142 KB", when: "Mar 28, 2024, 10:33 AM", rows: 33, source: "library" },
+      { name: "Busbar_Joint_DFMEA.xlsx", size: "198 KB", when: "Jun 5, 2024, 2:10 PM", rows: 55, source: "library" },
+      { name: "Wire_Harness_DFMEA_2023.xlsx", size: "156 KB", when: "Aug 19, 2024, 11:20 AM", rows: 39, source: "library" },
+      { name: "Connector_Housing_DFMEA.xlsx", size: "211 KB", when: "Nov 2, 2024, 3:45 PM", rows: 61, source: "library" },
+      { name: "Terminal_Retention_DFMEA_Rev3.xlsx", size: "184 KB", when: "Jan 14, 2025, 9:02 AM", rows: 48, source: "library" },
+      { name: "Battery_Tray_Mounting_DFMEA.xlsx", size: "167 KB", when: "Feb 7, 2025, 1:18 PM", rows: 42, source: "library" },
+      { name: "Coolant_Hose_Fitting_DFMEA.xlsx", size: "129 KB", when: "Mar 3, 2025, 9:54 AM", rows: 27, source: "library" },
+      { name: "PCB_Connector_Interface_DFMEA.xlsx", size: "203 KB", when: "Mar 21, 2025, 4:02 PM", rows: 58, source: "library" },
+      { name: "Door_Latch_Actuator_DFMEA.xlsx", size: "176 KB", when: "Apr 9, 2025, 10:47 AM", rows: 45, source: "library" },
+      { name: "Seat_Belt_Buckle_DFMEA.xlsx", size: "151 KB", when: "Apr 30, 2025, 2:36 PM", rows: 36, source: "library" },
+      { name: "Headlamp_Housing_Seal_DFMEA.xlsx", size: "188 KB", when: "May 16, 2025, 11:09 AM", rows: 50, source: "library" },
+      { name: "Charging_Port_Cover_DFMEA.xlsx", size: "160 KB", when: "Jun 2, 2025, 3:27 PM", rows: 38, source: "library" }
     ];
 
     function readHistory(){
@@ -90,10 +96,14 @@
       return (bytes / (1024 * 1024)).toFixed(2) + " MB";
     }
     function allRows(){
-      var realList = readHistory();
-      return DEFAULT_LIBRARY.map(function(d){ return Object.assign({ mine: false }, d); })
-        .concat(realList.map(function(d){ return Object.assign({ mine: true }, d); }))
-        .slice().reverse();
+      // Client-shared files always lead the list -- they're the
+      // authoritative external reference, not just more library data --
+      // then your own uploads (newest first), then this workspace's own
+      // library (newest first).
+      var client = DEFAULT_LIBRARY.filter(function(d){ return d.source === "client"; });
+      var library = DEFAULT_LIBRARY.filter(function(d){ return d.source === "library"; }).slice().reverse();
+      var mine = readHistory().map(function(d){ return Object.assign({ source: "mine" }, d); }).slice().reverse();
+      return client.concat(mine, library);
     }
     // Opening an uploaded worksheet reuses the same per-document override
     // mechanism every DFMEA in this build already uses -- there's no real
@@ -121,12 +131,12 @@
       var query = searchInput.value.trim().toLowerCase();
       var source = sourceFilter.value;
       var visible = rows.filter(function(r){
-        if(source === "library" && r.mine) return false;
-        if(source === "mine" && !r.mine) return false;
+        if(source !== "all" && r.source !== source) return false;
         if(query && r.name.toLowerCase().indexOf(query) === -1) return false;
         return true;
       });
 
+      var SOURCE_LABELS = { client: "Shared by client", mine: "Uploaded by you", library: "Library" };
       historyBody.innerHTML = "";
       historyEmpty.hidden = visible.length > 0;
       visible.forEach(function(item){
@@ -136,7 +146,7 @@
           + "<td>" + escapeHtml(item.size) + "</td>"
           + "<td>" + escapeHtml(item.rows != null ? item.rows + " rows" : "—") + "</td>"
           + "<td>" + escapeHtml(item.when) + "</td>"
-          + "<td><span class=\"uh-source" + (item.mine ? " mine" : "") + "\">" + (item.mine ? "Uploaded by you" : "Library") + "</span></td>"
+          + "<td><span class=\"uh-source " + item.source + "\">" + SOURCE_LABELS[item.source] + "</span></td>"
           + "<td><span class=\"uh-status ok\">Trained</span></td>";
         row.addEventListener("click", function(){ openWorksheetPreview(item); });
         historyBody.appendChild(row);

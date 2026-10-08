@@ -198,201 +198,90 @@
   }
   var documentLink = document.querySelector(".subnav.on");
   if(documentLink){
-    function readCustomProjects(){
+    // The sidebar lists projects only. A project's DFMEA documents are
+    // opened from that project's own page, not nested underneath it here.
+    var readCustomProjects = function(){
       try{ return JSON.parse(localStorage.getItem("dfmeaMyProjects") || "[]"); }catch(error){ return []; }
-    }
-    function escapeAttr(value){
-      var div = document.createElement("div");
-      div.textContent = String(value);
-      return div.innerHTML;
-    }
-    var customProjectsHtml = readCustomProjects().map(function(p){
-      return '<details class="tree-project inactive-project" data-id="' + escapeAttr(p.id) + '">'
-        + '<summary><span class="tree-name">' + escapeAttr(p.name) + '</span></summary>'
-        + '</details>';
-    }).join("");
-    documentLink.outerHTML = `<div class="project-filter">
-      <label class="project-search">
-        <svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-        <input id="projectSearch" type="search" aria-label="Search projects" placeholder="Find a project" autocomplete="off">
-      </label>
-      <nav class="risk-tree" aria-label="Projects and risk hierarchy">
-        <details class="tree-project tree-project-active" data-id="aster-ev-connector" open>
-          <summary data-tip="Project"><span class="tree-name">Aster EV Connector</span><span class="project-state">CURRENT</span></summary>
-          <div class="tree-children">
-            <details class="tree-document" data-real="true" open>
-              <summary data-tip="DFMEA document"><span class="tree-name">Crimp DFMEA</span></summary>
-              <div class="tree-children">
-                <details open>
-                  <summary data-tip="Item or component"><span class="tree-name">Conductor Crimp</span></summary>
-                  <div class="tree-children">
-                    <details open>
-                      <summary data-tip="Function: what the component should do"><span class="tree-name">Carry electrical current</span></summary>
-                      <div class="tree-children">
-                        <div class="tree-leaf tree-current" aria-current="page" data-tip="Failure mode: how this function can fail">Contact resistance too high</div>
-                        <div class="tree-leaf" data-tip="Failure mode">Wire pulls out of terminal</div>
-                      </div>
-                    </details>
-                    <details>
-                      <summary data-tip="Function: what the component should do"><span class="tree-name">Hold the conductor securely</span></summary>
-                      <div class="tree-children"><div class="tree-leaf" data-tip="Failure mode">Crimp grip is too weak</div></div>
-                    </details>
-                  </div>
-                </details>
-                <details class="tree-document" data-real="true" data-doc-id="seed-terminal-durability">
-                  <summary data-tip="DFMEA document"><span class="tree-name">Terminal Durability DFMEA</span></summary>
-                </details>
-              </div>
-            </details>
-          </div>
-        </details>
-        ${customProjectsHtml}
-        <div class="project-empty" aria-live="polite" hidden>No matching projects</div>
-      </nav>
-    </div>`;
-    // Documents created through New DFMEA belong under their own
-    // project's branch in the tree too, same as the hardcoded ones --
-    // added after the tree markup exists so they can be appended into
-    // whichever project (built-in or custom) they were created under.
-    var treeNav = document.querySelector(".risk-tree");
-    function readMyDocuments(){
-      try{ return JSON.parse(localStorage.getItem("dfmeaMyDocuments") || "[]"); }catch(error){ return []; }
-    }
-    if(treeNav){
-      readMyDocuments().forEach(function(doc){
-        var projectEl = treeNav.querySelector('.tree-project[data-id="' + doc.projectId + '"]');
-        if(!projectEl) return;
-        var children = projectEl.querySelector(":scope > .tree-children");
-        if(!children){
-          children = document.createElement("div");
-          children.className = "tree-children";
-          projectEl.appendChild(children);
-        }
-        var docEl = document.createElement("details");
-        docEl.className = "tree-document";
-        docEl.setAttribute("data-real", "true");
-        docEl.setAttribute("data-doc-id", doc.id);
-        docEl.innerHTML = '<summary data-tip="DFMEA document"><span class="tree-name"></span></summary>';
-        docEl.querySelector(".tree-name").textContent = doc.name;
-        children.appendChild(docEl);
-      });
-    }
+    };
+    var projectFilter = document.createElement("div");
+    projectFilter.className = "project-filter";
+    projectFilter.innerHTML = '<label class="project-search">'
+      + '<svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>'
+      + '<input id="projectSearch" type="search" aria-label="Search projects" placeholder="Find a project" autocomplete="off">'
+      + '</label>'
+      + '<nav class="project-list" aria-label="Projects">'
+      + '<div class="project-empty" aria-live="polite" hidden>No matching projects</div>'
+      + '</nav>';
+    documentLink.replaceWith(projectFilter);
+    var projectNav = projectFilter.querySelector(".project-list");
+    var emptyState = projectNav.querySelector(".project-empty");
+    var projectLinks = function(){
+      return Array.prototype.slice.call(projectNav.querySelectorAll(".project-link"));
+    };
+    var findProjectLink = function(projectId){
+      return projectLinks().find(function(link){ return link.getAttribute("data-id") === projectId; }) || null;
+    };
 
-    // Exposed so a page that just created a project/document (Create
-    // project with AI, New DFMEA) can update THIS tree live, in the DOM,
-    // right away -- instead of only taking effect on the next full page
-    // load, which read like the app needed a manual refresh to catch up.
+    // Exposed so a page that just created a project (Create project with
+    // AI) can add it here live, right away, instead of it only showing up
+    // on the next full page load.
+    window.addProjectToSidebar = function(project){
+      var existing = findProjectLink(project.id);
+      if(existing) return existing;
+      var link = document.createElement("a");
+      link.className = "project-link";
+      link.setAttribute("data-id", project.id);
+      link.href = "project.html?id=" + encodeURIComponent(project.id);
+      link.innerHTML = '<svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span></span>';
+      link.querySelector("span").textContent = project.name;
+      projectNav.insertBefore(link, emptyState);
+      return link;
+    };
     window.blinkSidebarEl = function(el){
       if(!el) return;
-      el.classList.add("tree-blink");
-      setTimeout(function(){ el.classList.remove("tree-blink"); }, 3000);
+      el.classList.add("project-blink");
+      setTimeout(function(){ el.classList.remove("project-blink"); }, 3000);
     };
-    window.addProjectToSidebarTree = function(project){
-      if(!treeNav) return null;
-      var existing = treeNav.querySelector('.tree-project[data-id="' + project.id + '"]');
-      if(existing) return existing;
-      var el = document.createElement("details");
-      el.className = "tree-project inactive-project";
-      el.setAttribute("data-id", project.id);
-      el.innerHTML = '<summary><span class="tree-name"></span></summary>';
-      el.querySelector(".tree-name").textContent = project.name;
-      var emptyEl = treeNav.querySelector(".project-empty");
-      treeNav.insertBefore(el, emptyEl);
-      return el;
-    };
-    window.addDocToSidebarTree = function(doc){
-      if(!treeNav) return null;
-      var existing = treeNav.querySelector('.tree-document[data-doc-id="' + doc.id + '"]');
-      if(existing) return existing;
-      var projectEl = treeNav.querySelector('.tree-project[data-id="' + doc.projectId + '"]');
-      if(!projectEl) return null;
-      var children = projectEl.querySelector(":scope > .tree-children");
-      if(!children){
-        children = document.createElement("div");
-        children.className = "tree-children";
-        projectEl.appendChild(children);
-      }
-      var docEl = document.createElement("details");
-      docEl.className = "tree-document";
-      docEl.setAttribute("data-real", "true");
-      docEl.setAttribute("data-doc-id", doc.id);
-      docEl.innerHTML = '<summary data-tip="DFMEA document"><span class="tree-name"></span></summary>';
-      docEl.querySelector(".tree-name").textContent = doc.name;
-      children.appendChild(docEl);
-      return docEl;
-    };
-
-    // Whichever project/document was just created gets a brief highlight
-    // pulse wherever it landed in this tree -- one-time, cleared from
-    // sessionStorage immediately so it only ever fires on the page load
-    // right after creation, not on every later visit.
-    if(treeNav){
-      try{
-        var justProjectId = sessionStorage.getItem("dfmeaJustCreatedProjectId");
-        if(justProjectId){
-          sessionStorage.removeItem("dfmeaJustCreatedProjectId");
-          window.blinkSidebarEl(treeNav.querySelector('.tree-project[data-id="' + justProjectId + '"]'));
-        }
-        var justDocId = sessionStorage.getItem("dfmeaJustCreatedDocId");
-        if(justDocId){
-          sessionStorage.removeItem("dfmeaJustCreatedDocId");
-          window.blinkSidebarEl(treeNav.querySelector('.tree-document[data-doc-id="' + justDocId + '"]'));
-        }
-      }catch(error){ /* sessionStorage unavailable -- nothing to blink */ }
-
-      // Creating a project/document on ANOTHER already-open tab (Data
-      // Warehouse or a project page left open while "Create project with
-      // AI" runs in a new tab) doesn't touch this tab's DOM at all -- the
-      // browser's own "storage" event fires here whenever localStorage
-      // changes in another tab of this app, which is what patches this
-      // tree live instead of leaving it stale until a manual refresh.
-      window.addEventListener("storage", function(event){
-        if(event.key === "dfmeaMyProjects" && event.newValue){
-          try{
-            JSON.parse(event.newValue).forEach(function(p){
-              if(!treeNav.querySelector('.tree-project[data-id="' + p.id + '"]')){
-                window.blinkSidebarEl(window.addProjectToSidebarTree(p));
-              }
-            });
-          }catch(error){ /* malformed storage value -- ignore */ }
-        }
-        if(event.key === "dfmeaMyDocuments" && event.newValue){
-          try{
-            JSON.parse(event.newValue).forEach(function(d){
-              if(!treeNav.querySelector('.tree-document[data-doc-id="' + d.id + '"]')){
-                window.blinkSidebarEl(window.addDocToSidebarTree(d));
-              }
-            });
-          }catch(error){ /* malformed storage value -- ignore */ }
-        }
-      });
-    }
-    // Recorded once per project node, including ones added live later (see
-    // addProjectToSidebarTree above), so search can restore each one's own
-    // original open/closed state when the query is cleared.
-    Array.prototype.slice.call(document.querySelectorAll(".tree-project")).forEach(function(project){
-      if(project.dataset.initialOpen === undefined) project.dataset.initialOpen = project.open ? "1" : "";
+    [{ id: "aster-ev-connector", name: "Aster EV Connector" }].concat(readCustomProjects()).forEach(function(project){
+      window.addProjectToSidebar(project);
     });
-    var projectSearch = document.getElementById("projectSearch");
-    if(projectSearch){
-      var emptyState = document.querySelector(".project-empty");
-      projectSearch.addEventListener("input", function(){
-        // Re-queried on every input rather than captured once, so a
-        // project/document added live after setup is searchable immediately.
-        var projects = Array.prototype.slice.call(document.querySelectorAll(".tree-project"));
-        var query = projectSearch.value.trim().toLowerCase();
-        var visible = 0;
-        projects.forEach(function(project){
-          if(project.dataset.initialOpen === undefined) project.dataset.initialOpen = project.open ? "1" : "";
-          var name = project.querySelector(":scope > summary").textContent.toLowerCase();
-          var matches = !query || name.indexOf(query) !== -1;
-          project.hidden = !matches;
-          project.open = query ? matches : !!project.dataset.initialOpen;
-          if(matches) visible++;
+
+    // A project that was just created gets a brief highlight pulse where
+    // it landed in this list -- one-time, cleared from sessionStorage
+    // immediately so it only fires on the page load right after creation.
+    try{
+      var justProjectId = sessionStorage.getItem("dfmeaJustCreatedProjectId");
+      if(justProjectId){
+        sessionStorage.removeItem("dfmeaJustCreatedProjectId");
+        window.blinkSidebarEl(findProjectLink(justProjectId));
+      }
+    }catch(error){ /* sessionStorage unavailable -- nothing to blink */ }
+
+    // Creating a project in ANOTHER already-open tab doesn't touch this
+    // tab's DOM at all -- the browser's own "storage" event fires here
+    // whenever localStorage changes in another tab of this app, which is
+    // what adds it to this list live instead of leaving it stale until a
+    // manual refresh.
+    window.addEventListener("storage", function(event){
+      if(event.key !== "dfmeaMyProjects" || !event.newValue) return;
+      try{
+        JSON.parse(event.newValue).forEach(function(project){
+          if(!findProjectLink(project.id)) window.blinkSidebarEl(window.addProjectToSidebar(project));
         });
-        emptyState.hidden = visible > 0;
+      }catch(error){ /* malformed storage value -- ignore */ }
+    });
+
+    var projectSearch = projectFilter.querySelector("#projectSearch");
+    projectSearch.addEventListener("input", function(){
+      var query = projectSearch.value.trim().toLowerCase();
+      var visible = 0;
+      projectLinks().forEach(function(link){
+        var matches = !query || link.textContent.toLowerCase().indexOf(query) !== -1;
+        link.hidden = !matches;
+        if(matches) visible++;
       });
-    }
+      emptyState.hidden = visible > 0;
+    });
   }
   function refreshDfmeaMetrics(){
   var analysisRows = Array.prototype.slice.call(document.querySelectorAll("#wsBody tr"));

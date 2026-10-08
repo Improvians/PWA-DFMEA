@@ -40,6 +40,7 @@
 .uh-status.ok{background:#F0FDF4;color:#166534}
 .uh-source{display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;background:#F1F5F9;color:#64748B}
 .uh-source.mine{background:#EEF2FF;color:#4338CA}
+.uh-source.client{background:#FFFBEB;color:#B45309}
 .req-row{cursor:pointer}
 .req-row:hover td{background:#F8FAFF}
 .np-standard{display:inline-flex;align-items:center;padding:2px 9px;border-radius:5px;background:#EEF2FF;color:#4338CA;font-size:10px;font-weight:700}
@@ -49,8 +50,8 @@
 
 <div class="side">
   <div class="brand"><div class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h6l5 5v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v5h5"/><path d="M9.5 13.5l2 2 3.5-4"/></svg></div>
-    <div><div class="bn">DFMEA Studio</div><div class="bs">PROJECT RISK ANALYSIS</div></div></div>
-  <div class="nav on" id="navUploadData"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5-5 5 5M12 5v12"/></svg></span>Data Warehouse</div><div class="nav" id="navDfmea"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span>Projects</div><div class="subnav on"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>Crimp DFMEA</span></div>
+    <div><div class="bn">DFMEA</div><div class="bs">PROJECT RISK ANALYSIS</div></div></div>
+  <div class="nav on" id="navUploadData"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5-5 5 5M12 5v12"/></svg></span>Legacy DFMEA</div><div class="nav" id="navDfmea"><span class="ni"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span>Projects</div><div class="subnav on"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>Crimp DFMEA</span></div>
   <div class="sfoot" id="sfootUser" data-tip="Signed in as D. Whitaker"><div class="av">DW</div>
     <div><div class="un">D. Whitaker</div><div class="ur">Lead Design Engineer</div></div>
     <span class="coll" id="logoutBtn" data-tip="Log out"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></span></div>
@@ -59,8 +60,8 @@
 <div class="main">
   <div class="top">
     <div>
-      <div class="crumb">DFMEA Studio &rsaquo; <b>Data Warehouse</b></div>
-      <div class="ttl">Data warehouse</div>
+      <div class="crumb">DFMEA &rsaquo; <b>Legacy DFMEA</b></div>
+      <div class="ttl">Legacy DFMEA</div>
     </div>
   </div>
 
@@ -71,8 +72,9 @@
         <div class="wsearch" data-tip="Search by file name"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input type="text" id="uhSearch" placeholder="Search files"></div>
         <select class="fsel" id="uhSourceFilter" data-tip="Filter by where the file came from">
           <option value="all">All sources</option>
-          <option value="library">Library</option>
+          <option value="client">Shared by client</option>
           <option value="mine">Uploaded by you</option>
+          <option value="library">Library</option>
         </select>
         <div class="spacer"></div>
         <button type="button" class="fl" id="uhExportBtn" data-tip="Download the visible rows as a CSV file"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Export</button>

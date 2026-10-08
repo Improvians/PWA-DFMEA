@@ -4,7 +4,7 @@
   // samples this workspace already has on file, and every real one
   // generated through "Create project with AI". Kept in one place (not
   // duplicated per page) so editing a spec on the viewer page, listing it
-  // in Data Warehouse, and showing it on a project's page all agree.
+  // in Legacy DFMEA, and showing it on a project's page all agree.
   var KEY = "dfmeaRequirementDocs";
   var DEFAULTS_VERSION_KEY = "dfmeaRequirementDocsDefaultsVersion";
   var DEFAULTS_VERSION = "5";

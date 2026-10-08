@@ -46,7 +46,7 @@
   var pageTitle = document.getElementById("ndPageTitle");
   var crumbEl = document.querySelector(".crumb");
   var crumbLabel = mode === "ai" ? "New DFMEA with AI" : "New DFMEA";
-  if(crumbEl) crumbEl.innerHTML = 'DFMEA Studio &rsaquo; <b>' + crumbLabel + '</b>';
+  if(crumbEl) crumbEl.innerHTML = 'DFMEA &rsaquo; <b>' + crumbLabel + '</b>';
   if(pageTitle) pageTitle.textContent = mode === "ai" ? "Create a new DFMEA with AI" : "Create a new DFMEA";
 
   var templateField = document.getElementById("ndTemplateField");
@@ -162,7 +162,7 @@
     showStep(step2);
   });
 
-  // Same shared worksheet library Data Warehouse shows -- a DFMEA this
+  // Same shared worksheet library Legacy DFMEA shows -- a DFMEA this
   // workspace already has on file is exactly the kind of thing AI
   // matching should be drawing candidates from, not just the one
   // reference document and whatever the visitor personally uploaded.
