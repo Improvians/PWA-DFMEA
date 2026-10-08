@@ -294,6 +294,26 @@
       if(window.refreshDfmeaMetrics) window.refreshDfmeaMetrics();
     }
 
+    // Surface the project's design requirement specification from right
+    // inside the DFMEA itself -- not just on the project page and Data
+    // Warehouse -- so an engineer reading the document can jump straight
+    // to the requirements it's meant to satisfy.
+    if(override.projectId && window.DfmeaReqDocs){
+      var reqDoc = window.DfmeaReqDocs.readAll().find(function(r){ return r.projectId === override.projectId; });
+      if(reqDoc){
+        var topEl = document.querySelector(".top");
+        if(topEl && !document.getElementById("viewReqSpecLink")){
+          var reqLink = document.createElement("a");
+          reqLink.id = "viewReqSpecLink";
+          reqLink.href = "requirement-view.html?id=" + encodeURIComponent(reqDoc.id);
+          reqLink.target = "_blank";
+          reqLink.style.cssText = "margin-left:14px;align-self:center;font-size:11.5px;font-weight:700;color:#4338CA;text-decoration:none;white-space:nowrap";
+          reqLink.textContent = "View design requirements ›";
+          topEl.appendChild(reqLink);
+        }
+      }
+    }
+
     // Announcing "this was generated from X" is the point when AI
     // generation is the feature being shown off -- but sample/starter
     // documents should just look like real documents, not carry a
