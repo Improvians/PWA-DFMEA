@@ -46,6 +46,8 @@
 .np-table tr.clickable:hover td{background:#F8FAFF}
 .np-sectitle{font-size:11.5px;font-weight:700;color:#1E293B;margin:18px 0 4px}
 .np-secsub{font-size:10.5px;color:#64748B;margin-bottom:8px}
+.np-reftype{display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:9.5px;font-weight:700;background:#F1F5F9;color:#64748B}
+.np-reftype.spec{background:#EEF2FF;color:#4338CA}
 </style>
 </head>
 <body><div class="app">
@@ -125,9 +127,8 @@
         <div class="np-secsub">Each one opens as a real, editable DFMEA -- click to open.</div>
         <table class="np-table"><thead><tr><th>Name</th><th>Function</th><th>Severity</th></tr></thead><tbody id="npDfmeaTable"></tbody></table>
 
-        <div class="np-sectitle" id="npMatchedTitle" hidden>Related DFMEAs used as reference</div>
-        <div class="np-secsub" id="npMatchedSub" hidden>These existing DFMEAs matched the product description and informed the generated structure.</div>
-        <table class="np-table" id="npMatchedTable" hidden><thead><tr><th>Name</th><th>Source</th></tr></thead><tbody id="npMatchedBody"></tbody></table>
+        <div class="np-sectitle" id="npMatchedTitle" hidden>Generated using these references</div>
+        <table class="np-table" id="npMatchedTable" hidden><thead><tr><th>Reference</th><th>Type</th></tr></thead><tbody id="npMatchedBody"></tbody></table>
 
         <div class="nd-actions" id="npDoneActions"></div>
       </div>

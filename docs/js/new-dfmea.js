@@ -18,7 +18,7 @@
   // Same document names project.html already shows for each built-in
   // project -- kept in sync with KNOWN_PROJECTS in project-detail.js.
   var KNOWN_PROJECT_DOCS = {
-    "aster-ev-connector": ["Crimp DFMEA", "Terminal Durability DFMEA"]
+    "aster-ev-connector": ["Crimp DFMEA", "Terminal Durability DFMEA", "Housing Seal Integrity DFMEA", "Mating Cycle Durability DFMEA", "Connector Lock Retention DFMEA"]
   };
   function existingDocNames(projectId){
     var names = (KNOWN_PROJECT_DOCS[projectId] || []).slice();
@@ -119,6 +119,7 @@
       var list = JSON.parse(localStorage.getItem("dfmeaMyDocuments") || "[]");
       list.push(record);
       localStorage.setItem("dfmeaMyDocuments", JSON.stringify(list));
+      sessionStorage.setItem("dfmeaJustCreatedDocId", record.id);
     }catch(error){ /* storage unavailable -- the flow still works, just won't be listed anywhere */ }
   }
   // There's only one real, fully-populated worksheet in this build (the

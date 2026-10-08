@@ -277,6 +277,31 @@
         children.appendChild(docEl);
       });
     }
+
+    // Whichever project/document was just created (Create project with AI,
+    // New DFMEA) gets a brief highlight pulse wherever it landed in this
+    // tree -- one-time, cleared from sessionStorage immediately so it only
+    // ever fires on the page load right after creation, not on every
+    // later visit.
+    if(treeNav){
+      function blinkOnce(el){
+        if(!el) return;
+        el.classList.add("tree-blink");
+        setTimeout(function(){ el.classList.remove("tree-blink"); }, 3000);
+      }
+      try{
+        var justProjectId = sessionStorage.getItem("dfmeaJustCreatedProjectId");
+        if(justProjectId){
+          sessionStorage.removeItem("dfmeaJustCreatedProjectId");
+          blinkOnce(treeNav.querySelector('.tree-project[data-id="' + justProjectId + '"]'));
+        }
+        var justDocId = sessionStorage.getItem("dfmeaJustCreatedDocId");
+        if(justDocId){
+          sessionStorage.removeItem("dfmeaJustCreatedDocId");
+          blinkOnce(treeNav.querySelector('.tree-document[data-doc-id="' + justDocId + '"]'));
+        }
+      }catch(error){ /* sessionStorage unavailable -- nothing to blink */ }
+    }
     var projectSearch = document.getElementById("projectSearch");
     if(projectSearch){
       var projects = Array.prototype.slice.call(document.querySelectorAll(".tree-project"));

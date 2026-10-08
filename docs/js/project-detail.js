@@ -13,7 +13,10 @@
       name: "Aster EV Connector",
       docs: [
         { name: "Crimp DFMEA", real: true, meta: "64 causes · 26 paths · updated today" },
-        { name: "Terminal Durability DFMEA", real: true, docId: "seed-terminal-durability", meta: "64 causes · 26 paths · updated 3 days ago" }
+        { name: "Terminal Durability DFMEA", real: true, docId: "seed-terminal-durability", meta: "64 causes · 26 paths · updated 3 days ago" },
+        { name: "Housing Seal Integrity DFMEA", real: true, docId: "seed-housing-seal", meta: "64 causes · 26 paths · updated 6 days ago" },
+        { name: "Mating Cycle Durability DFMEA", real: true, docId: "seed-mating-cycle", meta: "64 causes · 26 paths · updated 9 days ago" },
+        { name: "Connector Lock Retention DFMEA", real: true, docId: "seed-lock-retention", meta: "64 causes · 26 paths · updated 2 weeks ago" }
       ]
     }
   };

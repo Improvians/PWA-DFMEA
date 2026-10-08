@@ -856,6 +856,14 @@ dialog[open]::backdrop{animation:backdropIn .18s ease forwards}
 .nd-step.on{animation:appIn .25s ease both}
 #projGrid .proj-card,#docList .doc-row{animation:appIn .25s ease both}
 
+/* A project or document just created elsewhere (Create project with AI,
+   New DFMEA) gets a brief highlight pulse where it lands in the sidebar
+   tree, so it's obvious which one just appeared instead of the list just
+   silently having one more row. page-setup.js adds this class once and
+   removes it after the animation finishes -- it never persists. */
+@keyframes treeBlinkPulse{0%,100%{background:transparent}50%{background:#E0E7FF}}
+.tree-blink>summary{animation:treeBlinkPulse .6s ease-in-out 5}
+
 @media (prefers-reduced-motion:reduce){
   .nd-step.on,#projGrid .proj-card,#docList .doc-row,.project-filter{animation:none}
   .nav,.subnav,.btn,.xp,.tab-add,.tab,.pager button,.ibtn,.csel-btn,.proj-card,.doc-row,
@@ -863,4 +871,5 @@ dialog[open]::backdrop{animation:backdropIn .18s ease forwards}
     transition:none}
   .proj-card:hover,.doc-row:hover,.kp:hover,.btn:active,.xp:active,.tab-add:active,
   .proj-card:active,.doc-row:active{transform:none}
+  .tree-blink>summary{animation:none;background:#E0E7FF}
 }

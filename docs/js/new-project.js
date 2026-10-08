@@ -151,6 +151,7 @@
       var list = readMyProjects();
       list.push(project);
       localStorage.setItem("dfmeaMyProjects", JSON.stringify(list));
+      sessionStorage.setItem("dfmeaJustCreatedProjectId", project.id);
     }catch(error){ /* storage unavailable -- the flow still works, just won't be listed */ }
   }
 
@@ -199,8 +200,11 @@
     }).map(function(entry){ return entry.spec; });
     var specs = Array.from(new Set(matchedSpecs.concat(DEFAULT_SPECS))).slice(0, 18);
 
-    // --- related DFMEAs that matched the description, shown as reference ---
+    // --- related DFMEAs and existing requirement specs that matched the
+    // description -- shown together as one simple "what this was built
+    // from" list, so the result is explainable, not a black box.
     var matched = REFERENCE_DOCS.filter(function(doc){ return sharesWord(description, doc.name); });
+    var matchedReqDocs = window.DfmeaReqDocs.readAll().filter(function(d){ return sharesWord(description, d.productName); });
 
     // --- project ---
     saveProject({ id: projectId, name: name, description: description, createdAt: new Date().toLocaleString() });
@@ -238,13 +242,17 @@
       });
     });
 
-    if(matched.length){
+    // Capped to a handful -- this is meant to explain the result at a
+    // glance, not list every loose keyword match.
+    var references = matched.map(function(m){ return { name: m.name, type: "DFMEA" }; })
+      .concat(matchedReqDocs.map(function(d){ return { name: d.productName, type: "Requirement spec" }; }))
+      .slice(0, 4);
+    if(references.length){
       document.getElementById("npMatchedTitle").hidden = false;
-      document.getElementById("npMatchedSub").hidden = false;
-      var matchedTable = document.getElementById("npMatchedTable");
-      matchedTable.hidden = false;
-      document.getElementById("npMatchedBody").innerHTML = matched.map(function(m){
-        return '<tr><td>' + escapeHtml(m.name) + '</td><td>' + escapeHtml(m.meta) + '</td></tr>';
+      document.getElementById("npMatchedTable").hidden = false;
+      document.getElementById("npMatchedBody").innerHTML = references.map(function(r){
+        var badgeClass = r.type === "DFMEA" ? "np-reftype" : "np-reftype spec";
+        return '<tr><td>' + escapeHtml(r.name) + '</td><td><span class="' + badgeClass + '">' + escapeHtml(r.type) + '</span></td></tr>';
       }).join("");
     }
 

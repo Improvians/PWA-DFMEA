@@ -200,7 +200,10 @@
   // visitor created) -- they're the same kind of override, just seeded
   // here instead of written to localStorage by New DFMEA.
   var SEED_OVERRIDES = {
-    "seed-terminal-durability": { name: "Terminal Durability DFMEA", function: "Terminal Contact Resistance After Cycling", failureMode: "Missing or Degraded Function", mode: "sample" }
+    "seed-terminal-durability": { name: "Terminal Durability DFMEA", function: "Terminal Contact Resistance After Cycling", failureMode: "Missing or Degraded Function", mode: "sample" },
+    "seed-housing-seal": { name: "Housing Seal Integrity DFMEA", function: "Housing Seal Integrity", failureMode: "Seal Fails to Maintain IP Rating After Repeated Mating", severity: 7, mode: "sample" },
+    "seed-mating-cycle": { name: "Mating Cycle Durability DFMEA", function: "Mating Cycle Durability", failureMode: "Contact Performance Degrades After Repeated Mating Cycles", severity: 7, mode: "sample" },
+    "seed-lock-retention": { name: "Connector Lock Retention DFMEA", function: "Connector Lock Retention", failureMode: "Primary Lock Releases Under Vibration or Pull Load", severity: 8, mode: "sample" }
   };
   var override = null;
   if(isDashboard){
