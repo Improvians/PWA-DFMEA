@@ -345,27 +345,6 @@
       }
     }
 
-    // Announcing "this was generated from X" is the point when AI
-    // generation is the feature being shown off -- but sample/starter
-    // documents should just look like real documents, not carry a
-    // disclaimer banner explaining they're reused data underneath.
-    if(override.mode !== "ai") return;
-
-    var banner = document.createElement("div");
-    banner.style.cssText = "margin:0 0 14px;padding:10px 14px;border-radius:9px;background:#EEF2FF;"
-      + "border:1px solid #C7D2FE;color:#3730A3;font-size:11.5px;display:flex;align-items:center;gap:10px";
-    var sourceText = 'was generated from the <b>Crimp Contact Resistance</b> reference DFMEA'
-      + (override.generatedFrom && override.generatedFrom.length ? ' and ' + override.generatedFrom.length + ' related upload' + (override.generatedFrom.length === 1 ? "" : "s") : "");
-    banner.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1M3 12h3m12 0h3M5.6 18.4l2.1-2.1m8.6-8.6l2.1-2.1"/></svg>'
-      + '<span><b>' + String(override.name).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + '</b> ' + sourceText
-      + '. Everything below is a real, editable starting structure, not a locked preview.</span>'
-      + '<button type="button" id="dismissOverrideBtn" style="margin-left:auto;background:none;border:none;color:#4338CA;font-weight:700;font-size:11px;cursor:pointer;flex:none">View the original Crimp DFMEA</button>';
-    var content = document.querySelector(".content");
-    if(content) content.insertBefore(banner, content.firstChild);
-    var dismissBtn = document.getElementById("dismissOverrideBtn");
-    if(dismissBtn) dismissBtn.addEventListener("click", function(){
-      window.location.href = "index.html";
-    });
   }
 
   // it1_app.js (dashboard only) defines a richer showToast -- this is a
