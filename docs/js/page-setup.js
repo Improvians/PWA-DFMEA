@@ -183,6 +183,46 @@
       if(!tag || /^(FUNCTION|ITEM)$/.test(tag.textContent.trim())) plus.remove();
     });
   }
+  // One definition of what the diagram's colours mean, shown above the
+  // inline preview and again in the full view's toolbar -- each swatch is
+  // drawn like the node it stands for (pale fill, coloured outline, solid
+  // left bar), so it can be matched to the diagram at a glance.
+  var legendHosts = Array.prototype.slice.call(document.querySelectorAll("[data-node-legend]"));
+  if(legendHosts.length){
+    var legendNode = function(fill, stroke, accent, label){
+      return '<span><i class="nl-node" style="background:' + fill + ';border-color:' + stroke + ';border-left-color:' + accent + '"></i>' + label + '</span>';
+    };
+    var legendBar = function(color, label){
+      return '<span><i class="nl-bar" style="background:' + color + '"></i>' + label + '</span>';
+    };
+    var legendBadge = function(color, letter, label){
+      return '<span><i class="nl-badge" style="background:' + color + '">' + letter + '</i>' + label + '</span>';
+    };
+    // Each group wraps as one unit, so a heading never ends up on a
+    // different line from the swatches it introduces.
+    var legendGroup = function(heading, items){
+      return '<div class="nl-group"><b>' + heading + '</b>' + items.join("") + '</div>';
+    };
+    var legendHtml = legendGroup("Node colours", [
+        legendNode("#F8FAFC", "#CBD5E1", "#475569", "Function"),
+        legendNode("#FFFFFF", "#FBBF24", "#D97706", "Failure mode"),
+        legendNode("#FFFAEB", "#FCD34D", "#B45309", "Cause levels 1&ndash;3"),
+        legendNode("#FFF7ED", "#FDBA74", "#C2410C", "Levels 4&ndash;6"),
+        legendNode("#F5F3FF", "#C4B5FD", "#6D28D9", "Levels 7&ndash;9"),
+        legendNode("#FFF1F2", "#FDA4AF", "#BE123C", "Levels 10&ndash;11"),
+        legendNode("#FEF2F2", "#FCA5A5", "#EF4444", "TBD: cause not identified yet")
+      ])
+      + legendGroup("Left bar on a final cause", [
+        legendBar("#DC2626", "RPN 100+"),
+        legendBar("#D97706", "RPN 40&ndash;99"),
+        legendBar("#16A34A", "RPN under 40")
+      ])
+      + legendGroup("Badges", [
+        legendBadge("#4338CA", "D", "Deepest design cause"),
+        legendBadge("#B45309", "M", "Deepest manufacturing cause")
+      ]);
+    legendHosts.forEach(function(host){ host.innerHTML = legendHtml; });
+  }
   var searchShell = document.querySelector(".top .srch");
   if(searchShell){
     searchShell.innerHTML = '<svg class="ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="globalSearch" type="search" aria-label="Search failure modes, causes, and controls" placeholder="Search failure modes, causes, controls" autocomplete="off">';

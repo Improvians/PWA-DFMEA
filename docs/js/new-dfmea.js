@@ -81,8 +81,8 @@
     });
     // A second DFMEA with the same name as one that already exists in
     // this project is exactly the kind of mix-up that's confusing later
-    // (which one is which in the sidebar, in a project's document list),
-    // so it's blocked here the same way an empty name is.
+    // (which one is which in the project's document table), so it's
+    // blocked here the same way an empty name is.
     var nameField = document.getElementById("ndNameField");
     var nameErr = document.getElementById("ndNameErr");
     var typedName = nameInput.value.trim();
@@ -119,7 +119,6 @@
       var list = JSON.parse(localStorage.getItem("dfmeaMyDocuments") || "[]");
       list.push(record);
       localStorage.setItem("dfmeaMyDocuments", JSON.stringify(list));
-      sessionStorage.setItem("dfmeaJustCreatedDocId", record.id);
     }catch(error){ /* storage unavailable -- the flow still works, just won't be listed anywhere */ }
   }
   // There's only one real, fully-populated worksheet in this build (the
@@ -256,10 +255,6 @@
     var projectId = projectSelect.value;
     var docId = makeDocId();
     saveDocRecord({ id: docId, name: name, function: fn, severity: severity, projectId: projectId, mode: "blank", createdAt: new Date().toLocaleString() });
-    if(window.addDocToSidebarTree){
-      var newBlankDocEl = window.addDocToSidebarTree({ id: docId, name: name, projectId: projectId });
-      if(newBlankDocEl && window.blinkSidebarEl) window.blinkSidebarEl(newBlankDocEl);
-    }
     // A brand new DFMEA still needs *something* to open -- rather than a
     // dead end, it starts from the same default worksheet structure every
     // new document gets here, clearly labelled as a starting point you're
@@ -292,10 +287,6 @@
     var fromNames = selected.map(function(c){ return c.name; });
     var relatedUploadNames = selected.filter(function(c){ return !c.isReference; }).map(function(c){ return c.name; });
     saveDocRecord({ id: docId, name: name, function: fn, severity: severity, projectId: projectId, mode: "ai", generatedFrom: fromNames, relatedUploads: relatedUploadNames, createdAt: new Date().toLocaleString() });
-    if(window.addDocToSidebarTree){
-      var newAiDocEl = window.addDocToSidebarTree({ id: docId, name: name, projectId: projectId });
-      if(newAiDocEl && window.blinkSidebarEl) window.blinkSidebarEl(newAiDocEl);
-    }
     saveOverride(docId, {
       name: name, function: fn, failureMode: failure, severity: severity, mode: "ai", projectId: projectId, generatedFrom: relatedUploadNames, generatedAt: new Date().toISOString()
     });

@@ -203,6 +203,7 @@ body{background:#F4F6FB;font-family:"Inter", -apple-system, BlinkMacSystemFont, 
  justify-content:space-between;gap:16px;background:#FBFCFE;flex:none}
 .chd h3{font-family:"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;font-size:13.8px;font-weight:700;
  letter-spacing:-.1px;display:flex;align-items:center;gap:8px}
+.sm{font-size:11.5px;color:#64748B;line-height:1.5}
 .chd .sm{font-size:10.7px;color:#94A3B8;margin-top:4px;line-height:1.45;max-width:850px}
 .pid2{font-family:Consolas,monospace;font-size:10.5px;font-weight:700;color:#4F46E5;
  background:#EEF2FF;padding:2px 7px;border-radius:5px}
@@ -312,11 +313,20 @@ svg.compare-active .hitbox:not(.compare-new){opacity:.22}
 .shint{font-size:10.4px;color:#64748B;margin-top:7px;display:flex;align-items:flex-start;
  gap:6px;line-height:1.45}
 .shint b{color:#4338CA}
-.lgd{display:flex;flex-wrap:wrap;align-items:center;gap:7px 15px;margin-top:auto;padding-top:11px;
- border-top:1px solid #F1F5F9;font-size:10.1px;color:#64748B}
-.lgd span{display:flex;align-items:center;gap:6px}
-.lgd i{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}
-.lgd .rd{color:#94A3B8;font-style:italic}
+/* What the diagram's node colours mean. page-setup.js fills this in two
+   places from one definition: above the inline preview, and as the second
+   row of the full view's toolbar. */
+.node-legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 24px;font-size:10.5px;color:#475569}
+.node-legend .nl-group{display:flex;flex-wrap:wrap;align-items:center;gap:6px 13px}
+.node-legend b{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#94A3B8;
+ white-space:nowrap}
+.node-legend span{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.node-legend i{flex:none;display:inline-block;font-style:normal}
+.node-legend .nl-node{width:18px;height:12px;border:1.5px solid;border-left-width:4px;border-radius:3px}
+.node-legend .nl-bar{width:4px;height:12px;border-radius:2px}
+.node-legend .nl-badge{width:14px;height:14px;border-radius:50%;color:#fff;font-size:8.5px;font-weight:800;
+ display:inline-flex;align-items:center;justify-content:center}
+.pad>.node-legend{margin-bottom:12px}
 
 /* scores panel */
 .fg{margin-bottom:12px}
@@ -577,16 +587,10 @@ tr.sel td:first-child{box-shadow:inset 3px 0 0 #4F46E5}
  color:#4338CA;font-weight:700;font-size:12.5px;padding:9px 18px;border-radius:22px;
  box-shadow:0 6px 18px rgba(67,56,202,.2)}
 .treemodalbar{display:none;position:sticky;top:0;left:0;right:0;z-index:3;background:#fff;
- border-bottom:1px solid #E4EAF2;padding:10px 14px;align-items:center;justify-content:space-between}
+ border-bottom:1px solid #E4EAF2;padding:10px 14px;align-items:center;flex-wrap:wrap;row-gap:9px}
 .treewrap.open .treemodalbar{display:flex}
+.treemodalbar>.node-legend{flex:0 0 100%;padding-top:9px;border-top:1px solid #F1F5F9}
 .tzoom{display:flex;align-items:center;gap:8px}
-.tree-legend{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 12px;
- flex:1;min-width:0;margin:0 14px;font-size:9.5px;color:#64748B}
-.tree-legend span{display:flex;align-items:center;gap:5px;white-space:nowrap}
-.tree-legend i{width:9px;height:9px;border-radius:3px;display:inline-block;flex:none}
-.tree-legend-badge{width:13px!important;height:13px!important;border-radius:50%!important;
- color:#fff;font-size:8px;font-weight:800;display:inline-flex!important;align-items:center;justify-content:center}
-.tree-legend-sep{width:1px;height:12px;border-radius:0;background:#E4EAF2;margin:0 2px}
 .tzoom button{width:28px;height:28px;border:1px solid #E4EAF2;border-radius:7px;background:#fff;
  font-size:15px;font-weight:700;color:#475569;cursor:pointer}
 .tzoom button:hover{background:#F1F5F9}
@@ -595,8 +599,8 @@ tr.sel td:first-child{box-shadow:inset 3px 0 0 #4F46E5}
 #treeCompareBtn2:disabled{opacity:.45;cursor:default}
 #treeCompareBtn2.active{background:#EEF2FF;border-color:#C7D2FE;color:#4338CA}
 #tZoomLabel{font:700 11.5px Consolas;color:#475569;width:44px;text-align:center}
-#treeCloseBtn{display:flex;align-items:center;gap:6px;border:1px solid #E4EAF2;border-radius:7px;
- background:#fff;padding:6px 12px;font-size:12px;font-weight:600;color:#334155;cursor:pointer}
+#treeCloseBtn{display:flex;align-items:center;gap:6px;margin-left:auto;border:1px solid #E4EAF2;
+ border-radius:7px;background:#fff;padding:6px 12px;font-size:12px;font-weight:600;color:#334155;cursor:pointer}
 #treeCloseBtn:hover{background:#F1F5F9}
 .modalbackdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:110}
 .modalbackdrop.show{display:block}
@@ -855,3 +859,63 @@ dialog[open]::backdrop{animation:backdropIn .18s ease forwards}
   .kp:hover,.btn:active,.xp:active,.tab-add:active,.backbtn:active{transform:none}
   .project-link.project-blink{animation:none;background-color:#E0E7FF}
 }
+
+/* ---------- SHARED TABLES ---------- */
+/* Clickable list tables: Projects, and a project's DFMEA documents. */
+.data-card{background:#fff;border:1px solid #E4EAF2;border-radius:12px;overflow:hidden}
+/* table-layout:auto overrides the global fixed layout (meant for the
+   wide worksheet) so columns size to their content instead of splitting
+   the width evenly and squeezing the name column. */
+.data-table{width:100%;border-collapse:collapse;table-layout:auto}
+.data-table th{text-align:left;padding:9px 14px;background:#F8FAFC;color:#64748B;font-weight:700;
+ font-size:10px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #E4EAF2;white-space:nowrap}
+.data-table td{padding:11px 14px;border-bottom:1px solid #F1F5F9;color:#334155;font-size:12px;
+ line-height:1.4;vertical-align:middle}
+.data-table tbody tr{cursor:pointer}
+.data-table tbody tr:last-child td{border-bottom:none}
+.data-table tbody tr:hover td{background:#F8FAFF}
+.data-name{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;color:#1E293B}
+.data-icon{width:30px;height:30px;border-radius:8px;background:#EEF2FF;color:#4338CA;display:flex;
+ align-items:center;justify-content:center;flex:none}
+.data-icon.empty{background:#F1F5F9;color:#94A3B8}
+.data-table td.data-muted{font-size:11.5px;color:#64748B}
+.data-table .chip{text-align:center}
+.data-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:5px;font-size:9.5px;
+ font-weight:700;white-space:nowrap}
+.data-badge.active{background:#EEF2FF;color:#4338CA}
+.data-badge.draft{background:#F1F5F9;color:#475569}
+.data-badge.empty{background:#F1F5F9;color:#94A3B8}
+.data-empty{padding:28px;text-align:center;color:#94A3B8;font-size:12px}
+
+/* A design requirement specification as a table (number, category,
+   requirement). DfmeaReqDocs.specTableHtml renders it everywhere a spec
+   is shown, so every page reads the same way. */
+.spec-table{width:100%;border-collapse:collapse}
+.spec-table th{text-align:left;padding:8px 12px;background:#F8FAFC;color:#64748B;font-weight:700;
+ font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #E4EAF2;white-space:nowrap}
+.spec-table td{padding:8px 12px;border-bottom:1px solid #F1F5F9;color:#334155;font-size:11.5px;
+ line-height:1.5;vertical-align:top}
+.spec-table tr:last-child td{border-bottom:none}
+.spec-table th.spec-num,.spec-table td.spec-num{width:34px}
+.spec-table td.spec-num{color:#94A3B8;font-weight:700}
+.spec-table th.spec-cat-cell,.spec-table td.spec-cat-cell{width:118px}
+.spec-cat{display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:9.5px;
+ font-weight:700;white-space:nowrap;background:#F1F5F9;color:#475569}
+.spec-cat[data-cat="mechanical"]{background:#EEF2FF;color:#4338CA}
+.spec-cat[data-cat="electrical"]{background:#FFFBEB;color:#B45309}
+.spec-cat[data-cat="environmental"]{background:#ECFDF5;color:#047857}
+.spec-cat[data-cat="material"]{background:#F5F3FF;color:#6D28D9}
+.spec-cat[data-cat="manufacturing"]{background:#FFF7ED;color:#C2410C}
+.spec-cat[data-cat="quality"]{background:#F0F9FF;color:#0369A1}
+.req-standard{display:inline-flex;align-items:center;padding:2px 9px;border-radius:5px;background:#EEF2FF;
+ color:#4338CA;font-size:10px;font-weight:700;white-space:nowrap}
+
+/* The project's requirement spec, collapsed, at the top of a DFMEA. */
+.req-panel{margin:0 0 14px;border:1px solid #E4EAF2;border-radius:10px;background:#fff;overflow:hidden}
+.req-panel>summary{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;list-style:none;
+ font-size:12px;font-weight:700;color:#1E293B}
+.req-panel>summary::-webkit-details-marker{display:none}
+.req-panel>summary::after{content:"";margin-left:auto;width:7px;height:7px;border-right:2px solid #94A3B8;
+ border-bottom:2px solid #94A3B8;transform:rotate(45deg);transition:transform .15s ease}
+.req-panel[open]>summary{border-bottom:1px solid #E4EAF2}
+.req-panel[open]>summary::after{transform:rotate(-135deg)}

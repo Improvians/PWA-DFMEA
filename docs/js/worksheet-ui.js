@@ -155,38 +155,49 @@
     }
     var minZoom = 0.15;
     var fitZoom = 0.15;
-    function fitOpen(){
-      var cw = wrap.clientWidth - 60, ch = wrap.clientHeight - 90;
-      if(cw <= 0 || ch <= 0) return;
-      // fitZoom is the true "whole diagram fits the window" scale, used
-      // by the Fit button and when the modal first opens. minZoom is a
-      // separate, lower floor for manual zoom-out -- it used to equal
-      // fitZoom exactly, which could strand nodes just out of reach if
-      // the fit calculation was ever slightly off, and gave no way to
-      // zoom out past "fit" even when that would help. Keeping it well
-      // below fitZoom means there's always more room to zoom out.
+    var modalBar = wrap.querySelector(".treemodalbar");
+    // fitZoom is the true "whole diagram fits the window" scale, used by
+    // the Fit button. minZoom is a separate, lower floor for manual
+    // zoom-out -- it used to equal fitZoom exactly, which could strand
+    // nodes just out of reach if the fit calculation was ever slightly
+    // off, and gave no way to zoom out past "fit" even when that would
+    // help. Keeping it well below fitZoom means there's always more room
+    // to zoom out. The toolbar's real height is measured (it wraps onto a
+    // second row for the colour legend) rather than assumed.
+    function measureFit(){
+      var cw = wrap.clientWidth - 60;
+      var ch = wrap.clientHeight - (modalBar ? modalBar.offsetHeight : 0) - 41;
+      if(cw <= 0 || ch <= 0) return false;
       fitZoom = Math.max(0.08, Math.min(1, Math.min(cw / vb.width, ch / vb.height)));
       minZoom = Math.max(0.05, fitZoom * 0.6);
+      return true;
+    }
+    function fitOpen(){
+      if(!measureFit()) return;
       z = fitZoom;
       apply();
     }
-    // Opening the modal should feel like arriving in the middle of the
-    // whole picture, not landing pinned to its top-left corner. Once the
-    // fit-to-window zoom is applied, scroll so the diagram's own centre
-    // sits at the centre of the visible modal, then let the user explore
-    // outward from there.
+    // Fit shows the whole diagram, so it centres it in the window.
     function centerScroll(){
       requestAnimationFrame(function(){
         wrap.scrollLeft = Math.max(0, (wrap.scrollWidth - wrap.clientWidth) / 2);
         wrap.scrollTop = Math.max(0, (wrap.scrollHeight - wrap.clientHeight) / 2);
       });
     }
+    // The full view opens at a readable 80%, pinned to the diagram's
+    // top-left corner -- where the chain starts (function, failure mode,
+    // first cause levels) -- instead of shrinking everything to fit, which
+    // left the text too small to read until the user zoomed in by hand.
+    var OPEN_ZOOM = 0.8;
     function openTree(){
       wrap.classList.add("open");
       backdrop.classList.add("show");
       document.body.style.overflow = "hidden";
-      fitOpen();
-      centerScroll();
+      measureFit();
+      z = OPEN_ZOOM;
+      apply();
+      wrap.scrollLeft = 0;
+      wrap.scrollTop = 0;
       window.dispatchEvent(new Event("treeModalOpened"));
     }
     function closeTree(){
@@ -256,7 +267,11 @@
       else { fitClosed(); }
     });
     window.addEventListener("resize", function(){
-      wrap.classList.contains("open") ? fitOpen() : fitClosed();
+      // Resizing the window re-measures what "fit" means but keeps the
+      // zoom the user is currently at (zoomTo only clamps it), rather than
+      // snapping the full view back to fit-to-window.
+      if(wrap.classList.contains("open")){ measureFit(); zoomTo(z); }
+      else fitClosed();
     });
     fitClosed();
   }

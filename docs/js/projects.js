@@ -14,7 +14,7 @@
     { id: "aster-ev-connector", name: "Aster EV Connector", baseDocs: 5, status: "active",
       description: "EV charging connector: crimp, terminal, housing seal and lock retention" }
   ];
-  var STATUS_LABELS = { active: "Active", review: "In review", released: "Released", draft: "Draft", empty: "No DFMEA yet" };
+  var STATUS_LABELS = { active: "Active", draft: "Draft", empty: "No DFMEA yet" };
 
   function readMyProjects(){
     try{ return JSON.parse(localStorage.getItem("dfmeaMyProjects") || "[]"); }catch(error){ return []; }
@@ -43,11 +43,11 @@
       : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>';
     return '<tr data-id="' + escapeHtml(project.id) + '" data-tip="'
       + (status === "empty" ? "Open this project, then use + New DFMEA to add one." : "Open this project") + '">'
-      + '<td><div class="proj-name-cell"><span class="proj-icon' + (status === "empty" ? " empty" : "") + '">' + icon + '</span>'
-      + '<span class="proj-name">' + escapeHtml(project.name) + '</span></div></td>'
-      + '<td class="proj-meta">' + (description ? escapeHtml(description) : "&mdash;") + '</td>'
+      + '<td><div class="data-name"><span class="data-icon' + (status === "empty" ? " empty" : "") + '">' + icon + '</span>'
+      + escapeHtml(project.name) + '</div></td>'
+      + '<td class="data-muted">' + (description ? escapeHtml(description) : "&mdash;") + '</td>'
       + '<td>' + docCount + '</td>'
-      + '<td><span class="proj-badge ' + status + '">' + STATUS_LABELS[status] + '</span></td>'
+      + '<td><span class="data-badge ' + status + '">' + STATUS_LABELS[status] + '</span></td>'
       + '</tr>';
   }
 
@@ -74,4 +74,9 @@
     });
   }
   render();
+  // A project or DFMEA created in another open tab shows up in this table
+  // straight away too, the same way it does in the sidebar's project list.
+  window.addEventListener("storage", function(event){
+    if(event.key === "dfmeaMyProjects" || event.key === "dfmeaMyDocuments") render();
+  });
 })();

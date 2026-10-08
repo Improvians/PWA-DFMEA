@@ -248,5 +248,31 @@
     save(list);
   }
 
-  window.DfmeaReqDocs = { readAll: readAll, getById: getById, updateSpecs: updateSpecs, add: add };
+  function escapeHtml(value){
+    var div = document.createElement("div");
+    div.textContent = String(value);
+    return div.innerHTML;
+  }
+  // Each requirement is stored as one line, "Category — requirement text".
+  // A line without that prefix (one typed in by hand, or extracted from an
+  // uploaded document) is simply filed under "General".
+  function splitSpec(spec){
+    var match = /^([A-Za-z][A-Za-z &\/-]{1,24}) — ([\s\S]+)$/.exec(String(spec));
+    return match ? { category: match[1], text: match[2] } : { category: "General", text: String(spec) };
+  }
+  // The one way a specification is rendered everywhere it appears (the
+  // viewer, a project's page, the new-project result, inside a DFMEA):
+  // a numbered table with the category as its own column.
+  function specTableHtml(specs){
+    return '<table class="spec-table"><thead><tr><th class="spec-num">#</th><th class="spec-cat-cell">Category</th><th>Requirement</th></tr></thead><tbody>'
+      + (specs || []).map(function(spec, index){
+          var parts = splitSpec(spec);
+          return '<tr><td class="spec-num">' + (index + 1) + '</td>'
+            + '<td class="spec-cat-cell"><span class="spec-cat" data-cat="' + escapeHtml(parts.category.toLowerCase()) + '">' + escapeHtml(parts.category) + '</span></td>'
+            + '<td>' + escapeHtml(parts.text) + '</td></tr>';
+        }).join("")
+      + '</tbody></table>';
+  }
+
+  window.DfmeaReqDocs = { readAll: readAll, getById: getById, updateSpecs: updateSpecs, add: add, specTableHtml: specTableHtml };
 })();
