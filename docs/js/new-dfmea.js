@@ -260,7 +260,7 @@
     // new document gets here, clearly labelled as a starting point you're
     // meant to edit, not a locked example.
     saveOverride(docId, {
-      name: name, function: fn, failureMode: failure, severity: severity, mode: "blank", generatedAt: new Date().toISOString()
+      name: name, function: fn, failureMode: failure, severity: severity, mode: "blank", projectId: projectId, generatedAt: new Date().toISOString()
     });
     document.getElementById("ndDoneTitle").textContent = "“" + name + "” created";
     document.getElementById("ndDoneBody").textContent = "Started from the Electrical termination foundation template (64 causes, 26 paths). Everything is editable.";
@@ -288,7 +288,7 @@
     var relatedUploadNames = selected.filter(function(c){ return !c.isReference; }).map(function(c){ return c.name; });
     saveDocRecord({ id: docId, name: name, function: fn, severity: severity, projectId: projectId, mode: "ai", generatedFrom: fromNames, relatedUploads: relatedUploadNames, createdAt: new Date().toLocaleString() });
     saveOverride(docId, {
-      name: name, function: fn, failureMode: failure, severity: severity, mode: "ai", generatedFrom: relatedUploadNames, generatedAt: new Date().toISOString()
+      name: name, function: fn, failureMode: failure, severity: severity, mode: "ai", projectId: projectId, generatedFrom: relatedUploadNames, generatedAt: new Date().toISOString()
     });
 
     document.getElementById("ndDoneTitle").textContent = "“" + name + "” generated";
