@@ -35,148 +35,96 @@
     window.location.href = "projects.html";
   });
 
-  // "Contact resistance too high" / "Aster EV Connector" are hardcoded as
-  // CURRENT in the tree page-setup.js builds, because that's correct on
-  // the dashboard itself -- but the exact same tree markup is reused on
-  // every other page too, where nothing is actually "current". Strip that
-  // signal everywhere except the real dashboard, and make the tree's own
-  // project/document names navigate properly instead of just expanding.
+  // A DFMEA created through New DFMEA (blank or with AI) doesn't get its
+  // own separate dashboard -- there's only one real, fully-wired
+  // worksheet/tree in this build. Instead it reuses THIS SAME page's
+  // live, editable structure and just relabels the name/function/
+  // breadcrumb. Each created document keeps its own override (keyed by
+  // the ?doc= id in the URL) in dfmeaDocOverrides, so visiting index.html
+  // plainly (no ?doc=) always shows the real Crimp DFMEA, and several
+  // created documents never stomp on each other. Aster's other documents
+  // are sample data built into the app itself (not something a visitor
+  // created) -- the same kind of override, just seeded here instead of
+  // written to localStorage by New DFMEA.
+  var SEED_OVERRIDES = {
+    "seed-terminal-durability": { name: "Terminal Durability DFMEA", function: "Terminal Contact Resistance After Cycling", failureMode: "Missing or Degraded Function", mode: "sample" },
+    "seed-housing-seal": { name: "Housing Seal Integrity DFMEA", function: "Housing Seal Integrity", failureMode: "Seal Fails to Maintain IP Rating After Repeated Mating", severity: 7, mode: "sample" },
+    "seed-mating-cycle": { name: "Mating Cycle Durability DFMEA", function: "Mating Cycle Durability", failureMode: "Contact Performance Degrades After Repeated Mating Cycles", severity: 7, mode: "sample" },
+    "seed-lock-retention": { name: "Connector Lock Retention DFMEA", function: "Connector Lock Retention", failureMode: "Primary Lock Releases Under Vibration or Pull Load", severity: 8, mode: "sample" }
+  };
+
   var urlParams = new URLSearchParams(window.location.search);
+  var pageName = window.location.pathname.split("/").pop() || "index.html";
   var activeDocId = isDashboard ? urlParams.get("doc") : null;
-  if(!isDashboard || activeDocId){
-    var currentLeaf = document.querySelector(".tree-current");
-    if(currentLeaf){
-      currentLeaf.classList.remove("tree-current");
-      currentLeaf.removeAttribute("aria-current");
-    }
-    var currentBadge = document.querySelector(".project-state");
-    if(currentBadge) currentBadge.remove();
-  }
-  // Every project and document name in the sidebar tree should actually
-  // go somewhere, the same way the Projects pages do -- not just expand
-  // its branch. Project rows carry their real id in data-id (page-setup.js
-  // writes it, including for custom projects created on the Projects
-  // page), and document rows carry data-real -- "Crimp DFMEA" is the one
-  // real document and opens the live dashboard, every other document name
-  // goes to its own project's page, where it's honestly listed as having
-  // no data yet rather than pretending to open one.
-  Array.prototype.slice.call(document.querySelectorAll(".tree-project")).forEach(function(projectEl){
-    var projectId = projectEl.getAttribute("data-id");
-    var nameEl = projectEl.querySelector(":scope > summary .tree-name");
-    if(!projectId || !nameEl) return;
-    nameEl.addEventListener("click", function(event){
-      event.preventDefault();
-      event.stopPropagation();
-      window.location.href = "project.html?id=" + encodeURIComponent(projectId);
-    });
-  });
-  Array.prototype.slice.call(document.querySelectorAll(".tree-document")).forEach(function(docEl){
-    var isReal = docEl.getAttribute("data-real") === "true";
-    var docId = docEl.getAttribute("data-doc-id");
-    var nameEl = docEl.querySelector(":scope > summary .tree-name");
-    var projectEl = docEl.closest(".tree-project");
-    var projectId = projectEl ? projectEl.getAttribute("data-id") : null;
-    if(!nameEl) return;
-    nameEl.addEventListener("click", function(event){
-      event.preventDefault();
-      event.stopPropagation();
-      if(isReal) window.location.href = "index.html" + (docId ? "?doc=" + encodeURIComponent(docId) : "");
-      else if(projectId) window.location.href = "project.html?id=" + encodeURIComponent(projectId);
-    });
-  });
 
-  // The failure-mode leaves under Crimp DFMEA (e.g. "Contact resistance
-  // too high") are part of the one real document too -- on every page
-  // except the dashboard itself they need to open it, the same as
-  // clicking "Crimp DFMEA" one level up does, instead of being dead text.
-  if(!isDashboard){
-    Array.prototype.slice.call(document.querySelectorAll(".tree-leaf")).forEach(function(leaf){
-      leaf.style.cursor = "pointer";
-      leaf.addEventListener("click", function(event){
-        event.preventDefault();
-        event.stopPropagation();
-        window.location.href = "index.html";
-      });
-    });
+  function readList(key){
+    try{ return JSON.parse(localStorage.getItem(key) || "[]"); }catch(error){ return []; }
+  }
+  var BUILT_IN_PROJECT_NAMES = { "aster-ev-connector": "Aster EV Connector" };
+  function projectName(projectId){
+    if(BUILT_IN_PROJECT_NAMES[projectId]) return BUILT_IN_PROJECT_NAMES[projectId];
+    var custom = readList("dfmeaMyProjects").find(function(p){ return p.id === projectId; });
+    return custom ? custom.name : "";
+  }
+  // The Crimp DFMEA and the seeded sample documents all belong to Aster EV
+  // Connector; a document created through New DFMEA or Create project with
+  // AI records its own project. Anything else (a legacy worksheet preview)
+  // belongs to no project.
+  function projectIdForDoc(docId){
+    if(!docId || SEED_OVERRIDES[docId]) return "aster-ev-connector";
+    var record = readList("dfmeaMyDocuments").find(function(d){ return d.id === docId; });
+    return record ? record.projectId : null;
   }
 
-  // Clicking a project/document name navigates (above); clicking anywhere
-  // else on its row (or the chevron) expands/collapses it natively via
-  // <details>, so a single click on the row itself does both at once. On
-  // top of that, whichever project (and, on the dashboard, document) the
-  // CURRENT page actually belongs to should always show expanded in the
-  // tree, however the visitor got there -- a direct link, the back
-  // button, or a click here -- so the sidebar and the page never disagree.
-  var currentProjectId = isDashboard ? "aster-ev-connector" : urlParams.get("id");
-  var activeDocEl = null;
-  if(activeDocId){
-    // Viewing a document other than the Crimp DFMEA: the tree should show
-    // THAT document as current (and its project expanded), not leave the
-    // Crimp DFMEA branch highlighted as if it were still the open page.
-    activeDocEl = Array.prototype.slice.call(document.querySelectorAll(".tree-document[data-doc-id]")).find(function(el){
-      return el.getAttribute("data-doc-id") === activeDocId;
-    }) || null;
-    if(activeDocEl){
-      var activeProjectEl = activeDocEl.closest(".tree-project");
-      currentProjectId = activeProjectEl ? activeProjectEl.getAttribute("data-id") : null;
-      Array.prototype.slice.call(document.querySelectorAll(".tree-project-active")).forEach(function(el){
-        el.classList.remove("tree-project-active");
-      });
-      Array.prototype.slice.call(document.querySelectorAll(".tree-document[open]")).forEach(function(el){
-        el.removeAttribute("open");
-      });
-      Array.prototype.slice.call(document.querySelectorAll(".tree-project[open]")).forEach(function(el){
-        if(el !== activeProjectEl) el.removeAttribute("open");
-      });
-      if(activeProjectEl){
-        activeProjectEl.classList.add("tree-project-active");
-        var activeSummary = activeProjectEl.querySelector(":scope > summary");
-        if(activeSummary && !activeSummary.querySelector(".project-state")){
-          var badge = document.createElement("span");
-          badge.className = "project-state";
-          badge.textContent = "CURRENT";
-          activeSummary.appendChild(badge);
-        }
-      }
-      activeDocEl.classList.add("tree-doc-current");
-      activeDocEl.setAttribute("aria-current", "page");
-    }
-  }
+  // Whichever project the CURRENT page belongs to -- the open DFMEA's
+  // project on the dashboard, the project itself on its own page -- is
+  // marked in the sidebar's project list, so the sidebar and the page
+  // never disagree however the visitor got here.
+  var currentProjectId = null;
+  if(isDashboard) currentProjectId = projectIdForDoc(activeDocId);
+  else if(pageName === "project.html") currentProjectId = urlParams.get("id");
   if(currentProjectId){
-    var currentProjectEl = Array.prototype.slice.call(document.querySelectorAll(".tree-project")).find(function(el){
-      return el.getAttribute("data-id") === currentProjectId;
+    var currentProjectLink = Array.prototype.slice.call(document.querySelectorAll(".project-link")).find(function(link){
+      return link.getAttribute("data-id") === currentProjectId;
     });
-    if(currentProjectEl) currentProjectEl.setAttribute("open", "");
+    if(currentProjectLink){
+      currentProjectLink.classList.add("on");
+      currentProjectLink.setAttribute("aria-current", "page");
+    }
   }
 
-  // The sidebar tree relies on native <details>/<summary> for expand and
-  // collapse, but the browser's own default marker looks inconsistent
-  // and dated next to the rest of the app -- swap in a small chevron
-  // that rotates open, same icon language as every other control here.
-  Array.prototype.slice.call(document.querySelectorAll(".risk-tree summary")).forEach(function(summary){
-    if(summary.querySelector(".tree-chev") || summary.querySelector(".tree-chev-spacer")) return;
-    if(!summary.parentElement.querySelector(":scope > .tree-children")){
-      // A project with no documents yet has nothing to expand, but its
-      // name should still line up with the sibling projects that do.
-      if(summary.parentElement.classList.contains("tree-project")){
-        var spacer = document.createElement("span");
-        spacer.className = "tree-chev-spacer";
-        summary.insertBefore(spacer, summary.firstChild);
-      }
-      return;
+  // Back goes one level up from wherever this page sits: a DFMEA (or the
+  // New DFMEA form) returns to its project's document list, a project (or
+  // the new-project form) returns to the Projects list. The sidebar-less
+  // viewer pages carry their own back link, so they're skipped here.
+  var backTarget = null;
+  if(document.querySelector(".side")){
+    if(isDashboard || pageName === "new-dfmea.html"){
+      var parentProjectId = isDashboard ? currentProjectId : urlParams.get("project");
+      var parentProjectName = parentProjectId ? projectName(parentProjectId) : "";
+      backTarget = parentProjectName
+        ? { href: "project.html?id=" + encodeURIComponent(parentProjectId), label: "Back to " + parentProjectName }
+        : { href: "projects.html", label: "Back to Projects" };
+    }else if(pageName === "project.html" || pageName === "new-project.html"){
+      backTarget = { href: "projects.html", label: "Back to Projects" };
     }
-    var chev = document.createElementNS ? document.createElement("span") : null;
-    chev.className = "tree-chev";
-    chev.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
-    summary.insertBefore(chev, summary.firstChild);
-  });
+  }
+  var titleBlock = document.querySelector(".top > div:first-child");
+  if(backTarget && titleBlock){
+    var backBtn = document.createElement("a");
+    backBtn.className = "backbtn";
+    backBtn.href = backTarget.href;
+    backBtn.setAttribute("aria-label", backTarget.label);
+    backBtn.setAttribute("data-tip", backTarget.label);
+    backBtn.innerHTML = '<svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span>Back</span>';
+    titleBlock.classList.add("has-back");
+    titleBlock.insertBefore(backBtn, titleBlock.firstChild);
+  }
 
   // "+ New DFMEA" defaults to whichever project this page is already
-  // showing (the dashboard is always Aster EV Connector; a project page
-  // carries its id in the URL), so creating one doesn't force picking the
-  // project again when it's already obvious from context.
-  var newDfmeaProjectId = currentProjectId;
-  var newDfmeaSuffix = newDfmeaProjectId ? "&project=" + encodeURIComponent(newDfmeaProjectId) : "";
+  // showing, so creating one doesn't force picking the project again when
+  // it's already obvious from context.
+  var newDfmeaSuffix = currentProjectId ? "&project=" + encodeURIComponent(currentProjectId) : "";
   var newDfmeaBtn = document.getElementById("tabNewDfmea");
   if(newDfmeaBtn) newDfmeaBtn.addEventListener("click", function(){
     window.location.href = "new-dfmea.html?mode=blank" + newDfmeaSuffix;
@@ -186,34 +134,13 @@
     window.location.href = "new-dfmea.html?mode=ai" + newDfmeaSuffix;
   });
 
-  // A DFMEA created through New DFMEA (blank or with AI) doesn't get its
-  // own separate dashboard -- there's only one real, fully-wired
-  // worksheet/tree in this build. Instead it reuses THIS SAME page's
-  // live, editable structure and just relabels the name/function/
-  // breadcrumb, with a banner saying so plainly rather than pretending
-  // it's a distinct document underneath. Each created document keeps its
-  // own override (keyed by the ?doc= id in the URL) in dfmeaDocOverrides,
-  // so visiting index.html plainly (no ?doc=) always shows the real
-  // Crimp DFMEA, and several created documents never stomp on each other.
-  // Northstar and Meridian's documents, and Aster's "Terminal Durability
-  // DFMEA", are sample data built into the app itself (not something a
-  // visitor created) -- they're the same kind of override, just seeded
-  // here instead of written to localStorage by New DFMEA.
-  var SEED_OVERRIDES = {
-    "seed-terminal-durability": { name: "Terminal Durability DFMEA", function: "Terminal Contact Resistance After Cycling", failureMode: "Missing or Degraded Function", mode: "sample" },
-    "seed-housing-seal": { name: "Housing Seal Integrity DFMEA", function: "Housing Seal Integrity", failureMode: "Seal Fails to Maintain IP Rating After Repeated Mating", severity: 7, mode: "sample" },
-    "seed-mating-cycle": { name: "Mating Cycle Durability DFMEA", function: "Mating Cycle Durability", failureMode: "Contact Performance Degrades After Repeated Mating Cycles", severity: 7, mode: "sample" },
-    "seed-lock-retention": { name: "Connector Lock Retention DFMEA", function: "Connector Lock Retention", failureMode: "Primary Lock Releases Under Vibration or Pull Load", severity: 8, mode: "sample" }
-  };
   var override = null;
-  if(isDashboard){
-    var docId = urlParams.get("doc");
-    if(docId && SEED_OVERRIDES[docId]){
-      override = SEED_OVERRIDES[docId];
-    }else if(docId){
+  if(activeDocId){
+    if(SEED_OVERRIDES[activeDocId]){
+      override = SEED_OVERRIDES[activeDocId];
+    }else{
       try{
-        var docOverrides = JSON.parse(localStorage.getItem("dfmeaDocOverrides") || "{}");
-        override = docOverrides[docId];
+        override = JSON.parse(localStorage.getItem("dfmeaDocOverrides") || "{}")[activeDocId] || null;
       }catch(error){ override = null; }
     }
   }
@@ -222,8 +149,7 @@
     if(titleEl && titleEl.firstChild) titleEl.firstChild.textContent = (override.function || override.name) + " ";
     var crumbEl = document.querySelector(".crumb");
     if(crumbEl){
-      var crumbProjectEl = activeDocEl ? activeDocEl.closest(".tree-project") : null;
-      var crumbProjectName = crumbProjectEl ? crumbProjectEl.querySelector(":scope > summary .tree-name").textContent.trim() : "";
+      var crumbProjectName = currentProjectId ? projectName(currentProjectId) : "";
       crumbEl.textContent = "";
       if(crumbProjectName) crumbEl.appendChild(document.createTextNode(crumbProjectName + " › "));
       crumbEl.appendChild(document.createTextNode(override.name + " › "));
@@ -296,55 +222,41 @@
       }
       if(window.refreshDfmeaMetrics) window.refreshDfmeaMetrics();
     }
+  }
 
-    // Surface the project's design requirement specification from right
-    // inside the DFMEA itself -- not just a link out, the full list is
-    // shown in-page -- so an engineer reading the document can see every
-    // requirement it's meant to satisfy without leaving the page.
-    if(override.projectId && window.DfmeaReqDocs){
-      var reqDoc = window.DfmeaReqDocs.readAll().find(function(r){ return r.projectId === override.projectId; });
-      if(reqDoc){
-        var topEl = document.querySelector(".top");
-        if(topEl && !document.getElementById("viewReqSpecLink")){
-          var reqLink = document.createElement("a");
-          reqLink.id = "viewReqSpecLink";
-          reqLink.href = "requirement-view.html?id=" + encodeURIComponent(reqDoc.id);
-          reqLink.target = "_blank";
-          reqLink.style.cssText = "margin-left:14px;align-self:center;font-size:11.5px;font-weight:700;color:#4338CA;text-decoration:none;white-space:nowrap";
-          reqLink.textContent = "Open full requirement spec ›";
-          topEl.appendChild(reqLink);
-        }
-        var contentEl = document.querySelector(".content");
-        if(contentEl && !document.getElementById("reqSpecPanel")){
-          var panel = document.createElement("details");
-          panel.id = "reqSpecPanel";
-          panel.style.cssText = "margin:0 0 14px;border:1px solid #E4EAF2;border-radius:10px;background:#FBFCFE;padding:0;overflow:hidden";
-          var summary = document.createElement("summary");
-          summary.style.cssText = "cursor:pointer;padding:12px 16px;font-size:12px;font-weight:700;color:#1E293B;list-style:none;display:flex;align-items:center;gap:8px";
-          var standardChip = document.createElement("span");
-          standardChip.style.cssText = "display:inline-flex;align-items:center;padding:2px 9px;border-radius:5px;background:#EEF2FF;color:#4338CA;font-size:10px;font-weight:700";
-          standardChip.textContent = reqDoc.standard === "None" ? "No specific standard" : reqDoc.standard;
-          summary.appendChild(document.createTextNode("Design requirement specification — " + (reqDoc.specs || []).length + " requirements "));
-          summary.appendChild(standardChip);
-          panel.appendChild(summary);
-          var listWrap = document.createElement("div");
-          listWrap.style.cssText = "padding:4px 16px 16px";
-          var list = document.createElement("ul");
-          list.style.cssText = "list-style:none;margin:0;padding:0;display:grid;gap:7px";
-          (reqDoc.specs || []).forEach(function(s){
-            var li = document.createElement("li");
-            li.style.cssText = "display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#334155;line-height:1.5";
-            li.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px;color:#16A34A"><path d="M20 6L9 17l-5-5"/></svg>';
-            li.appendChild(document.createTextNode(s));
-            list.appendChild(li);
-          });
-          listWrap.appendChild(list);
-          panel.appendChild(listWrap);
-          contentEl.insertBefore(panel, contentEl.firstChild);
-        }
-      }
+  // Surface the project's design requirement specification from right
+  // inside the DFMEA itself -- not just a link out, the full table is
+  // shown in-page -- so an engineer reading the document can see every
+  // requirement it's meant to satisfy without leaving the page.
+  if(isDashboard && currentProjectId && window.DfmeaReqDocs){
+    var reqDoc = window.DfmeaReqDocs.readAll().find(function(r){ return r.projectId === currentProjectId; });
+    var topEl = document.querySelector(".top");
+    var contentEl = document.querySelector(".content");
+    if(reqDoc && topEl && contentEl){
+      var reqLink = document.createElement("a");
+      reqLink.id = "viewReqSpecLink";
+      reqLink.className = "req-link";
+      reqLink.href = "requirement-view.html?id=" + encodeURIComponent(reqDoc.id);
+      reqLink.target = "_blank";
+      reqLink.textContent = "Open full requirement spec ›";
+      topEl.appendChild(reqLink);
+
+      var panel = document.createElement("details");
+      panel.id = "reqSpecPanel";
+      panel.className = "req-panel";
+      var summary = document.createElement("summary");
+      summary.appendChild(document.createTextNode("Design requirement specification — " + (reqDoc.specs || []).length + " requirements"));
+      var standardChip = document.createElement("span");
+      standardChip.className = "req-standard";
+      standardChip.textContent = reqDoc.standard === "None" ? "No specific standard" : reqDoc.standard;
+      summary.appendChild(standardChip);
+      panel.appendChild(summary);
+      var panelBody = document.createElement("div");
+      panelBody.className = "req-panel-body";
+      panelBody.innerHTML = window.DfmeaReqDocs.specTableHtml(reqDoc.specs);
+      panel.appendChild(panelBody);
+      contentEl.insertBefore(panel, contentEl.firstChild);
     }
-
   }
 
   // it1_app.js (dashboard only) defines a richer showToast -- this is a
